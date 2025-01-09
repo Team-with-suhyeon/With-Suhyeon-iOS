@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct WithSuhyeon_iOSApp: App {
+    @StateObject var router = RouterRegistry()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(router)
         }
     }
 }

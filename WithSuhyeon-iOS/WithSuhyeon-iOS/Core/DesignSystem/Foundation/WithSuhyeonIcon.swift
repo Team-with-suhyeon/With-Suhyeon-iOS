@@ -5,6 +5,8 @@
 //  Created by 우상욱 on 1/11/25.
 //
 
+import Foundation
+
 public enum WithSuhyeonIcon: String {
     case icCheck16 = "ic_check_16"
     case icChat24 = "ic_chat_24"

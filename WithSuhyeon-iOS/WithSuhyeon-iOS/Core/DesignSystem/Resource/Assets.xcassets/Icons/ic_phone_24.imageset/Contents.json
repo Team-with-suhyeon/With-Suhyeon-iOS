@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "Property 1=ic_phone, Size=24.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

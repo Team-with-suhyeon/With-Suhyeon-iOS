@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-extension Font {
+public extension Font {
     static var heading01B: Font {
         return font(.suitBold, ofSize: 32)
     }

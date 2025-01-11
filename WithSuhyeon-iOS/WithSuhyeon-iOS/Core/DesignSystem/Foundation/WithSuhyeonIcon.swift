@@ -1,0 +1,44 @@
+//
+//  WithSuhyeonIcon.swift
+//  WithSuhyeon-iOS
+//
+//  Created by 우상욱 on 1/11/25.
+//
+
+import Foundation
+
+public enum WithSuhyeonIcon: String {
+    case icCheck16 = "ic_check_16"
+    case icChat24 = "ic_chat_24"
+    case icMenu24 = "ic_menu_24"
+    case icSearch24 = "ic_search_24"
+    case icXclose24 = "ic_xclose_24"
+    case icArrowUp24 = "ic_arrow_up_24"
+    case icArrowLeft24 = "ic_arrow_left_24"
+    case icBookmark24 = "ic_bookmark_24"
+    case icArrowRight24 = "ic_arrow_right_24"
+    case icWrite24 = "ic_write_24"
+    case icHome24 = "ic_home_24"
+    case icArchive24 = "ic_archive_24"
+    case icUpload24 = "ic_upload_24"
+    case icPlus24 = "ic_plus_24"
+    case icRefresh24 = "ic_refresh_24"
+    case icWarningBlack24 = "ic_warning_black_24"
+    case icSetting24 = "ic_setting_24"
+    case icTrash24 = "ic_trash_24"
+    case icCheck24 = "ic_check_24"
+    case icClock24 = "ic_clock_24"
+    case icDownload24 = "ic_download_24"
+    case icLocation24 = "ic_location_24"
+    case icUser24 = "ic_user_24"
+    case icExpand24 = "ic_expand_24"
+    case icArrowDown24 = "ic_arrow_down_24"
+    case icCalander24 = "ic_calander_24"
+    case icCamera24 = "ic_camera_24"
+    case icPhone24 = "ic_phone_24"
+    case icVideo24 = "ic_video_24"
+    case icMypage24 = "ic_mypage_24"
+    case icMessage24 = "ic_message_24"
+    case icGallery24 = "ic_gallery_24"
+    case icFind24 = "ic_find_24"
+}

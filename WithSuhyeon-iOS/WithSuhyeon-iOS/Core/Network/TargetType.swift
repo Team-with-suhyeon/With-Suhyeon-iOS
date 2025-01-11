@@ -15,11 +15,15 @@ public protocol TargetType: URLRequestConvertible {
     var path: String { get }
     var parameters: RequestParameters { get }
     var headers: [String: String]? { get }
-}
+    var multipartFormData: ((MultipartFormData) -> Void)? { get }}
 
 public extension TargetType {
     var headers: [String: String]? {
         return ["Content-Type": "application/json"]
+    }
+    
+    var multipartFormData: ((MultipartFormData) -> Void)? {
+        return nil
     }
 }
 

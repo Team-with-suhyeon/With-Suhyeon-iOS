@@ -74,6 +74,41 @@ final class NetworkClient: NetworkRequestable {
             .eraseToAnyPublisher()
     }
     
+    func upload<T: Decodable>(
+        _ model: T.Type,
+        target: TargetType,
+        formData: @escaping (MultipartFormData) -> Void
+    ) -> AnyPublisher<T, NetworkError> {
+        return NetworkManager
+            .shared
+            .session
+            .upload(multipartFormData: formData, with: target)
+            .validate()
+            .publishDecodable(type: T.self)
+            .tryMap { response in
+                guard let statusCode = response.response?.statusCode,
+                      let data = response.data else {
+                    throw NetworkError.unknownError
+                }
+                
+                switch statusCode {
+                case 200...299:
+                    if let decodedData = response.value {
+                        return decodedData
+                    } else {
+                        throw NetworkError.parsingError
+                    }
+                default:
+                    let error = self.handleStatusCode(statusCode, data: data)
+                    throw error
+                }
+            }
+            .mapError { error in
+                error as? NetworkError ?? .unknownError
+            }
+            .eraseToAnyPublisher()
+    }
+    
     private func handleStatusCode(_ statusCode: Int, data: Data) -> NetworkError {
         let errorCode = decodeError(data: data)
         switch (statusCode, errorCode) {

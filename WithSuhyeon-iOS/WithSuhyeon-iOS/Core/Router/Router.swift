@@ -28,4 +28,6 @@ public enum Destination: Hashable {
     case chat
     case detail(id: Int)
     case mypage
+    case galleryUpload
+    case galleryDetail(id: Int)
 }

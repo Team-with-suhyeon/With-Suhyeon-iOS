@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct WithSuhyeonTextField: View {
-    @State private var text: String = "안녕하세요"
     let placeholder: String
     let state: WithSuhyeonTextFieldState
     let keyboardType: UIKeyboardType
@@ -21,6 +20,8 @@ struct WithSuhyeonTextField: View {
     let errorText: String
     let onTapButton: () -> Void
     let onChangeText: (String) -> Void
+    
+    @State private var text: String = ""
     
     var body: some View {
         VStack(spacing: 8) {

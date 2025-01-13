@@ -25,7 +25,7 @@ struct WithSuhyeonCheckbox: View {
                 ZStack {
                     RoundedRectangle(cornerRadius: 6)
                         .fill(getBackgroundColor())
-                        .frame(width: 24, height: 24)
+                        .frame(width: 20, height: 20)
                     
                     Image(icon: checkIcon)
                         .renderingMode(.template)

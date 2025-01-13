@@ -30,7 +30,7 @@ struct WithSuhyeonMuiltiSelectBigChip: View {
                     .font(.body02SB)
                     .foregroundColor(isSelected ? .white : .black)
             }
-            .frame(maxWidth: .infinity, maxHeight: 72, alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.leading, 12)
             .padding(.trailing, 24)
             .padding(.vertical, 12)

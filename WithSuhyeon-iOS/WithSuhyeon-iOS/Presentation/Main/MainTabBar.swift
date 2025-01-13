@@ -10,8 +10,12 @@ import SwiftUI
 struct MainTabBar : View {
     @State private var selectedTab: MainTab = .home
     
+    init() {
+        UITabBar.appearance().isHidden = true
+    }
+    
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             TabView(selection: $selectedTab) {
                 HomeView()
                     .tag(MainTab.home)
@@ -24,7 +28,7 @@ struct MainTabBar : View {
                 MyPageView()
                     .tag(MainTab.myPage)
             }
-            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+            .tabViewStyle(DefaultTabViewStyle())
             
             Divider()
                 .frame(height: 1)
@@ -46,6 +50,7 @@ struct MainTabBar : View {
                 }
             }
             .background(Color.white)
+            .padding(.top, 10)
         }
     }
 }

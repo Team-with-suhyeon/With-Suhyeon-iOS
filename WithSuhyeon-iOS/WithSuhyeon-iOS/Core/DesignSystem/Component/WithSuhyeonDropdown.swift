@@ -1,0 +1,72 @@
+//
+//  WithSuhyeonDropdown.swift
+//  WithSuhyeon-iOS
+//
+//  Created by 김예지 on 1/14/25.
+//
+
+import SwiftUI
+
+struct WithSuhyeonDropdown<Content: View>:View {
+    let placeholder: String
+    let isError: Bool = false
+    let isSelected: Bool
+    let onTapDropdown: () -> Void
+    let errorMessage: String
+    
+    let content: Content
+    
+    init(placeholder: String, isSelected: Bool, onTapDropdown: @escaping () -> Void, errorMessage: String, @ViewBuilder content: @escaping () -> Content) {
+        self.placeholder = placeholder
+        self.isSelected = isSelected
+        self.onTapDropdown = onTapDropdown
+        self.errorMessage = errorMessage
+        self.content = content()
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(isError ? Color.red01 : Color.gray100, lineWidth: 1)
+                    .frame(height: 52)
+                
+                HStack {
+                    if !isSelected {
+                        Text(placeholder)
+                            .font(.body03R)
+                            .foregroundColor(.gray400)
+                    } else {
+                        content
+                    }
+                    Spacer()
+                    Image(icon: .icArrowDown24)
+                        .renderingMode(.template)
+                        .foregroundColor(.gray)
+                }
+                .padding(.leading, 16)
+                .padding(.trailing, 12)
+                .padding(.vertical, 16)
+            }.padding(.horizontal, 16)
+            
+            if isError  {
+                Text(errorMessage)
+                    .font(.body03R)
+                    .foregroundColor(.red01)
+                    .frame(alignment: .leading)
+            }
+        }
+    }
+}
+
+
+#Preview {
+    VStack(spacing: 16) {
+        WithSuhyeonDropdown(placeholder: "dd", isSelected: true, onTapDropdown: {}, errorMessage: "dd") {
+            HStack {
+                Image(icon: .icArchive24)
+            }
+        }
+    }
+    .padding(.top, 50)
+}

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct WithSuhyeonSmallFloatingButton<TargetView: View>: View {
+struct WithSuhyeonBigFloatingButton<TargetView: View>: View {
     let targetView: TargetView
     let action: () -> Void
     
@@ -18,7 +18,7 @@ struct WithSuhyeonSmallFloatingButton<TargetView: View>: View {
                    Button(action: {
                        action()
                    }) {
-                       HStack(spacing: 8) {
+                       HStack(spacing: 6) {
                            Image(.icWhitePlus)
                                .resizable()
                                .scaledToFit()
@@ -26,22 +26,23 @@ struct WithSuhyeonSmallFloatingButton<TargetView: View>: View {
                                .foregroundColor(.white)
                            
                            Text("사진 업로드하기")
-                               .font(.system(size: 16, weight: .bold))
+                               .font(.body03SB)
                                .foregroundColor(.white)
                        }
-                       .padding(.horizontal, 16)
+                       .padding(.leading, 12)
+                       .padding(.vertical, 12)
+                       .padding(.trailing, 16)
                        .frame(height: 48)
                        .background(
                            RoundedRectangle(cornerRadius: 24)
-                               .fill(Color.blue) // 버튼 배경색
+                               .fill(Color.primary500)
                        )
-                       .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
                    }
                    .buttonStyle(PlainButtonStyle())
                }
            }}
 
-struct FloatingButtonExample: View {
+struct BigFloatingButtonExample: View {
     var body: some View {
         NavigationView {
             ZStack {
@@ -55,10 +56,10 @@ struct FloatingButtonExample: View {
                     Spacer()
                     HStack {
                         Spacer()
-                        WithSuhyeonSmallFloatingButton(
+                        WithSuhyeonBigFloatingButton(
                             targetView: SecondView(),
                             action: {
-                                print("Floating Button Tapped!")
+                                print("큰 floatingButton tapped")
                             }
                         )
                         .padding()
@@ -77,5 +78,5 @@ struct SecondView: View {
 }
 
 #Preview {
-    FloatingButtonExample()
+    BigFloatingButtonExample()
 }

@@ -38,14 +38,12 @@ struct WithSuhyeonSmallChip: View {
                 }
                 
                 Text(title)
-                    .font(.body)
-                    .fontWeight(.semibold)
+                    .font(.body02SB)
                     .foregroundColor(isSelected ? Color.primary600 : Color.gray400)
             }
             .frame(width: 166, height: 72, alignment: .leading)
             .padding(.leading, 12)
-            .padding(.trailing, 24)
-            .padding(.vertical, 12)
+            .padding(.vertical, 6)
             .background(
                 RoundedRectangle(cornerRadius: 24)
                     .fill(isSelected ? Color.primary50 : Color.gray25)

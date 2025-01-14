@@ -13,24 +13,33 @@ struct WithSuhyeonSmallFloatingButton<TargetView: View>: View {
     
     var body: some View {
         NavigationLink(destination: {
-            targetView
-        }) {
-            ZStack {
-                Circle()
-                    .fill(Color.primary500)
-                    .frame(width: 48, height: 48)
-                
-                Image(.icWhitePlus)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 24, height: 24)
-            }
-        }
-        .simultaneousGesture(TapGesture().onEnded {
-            action()
-        })
-    }
-}
+                   targetView
+               }) {
+                   Button(action: {
+                       action()
+                   }) {
+                       HStack(spacing: 8) {
+                           Image(.icWhitePlus)
+                               .resizable()
+                               .scaledToFit()
+                               .frame(width: 24, height: 24)
+                               .foregroundColor(.white)
+                           
+                           Text("사진 업로드하기")
+                               .font(.system(size: 16, weight: .bold))
+                               .foregroundColor(.white)
+                       }
+                       .padding(.horizontal, 16)
+                       .frame(height: 48)
+                       .background(
+                           RoundedRectangle(cornerRadius: 24)
+                               .fill(Color.blue) // 버튼 배경색
+                       )
+                       .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
+                   }
+                   .buttonStyle(PlainButtonStyle())
+               }
+           }}
 
 struct FloatingButtonExample: View {
     var body: some View {

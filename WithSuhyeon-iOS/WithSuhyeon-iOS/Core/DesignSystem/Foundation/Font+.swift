@@ -32,18 +32,6 @@ public extension Font {
         return font(.suitRegular, ofSize: 28)
     }
     
-    static var heading03B: Font {
-        return font(.suitBold, ofSize: 26)
-    }
-    
-    static var heading03SB: Font {
-        return font(.suitSemiBold, ofSize: 26)
-    }
-    
-    static var heading03R: Font {
-        return font(.suitRegular, ofSize: 26)
-    }
-    
     static var title01B: Font {
         return font(.suitBold, ofSize: 24)
     }
@@ -57,14 +45,26 @@ public extension Font {
     }
     
     static var title02B: Font {
-        return font(.suitBold, ofSize: 20)
+        return font(.suitBold, ofSize: 22)
     }
     
     static var title02SB: Font {
-        return font(.suitSemiBold, ofSize: 20)
+        return font(.suitSemiBold, ofSize: 22)
     }
     
     static var title02R: Font {
+        return font(.suitRegular, ofSize: 22)
+    }
+    
+    static var title03B: Font {
+        return font(.suitBold, ofSize: 20)
+    }
+    
+    static var title03SB: Font {
+        return font(.suitSemiBold, ofSize: 20)
+    }
+    
+    static var title03R: Font {
         return font(.suitRegular, ofSize: 20)
     }
     

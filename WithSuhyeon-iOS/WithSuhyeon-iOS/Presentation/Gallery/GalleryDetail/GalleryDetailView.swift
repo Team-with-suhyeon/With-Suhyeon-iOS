@@ -1,0 +1,78 @@
+//
+//  GalleryDetailView.swift
+//  WithSuhyeon-iOS
+//
+//  Created by 우상욱 on 1/13/25.
+//
+
+import SwiftUI
+
+import Kingfisher
+
+struct GalleryDetailView : View {
+    @EnvironmentObject private var router: RouterRegistry
+    @StateObject private var galleryDetailFeature: GalleryDetailFeature
+    
+    init(id: Int) {
+        self._galleryDetailFeature = StateObject(wrappedValue: GalleryDetailFeature(id: id))
+    }
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            WithSuhyeonTopNavigationBar(title: "", leftIcon: .icArrowLeft24, onTapLeft: { galleryDetailFeature.send(.tapBackButton) })
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0) {
+                    KFImage(URL(string: galleryDetailFeature.state.imageURL))
+                        .cancelOnDisappear(true)
+                        .placeholder{
+                            Image(systemName: "list.dash")
+                        }
+                        .resizable()
+                            .scaledToFill()
+                            .aspectRatio(1, contentMode: .fit)
+                    
+                    WithSuhyeonCategoryChip(title: galleryDetailFeature.state.category)
+                        .padding(.top, 24)
+                        .padding(.leading, 16)
+                    
+                    Text(galleryDetailFeature.state.title)
+                        .font(.title02B)
+                        .foregroundColor(.gray900)
+                        .padding(.top, 12)
+                        .padding(.leading, 16)
+                    
+                    WithSuhyeonPostContainer(
+                        imageUrl: galleryDetailFeature.state.userImageURL,
+                        nickname: galleryDetailFeature.state.nickname,
+                        date: galleryDetailFeature.state.date,
+                        count: galleryDetailFeature.state.count
+                    )
+                    .padding(.top, 12)
+                    
+                    Text(galleryDetailFeature.state.content)
+                        .lineSpacing(4)
+                        .font(.body03R)
+                        .foregroundColor(.gray900)
+                        .padding(.top, 8)
+                        .padding(.bottom, 16)
+                        .padding(.horizontal, 16)
+                }
+            }
+            if (!galleryDetailFeature.state.isMine) {
+                ZStack {
+                    WithSuhyeonButton(title: "다운로드", buttonState: .enabled, icon: .icDownload24) { galleryDetailFeature.send(.tapDownloadButton)}
+                        .padding(.horizontal, 16)
+                }
+            }
+        }.onReceive(galleryDetailFeature.sideEffectSubject){ sideEffect in
+            switch sideEffect {
+            case .popBack:
+                router.popBack()
+            }
+        }.navigationBarBackButtonHidden(true)
+    }
+}
+
+#Preview {
+    GalleryDetailView(id: 0)
+}

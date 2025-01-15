@@ -10,7 +10,6 @@ import SwiftUI
 struct WithSuhyeonCheckbox: View {
     let state: WithSuhyeonCheckboxState
     let placeholder: String
-    let isChecked: Bool
     let checkIcon: WithSuhyeonIcon = .icCheck16
     let hasBackground: Bool
     let onTapCheckbox: () -> Void
@@ -55,71 +54,40 @@ struct WithSuhyeonCheckbox: View {
     }
     
     private func getIconColor() -> Color {
-        switch (state, isChecked, hasBackground) {
-        case (.disabled, _, _):
+        switch (state, hasBackground) {
+        case (.disabled, _):
             return .gray300
-        case (.unchecked, _, true):
+        case (.unchecked, true):
             return .white
-        case (.unchecked, _, false):
+        case (.unchecked, false):
             return .gray200
-        case (.checked, true, true):
+        case (.checked, true):
             return .white
-        case (.checked, true, false):
+        case (.checked, false):
             return .primary500
-        default:
-            return .gray200
         }
     }
 }
 
 struct CheckboxTest: View {
-    @State private var isChecked1 = false
-    @State private var isChecked2 = true
-    @State private var isChecked3 = false
-    @State private var isChecked4 = true
-    
+
     var body: some View {
         VStack(spacing: 16) {
             WithSuhyeonCheckbox(
-                state: isChecked1 ? .checked : .unchecked,
-                placeholder: "플레이스홀더",
-                isChecked: isChecked1,
-                hasBackground: true
-            ) {
-                isChecked1.toggle()
-            }
-            
-            WithSuhyeonCheckbox(
                 state: .checked,
                 placeholder: "플레이스홀더",
-                isChecked: isChecked2,
                 hasBackground: true
-            ) {
-                isChecked2.toggle()
-            }
+            ) {}
             
             WithSuhyeonCheckbox(
-                state: isChecked3 ? .checked : .unchecked,
+                state: .unchecked,
                 placeholder: "플레이스홀더",
-                isChecked: isChecked3,
-                hasBackground: false
-            ) {
-                isChecked3.toggle()
-            }
-            
-            WithSuhyeonCheckbox(
-                state: .checked,
-                placeholder: "플레이스홀더",
-                isChecked: isChecked4,
-                hasBackground: false
-            ) {
-                isChecked4.toggle()
-            }
+                hasBackground: true
+            ) {}
             
             WithSuhyeonCheckbox(
                 state: .disabled,
                 placeholder: "플레이스홀더",
-                isChecked: true,
                 hasBackground: true
             ) { }
         }

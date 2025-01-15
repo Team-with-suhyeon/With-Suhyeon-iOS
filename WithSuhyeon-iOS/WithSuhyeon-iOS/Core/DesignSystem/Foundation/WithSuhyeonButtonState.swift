@@ -10,4 +10,5 @@ import Foundation
 enum WithSuhyeonButtonState {
     case disabled
     case enabled
+    case alert
 }

@@ -24,10 +24,7 @@ public protocol Router {
 }
 
 public enum Destination: Hashable {
-    case home
-    case chat
-    case detail(id: Int)
-    case mypage
+    case main
     case galleryUpload
     case galleryDetail(id: Int)
 }

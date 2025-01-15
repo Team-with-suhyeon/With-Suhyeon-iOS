@@ -13,8 +13,17 @@ struct WithSuhyeon_iOSApp: App {
     
     var body: some Scene {
         WindowGroup {
-            MainTabBar()
-                .environmentObject(router)
+            NavigationStack(path: $router.path) {
+                MainTabBar()
+                .navigationDestination(for: Destination.self){ destination in
+                    switch destination {
+                    case .main : MainTabBar()
+                    case .galleryUpload : MainTabBar()
+                    case .galleryDetail(id: let id) : GalleryDetailView(id: id)
+                    }
+                }
+            }
+            .environmentObject(router)
         }
     }
 }

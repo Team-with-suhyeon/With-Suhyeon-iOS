@@ -11,8 +11,7 @@ import Combine
 class SignUpFeature: Feature {
     struct State {
         var progress: Double = 0.0
-        var isAgree: Bool = false // 약관 동의
-        
+        var isAgree: Bool = false
     }
     
     enum Intent {
@@ -57,7 +56,6 @@ class SignUpFeature: Feature {
     private func moveToNextStep() {
         if let currentIndex = SignUpContentCase.allCases.firstIndex(of: currentContent),
            currentIndex < SignUpContentCase.allCases.count - 1 {
-            print(currentIndex, "-" ,  currentContent)
             currentContent = SignUpContentCase.allCases[currentIndex + 1]
             updateProgress()
         }
@@ -77,10 +75,11 @@ class SignUpFeature: Feature {
         }
     }
     
-    
     func changeSelectedContent(signUpContentCase: SignUpContentCase) {
         currentContent = signUpContentCase
     }
+    
+    func updateIsAgree(_ newValue: Bool) {
+        state.isAgree = newValue
+    }
 }
-
-

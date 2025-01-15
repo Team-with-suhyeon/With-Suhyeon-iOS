@@ -15,27 +15,25 @@ struct SignUpContent: View {
     }
     
     var body: some View {
-        HStack(spacing: 0) {
-            TabView(selection: $selectedTab) {
-                TermsOfServiceView()
-                    .tag(SignUpContentCase.termsOfServiceView)
-                PhoneAuthenticationView()
-                    .tag(SignUpContentCase.authenticationView)
-                WriteNickNameView()
-                    .tag(SignUpContentCase.nickNameView)
-                SelectBirthYearView()
-                    .tag(SignUpContentCase.birthYearView)
-                SelectGenderView()
-                    .tag(SignUpContentCase.genderView)
-                ProfileImageView()
-                    .tag(SignUpContentCase.profileImageView)
-                ActiveAreaView()
-                    .tag(SignUpContentCase.activeAreaView)
-            }
-            .tabViewStyle(PageTabViewStyle())
-            .onAppear {
-                UIScrollView.appearance().isScrollEnabled = false
-            }
+        TabView(selection: $selectedTab) {
+            TermsOfServiceView()
+                .tag(SignUpContentCase.termsOfServiceView)
+            PhoneAuthenticationView()
+                .tag(SignUpContentCase.authenticationView)
+            WriteNickNameView()
+                .tag(SignUpContentCase.nickNameView)
+            SelectBirthYearView()
+                .tag(SignUpContentCase.birthYearView)
+            SelectGenderView()
+                .tag(SignUpContentCase.genderView)
+            ProfileImageView()
+                .tag(SignUpContentCase.profileImageView)
+            ActiveAreaView()
+                .tag(SignUpContentCase.activeAreaView)
+        }
+        .tabViewStyle(PageTabViewStyle())
+        .onAppear {
+            UIScrollView.appearance().isScrollEnabled = false
         }
     }
 }

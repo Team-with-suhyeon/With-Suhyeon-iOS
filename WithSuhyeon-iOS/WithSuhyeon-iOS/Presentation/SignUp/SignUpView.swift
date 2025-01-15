@@ -12,7 +12,7 @@ struct SignUpView: View {
     @StateObject private var signUpFeature =  SignUpFeature()
     
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 0) {
             WithSuhyeonTopNavigationBar(title: "", onTapLeft: {})
             
             WithSuhyeonProgressBar(progress: signUpFeature.state.progress)
@@ -24,10 +24,24 @@ struct SignUpView: View {
             
             SignUpContent(selectedTab: $signUpFeature.currentContent)
             
-            WithSuhyeonButton(title: "버튼", buttonState: .disabled, onTapButton: {
-                signUpFeature.send(.nextStep)
-            })
+            WithSuhyeonButton(
+                title: "다음",
+                buttonState: isNextStepEnabled() ? .enabled : .disabled,
+                clickable: isNextStepEnabled(),
+                onTapButton: {
+                    signUpFeature.send(.nextStep)
+                }
+            )
             .padding(.horizontal, 16)
+        }.environmentObject(signUpFeature)
+    }
+    
+    private func isNextStepEnabled() -> Bool {
+        switch signUpFeature.currentContent {
+        case .termsOfServiceView:
+            return signUpFeature.state.isAgree
+        default:
+            return true
         }
     }
 }

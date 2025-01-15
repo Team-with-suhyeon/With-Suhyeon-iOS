@@ -9,48 +9,46 @@ import SwiftUI
 
 struct WithSuhyeonSmallChip: View {
     let title: String
-    let chipState: WithSuhyeonChipState
     let clickable: Bool
-    let onTapChip: () -> Void
+    let onTapChip: (WithSuhyeonChipState) -> Void
     
-    @State private var isSelected: Bool
+    @State private var chipState: WithSuhyeonChipState
     
-    init(title: String, buttonState: WithSuhyeonChipState, clickable: Bool = true, onTapChip: @escaping () -> Void) {
+    init(title: String, chipState: WithSuhyeonChipState, clickable: Bool = true, onTapChip: @escaping (WithSuhyeonChipState) -> Void) {
         self.title = title
-        self.chipState = buttonState
+        self._chipState = State(initialValue: chipState)
         self.clickable = clickable
         self.onTapChip = onTapChip
-        self._isSelected = State(initialValue: buttonState == .selected)
     }
     
     var body: some View {
         Button(action: {
             if clickable {
-                isSelected.toggle()
-                onTapChip()
+                chipState = (chipState == .selected) ? .unselected : .selected
+                onTapChip(chipState)
             }
         }) {
             HStack(spacing: 16) {
                 ZStack {
                     Circle()
-                        .fill(isSelected ? Color.white : Color.gray200)
+                        .fill(chipState == .selected ? Color.white : Color.gray200)
                         .frame(width: 48, height: 48)
                 }
                 
                 Text(title)
                     .font(.body02SB)
-                    .foregroundColor(isSelected ? Color.primary600 : Color.gray400)
+                    .foregroundColor(chipState == .selected ? Color.primary600 : Color.gray400)
             }
             .frame(width: 166, height: 72, alignment: .leading)
             .padding(.leading, 12)
             .padding(.vertical, 6)
             .background(
                 RoundedRectangle(cornerRadius: 24)
-                    .fill(isSelected ? Color.primary50 : Color.gray25)
+                    .fill(chipState == .selected ? Color.primary50 : Color.gray25)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 24)
-                    .stroke(isSelected ? Color.primary200 : Color.clear, lineWidth: 1)
+                    .stroke(chipState == .selected ? Color.primary200 : Color.clear, lineWidth: 1)
             )
         }
         .buttonStyle(PlainButtonStyle())
@@ -63,17 +61,17 @@ struct ChipTestView: View {
         VStack(spacing: 16) {
             WithSuhyeonSmallChip(
                 title: "성별",
-                buttonState: .unselected,
-                onTapChip: {
-                    print("첫 번째 Chip 클릭됨")
+                chipState: .unselected,
+                onTapChip: { newState in
+                    print("첫 번째 Chip: \(newState)")
                 }
             )
             
             WithSuhyeonSmallChip(
                 title: "성별",
-                buttonState: .selected,
-                onTapChip: {
-                    print("두 번째 Chip 클릭됨")
+                chipState: .selected,
+                onTapChip: { newState in
+                    print("두 번째 Chip: \(newState)")
                 }
             )
         }

@@ -19,7 +19,7 @@ class GalleryDetailFeature: Feature {
         var userImageURL: String = "https://reqres.in/img/faces/7-image.jpg"
         var title: String = "가가가가가가"
         var isMine: Bool = false
-        var category: String = "바다"
+        var category: [String] = ["바다", "산", "캠핑"]
         var nickname: String = "작심이"
         var date: String = "1월 25일"
         var count: Int = 9

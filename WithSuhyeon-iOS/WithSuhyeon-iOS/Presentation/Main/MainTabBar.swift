@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct MainTabBar : View {
+    @EnvironmentObject var router: RouterRegistry
     @State private var selectedTab: MainTab = .home
     
     init() {

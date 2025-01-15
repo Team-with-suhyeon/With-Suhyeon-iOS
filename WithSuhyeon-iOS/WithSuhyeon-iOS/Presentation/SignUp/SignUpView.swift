@@ -1,0 +1,37 @@
+//
+//  SignUpView.swift
+//  WithSuhyeon-iOS
+//
+//  Created by 김예지 on 1/15/25.
+//
+
+import SwiftUI
+
+struct SignUpView: View {
+    @EnvironmentObject private var router: RouterRegistry
+    @StateObject private var signUpFeature =  SignUpFeature()
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            WithSuhyeonTopNavigationBar(title: "", onTapLeft: {})
+            
+            WithSuhyeonProgressBar(progress: signUpFeature.state.progress)
+            
+            Text(signUpFeature.currentContent.title)
+                .font(.title02B)
+                .padding(.leading, 16)
+                .padding(.vertical, 20)
+            
+            SignUpContent(selectedTab: $signUpFeature.currentContent)
+            
+            WithSuhyeonButton(title: "버튼", buttonState: .disabled, onTapButton: {
+                signUpFeature.send(.nextStep)
+            })
+            .padding(.horizontal, 16)
+        }
+    }
+}
+
+#Preview {
+    SignUpView()
+}

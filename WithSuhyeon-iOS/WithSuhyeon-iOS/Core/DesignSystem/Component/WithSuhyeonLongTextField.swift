@@ -41,15 +41,31 @@ struct WithSuhyeonLongTextField: View {
                     }
                 }
                 
-                TextField(placeholder, text: $text)
-                    .onChange(of: text, perform: onChangeText)
+                TextEditor(text: $text)
+                    .onChange(of: text, perform: { newText in
+                        if newText.count <= maxLength {
+                            text = newText
+                            onChangeText(newText)
+                        } else {
+                            text = String(newText.prefix(maxLength))
+                        }
+                    })
                     .keyboardType(keyboardType)
                     .font(.body03R)
                     .foregroundColor(state == .disabled ? .gray300 : .gray900)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 15)
-                    .accentColor(.black)
+                    .scrollContentBackground(.hidden)
+                    .background(Color.clear)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 9)
                     .disabled(state == .disabled)
+                
+                if text.isEmpty {
+                    Text(placeholder)
+                        .font(.body03R)
+                        .foregroundColor(.gray400)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 18)
+                }
                 
             }.frame(height: 188)
             

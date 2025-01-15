@@ -29,7 +29,9 @@ struct GalleryView: View {
                                 onTapItem: { index in galleryFeature.send(.tapCategory(index: index)) }
                             )
                         ) {
-                            ContentViewList(items: galleryFeature.state.galleryItems)
+                            ContentViewList(items: galleryFeature.state.galleryItems){ id in
+                                galleryFeature.send(.tapGalleryItem(id: id))
+                            }
                         }
                         .headerProminence(.increased)
                         .id("top")
@@ -115,6 +117,12 @@ struct ContentViewList: View {
         GridItem(.flexible(), spacing: 7),
         GridItem(.flexible()),
     ]
+    let onTapItem: (Int) -> Void
+    
+    init(items: [Gallery], onTapItem: @escaping (Int) -> Void) {
+        self.items = items
+        self.onTapItem = onTapItem
+    }
     
     var body: some View {
         LazyVStack(spacing: 0) {
@@ -122,6 +130,9 @@ struct ContentViewList: View {
             LazyVGrid(columns: columns, alignment: .leading, spacing: 12) {
                 ForEach(items, id: \.self) { item in
                     GalleryItem(imageUrl: item.imageUrl, title: item.title)
+                        .onTapGesture {
+                            onTapItem(item.id)
+                        }
                 }
             }
         }.background(Color.gray50)

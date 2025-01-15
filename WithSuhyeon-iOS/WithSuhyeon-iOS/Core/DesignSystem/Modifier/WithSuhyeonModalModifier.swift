@@ -8,16 +8,16 @@
 import SwiftUI
 
 struct WithSuhyeonModalModifier<ModalContent: View>: ViewModifier {
-    @Binding var isPresented: Bool
-    @Binding var isButtonEnabled: Bool
-
+    let isPresented: Bool
+    let isButtonEnabled: Bool
     let title: String
     let modalContent: () -> ModalContent
-
+    let onDismiss: () -> Void
+    
     func body(content: Content) -> some View {
         ZStack(alignment: .top) {
             content
-
+            
             if isPresented {
                 ZStack(alignment: .top) {
                     // 모달 핸들바
@@ -25,7 +25,7 @@ struct WithSuhyeonModalModifier<ModalContent: View>: ViewModifier {
                         .fill(Color.gray200)
                         .frame(width: 60, height: 4)
                         .padding(.top, 12)
-
+                    
                     VStack(alignment: .leading) {
                         Text(title)
                             .font(.title02B)
@@ -33,13 +33,13 @@ struct WithSuhyeonModalModifier<ModalContent: View>: ViewModifier {
                             .padding(.top, 44)
                             .padding(.horizontal, 24)
                             .padding(.bottom, 32)
-
+                        
                         modalContent()
                             .padding(.horizontal, 16)
-
+                        
                         Button(action: {
                             print("선택완료 버튼 선택")
-                            isPresented = false
+                            onDismiss()
                         }) {
                             Text("선택완료")
                                 .font(.body01B)
@@ -63,17 +63,19 @@ struct WithSuhyeonModalModifier<ModalContent: View>: ViewModifier {
 
 extension View {
     func withSuhyeonModal<ModalContent: View>(
-        isPresented: Binding<Bool>,
-        isButtonEnabled: Binding<Bool>,
+        isPresented: Bool,
+        isButtonEnabled: Bool,
         title: String,
-        @ViewBuilder modalContent: @escaping () -> ModalContent
+        @ViewBuilder modalContent: @escaping () -> ModalContent,
+        onDismiss: @escaping () -> Void
     ) -> some View {
         self.modifier(
             WithSuhyeonModalModifier(
                 isPresented: isPresented,
                 isButtonEnabled: isButtonEnabled,
                 title: title,
-                modalContent: modalContent
+                modalContent: modalContent,
+                onDismiss: onDismiss
             )
         )
     }

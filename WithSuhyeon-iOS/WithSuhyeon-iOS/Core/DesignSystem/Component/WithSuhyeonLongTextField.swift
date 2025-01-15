@@ -17,7 +17,28 @@ struct WithSuhyeonLongTextField: View {
     let errorText: String
     let onChangeText: (String) -> Void
     
-    @State private var text: String = "안녕하세요"
+    @State private var text: String = ""
+    
+    init(placeholder: String,
+             state: WithSuhyeonTextFieldState,
+             keyboardType: UIKeyboardType,
+             maxLength: Int,
+             countable: Bool,
+             isFocused: Bool,
+             errorText: String,
+             onChangeText: @escaping (String) -> Void) {
+            
+            self.placeholder = placeholder
+            self.state = state
+            self.keyboardType = keyboardType
+            self.maxLength = maxLength
+            self.countable = countable
+            self.isFocused = isFocused
+            self.errorText = errorText
+            self.onChangeText = onChangeText
+            
+            UITextView.appearance().textContainerInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+        }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -55,8 +76,7 @@ struct WithSuhyeonLongTextField: View {
                     .foregroundColor(state == .disabled ? .gray300 : .gray900)
                     .scrollContentBackground(.hidden)
                     .background(Color.clear)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 9)
+                    
                     .disabled(state == .disabled)
                 
                 if text.isEmpty {
@@ -64,7 +84,7 @@ struct WithSuhyeonLongTextField: View {
                         .font(.body03R)
                         .foregroundColor(.gray400)
                         .padding(.horizontal, 20)
-                        .padding(.vertical, 18)
+                        .padding(.vertical, 16)
                 }
                 
             }.frame(height: 188)

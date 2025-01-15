@@ -9,23 +9,14 @@ import SwiftUI
 
 struct WithSuhyeonSmallChip: View {
     let title: String
+    let chipState: WithSuhyeonChipState
     let clickable: Bool
-    let onTapChip: (WithSuhyeonChipState) -> Void
-    
-    @State private var chipState: WithSuhyeonChipState
-    
-    init(title: String, chipState: WithSuhyeonChipState, clickable: Bool = true, onTapChip: @escaping (WithSuhyeonChipState) -> Void) {
-        self.title = title
-        self._chipState = State(initialValue: chipState)
-        self.clickable = clickable
-        self.onTapChip = onTapChip
-    }
+    let onTapChip: () -> Void
     
     var body: some View {
         Button(action: {
             if clickable {
-                chipState = (chipState == .selected) ? .unselected : .selected
-                onTapChip(chipState)
+                onTapChip()
             }
         }) {
             HStack(spacing: 16) {
@@ -57,21 +48,28 @@ struct WithSuhyeonSmallChip: View {
 }
 
 struct ChipTestView: View {
+    @State private var firstChipState: WithSuhyeonChipState = .unselected
+    @State private var secondChipState: WithSuhyeonChipState = .selected
+    
     var body: some View {
         VStack(spacing: 16) {
             WithSuhyeonSmallChip(
                 title: "성별",
-                chipState: .unselected,
-                onTapChip: { newState in
-                    print("첫 번째 Chip: \(newState)")
+                chipState: firstChipState,
+                clickable: true,
+                onTapChip: {
+                    firstChipState = (firstChipState == .selected) ? .unselected : .selected
+                    print("첫 번째 Chip: \(firstChipState)")
                 }
             )
             
             WithSuhyeonSmallChip(
                 title: "성별",
-                chipState: .selected,
-                onTapChip: { newState in
-                    print("두 번째 Chip: \(newState)")
+                chipState: secondChipState,
+                clickable: true,
+                onTapChip: {
+                    secondChipState = (secondChipState == .selected) ? .unselected : .selected
+                    print("두 번째 Chip: \(secondChipState)")
                 }
             )
         }

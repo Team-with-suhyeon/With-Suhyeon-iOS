@@ -9,6 +9,7 @@ import Combine
 
 public class RouterRegistry: Router, ObservableObject {
     @Published public var path: [Destination] = []
+    @Published public var selectedTab: MainTab = .home
     
     public init() {}
     

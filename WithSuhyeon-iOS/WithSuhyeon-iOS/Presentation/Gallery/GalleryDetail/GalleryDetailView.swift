@@ -28,12 +28,16 @@ struct GalleryDetailView : View {
                             Image(systemName: "list.dash")
                         }
                         .resizable()
-                            .scaledToFill()
-                            .aspectRatio(1, contentMode: .fit)
+                        .scaledToFill()
+                        .aspectRatio(1, contentMode: .fit)
                     
-                    WithSuhyeonCategoryChip(title: galleryDetailFeature.state.category)
-                        .padding(.top, 24)
-                        .padding(.leading, 16)
+                    HStack(spacing: 8) {
+                        ForEach(galleryDetailFeature.state.category, id: \.self) { category in
+                            WithSuhyeonCategoryChip(title: category)
+                        }
+                    }
+                    .padding(.top, 24)
+                    .padding(.leading, 16)
                     
                     Text(galleryDetailFeature.state.title)
                         .font(.title02B)

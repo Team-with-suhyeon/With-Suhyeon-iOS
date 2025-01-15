@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct WithSuhyeonMuiltiSelectBigChip: View {
+struct WithSuhyeonMultiSelectBigChip: View {
     let text: String
     let isSelected: Bool
     let isDisabled: Bool
@@ -54,7 +54,7 @@ struct ChipTestView: View {
     
     var body: some View {
         VStack(spacing: 16) {
-            WithSuhyeonMuiltiSelectBigChip(
+            WithSuhyeonMultiSelectBigChip(
                 text: "남성",
                 isSelected: isMaleSelected,
                 isDisabled: false
@@ -62,7 +62,7 @@ struct ChipTestView: View {
                 isMaleSelected.toggle()
             }
             
-            WithSuhyeonMuiltiSelectBigChip(
+            WithSuhyeonMultiSelectBigChip(
                 text: "여성",
                 isSelected: isFemaleSelected,
                 isDisabled: false
@@ -70,7 +70,7 @@ struct ChipTestView: View {
                 isFemaleSelected.toggle()
             }
             
-            WithSuhyeonMuiltiSelectBigChip(
+            WithSuhyeonMultiSelectBigChip(
                 text: "남성",
                 isSelected: false,
                 isDisabled: true

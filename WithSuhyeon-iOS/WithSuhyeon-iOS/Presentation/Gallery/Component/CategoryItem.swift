@@ -16,7 +16,7 @@ struct CategoryItem: View {
         self.category = category
         self.scrollOffset = scrollOffset
         let nospace = category.replacingOccurrences(of: " ", with: "")
-        self.afterTextWidth = CGFloat(nospace.count * 15)
+        self._afterTextWidth = State(initialValue: CGFloat(nospace.count * 15))
         self.isSelected = isSelected
     }
     

@@ -82,7 +82,7 @@ class GalleryDetailFeature: Feature {
                         self?.state.isSaving = false
                     }
                 }
-            case .failure(let error):
+            case .failure(_):
                 DispatchQueue.main.async {
                     self?.state.isSaving = false
                 }

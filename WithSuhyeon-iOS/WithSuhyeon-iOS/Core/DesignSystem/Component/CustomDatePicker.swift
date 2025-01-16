@@ -25,9 +25,9 @@ struct CustomDatePicker: View {
     var body: some View {
         HStack(spacing: 16) {
             ZStack {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.primary50)
-                    .frame(width: 136, height: 46)
+                RoundedRectangle(cornerRadius: 8)
+                 .fill(Color.primary50)
+                 .frame(width: 124, height: 32)
                 
                 Picker("Date", selection: Binding(
                     get: { selectedDateIndex },
@@ -41,13 +41,13 @@ struct CustomDatePicker: View {
                     }
                 }
                 .pickerStyle(.wheel)
-                .frame(width: 140, height: 150)
+                .frame(width: 142, height: .infinity)
             }
             
             ZStack() {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.primary50)
-                    .frame(width: 60, height: 46)
+                RoundedRectangle(cornerRadius: 8)
+                 .fill(Color.primary50)
+                 .frame(width: 62, height: 32)
                 
                 Picker("AM/PM", selection: Binding(
                     get: { selectedAmPm },
@@ -65,9 +65,9 @@ struct CustomDatePicker: View {
             }
             
             ZStack {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.primary50)
-                    .frame(width: 109, height: 46)
+                RoundedRectangle(cornerRadius: 8)
+                 .fill(Color.primary50)
+                 .frame(width: 98, height: 32)
                 
                 HStack(spacing: 0) {
                     Picker("Hour", selection: Binding(
@@ -79,23 +79,32 @@ struct CustomDatePicker: View {
                                 .tag(hour)
                                 .foregroundColor(Color.gray800)
                                 .font(.title03SB)
+                                .padding(.vertical, 20)
                         }
                     }
                     .pickerStyle(.wheel)
-                    .frame(width: 70, height: 150)
+                    .clipShape(.rect.offset(x: -16))
+                    .padding(.trailing, -16)
+                    .frame(width: 60, height: .infinity)
                     
                     Picker("Minute", selection: Binding(
                         get: { selectedMinute },
                         set: { onMinuteChange($0) }
                     )) {
                         ForEach(minutes, id: \.self) { minute in
-                            Text(String(format: "%02d", minute))
-                                .tag(minute)
-                                .foregroundColor(Color.gray800)
-                                .font(.title03SB)
+                            ZStack {
+                                Text(String(format: "%02d", minute))
+                                    .tag(minute)
+                                    .foregroundColor(Color.gray800)
+                                    .font(.title03SB)
+                                    .padding(.vertical, 20)
+                            }
                         }
                     }
                     .pickerStyle(.wheel)
+                    .clipShape(.rect.offset(x: 16))
+                    .padding(.leading, -16)
+                    .frame(height: .infinity)
                 }
             }
         }
@@ -109,6 +118,7 @@ struct DatePickerView: View {
     @State private var selectedMinute: Int = 0
     @State private var selectedAmPm: String = "오전"
     
+    @State var selectedNumber: Int = 3
     private let dates: [String] = generateDatesForYear()
     private let hours = Array(1...12)
     private let minutes = stride(from: 0, to: 60, by: 5).map { $0 }
@@ -116,19 +126,19 @@ struct DatePickerView: View {
     
     var body: some View {
         CustomDatePicker(
-            selectedDateIndex: selectedDateIndex,
-            selectedHour: selectedHour,
-            selectedMinute: selectedMinute,
-            selectedAmPm: selectedAmPm,
-            dates: dates,
-            hours: hours,
-            minutes: minutes,
-            amPm: amPm,
-            onDateChange: { selectedDateIndex = $0 },
-            onHourChange: { selectedHour = $0 },
-            onMinuteChange: { selectedMinute = $0 },
-            onAmPmChange: { selectedAmPm = $0 }
-        )
+         selectedDateIndex: selectedDateIndex,
+         selectedHour: selectedHour,
+         selectedMinute: selectedMinute,
+         selectedAmPm: selectedAmPm,
+         dates: dates,
+         hours: hours,
+         minutes: minutes,
+         amPm: amPm,
+         onDateChange: { selectedDateIndex = $0 },
+         onHourChange: { selectedHour = $0 },
+         onMinuteChange: { selectedMinute = $0 },
+         onAmPmChange: { selectedAmPm = $0 }
+         )
     }
     
     static func generateDatesForYear() -> [String] {

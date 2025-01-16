@@ -13,11 +13,27 @@ class SignUpFeature: Feature {
         var progress: Double = 0.0
         var isAgree: Bool = false
         var buttonState: WithSuhyeonButtonState = .disabled
+        // 핸드폰 인증
+        var phoneNumber: String = ""
+        var authCode: String = ""
+        var isAuthButtonEnabled: Bool = false
+        var isAuthNumberCorrect: Bool = false
+        var phoneAuthStep: PhoneAuthStep = .enterPhoneNumber
+    }
+    
+    enum PhoneAuthStep {
+        case enterPhoneNumber
+        case enterAuthCode
+        case completed
     }
     
     enum Intent {
         case tapButton
         case tapBackButton
+        case updatePhoneNumber(String)
+        case requestAuthCode
+        case updateAuthCode(String)
+        case validateAuthCode
     }
     
     enum SideEffect {
@@ -66,7 +82,64 @@ class SignUpFeature: Feature {
             moveToNextStep()
         case .tapBackButton:
             moveToPreviousStep()
+        case .updatePhoneNumber(let phoneNumber):
+            updatePhoneNumber(phoneNumber)
+        case .requestAuthCode:
+            requestAuthCode()
+        case .updateAuthCode(let authCode):
+            updateAuthCode(authCode)
+        case .validateAuthCode:
+            validateAuthCode()
         }
+    }
+    
+    private func updateAuthButtonState() {
+        switch state.phoneAuthStep {
+        case .enterPhoneNumber:
+            state.isAuthButtonEnabled = state.phoneNumber.count >= 11
+        default:
+            state.isAuthButtonEnabled = false
+        }
+    }
+    
+    private func updatePhoneNumber(_ phoneNumber: String) {
+        state.phoneNumber = phoneNumber
+        updateAuthButtonState()
+    }
+    
+    private func requestAuthCode() {
+        state.phoneAuthStep = .enterAuthCode
+        state.authCode = ""
+        state.isAuthButtonEnabled = false
+        
+        updateAuthButtonState()
+        updateButtonState()
+    }
+    
+    private func validateAuthCode() {
+        if state.authCode == "123456" {
+            state.isAuthNumberCorrect = true
+            state.phoneAuthStep = .completed
+            moveToNextStep()
+        } else {
+            state.isAuthNumberCorrect = false
+        }
+        updateButtonState()
+    }
+    
+    private func updateAuthCode(_ authCode: String) {
+        if authCode.count > 6 {
+            return
+        }
+        
+        state.authCode = authCode
+        
+        
+        if authCode.count < 6 {
+            state.isAuthNumberCorrect = true
+        }
+        
+        updateAuthButtonState()
     }
     
     private func moveToNextStep() {
@@ -95,8 +168,16 @@ class SignUpFeature: Feature {
         let newButtonState: WithSuhyeonButtonState
         
         switch currentContent {
-        case .termsOfServiceView:
+        case .termsOfServiceView :
             newButtonState = state.isAgree ? .enabled : .disabled
+        case .authenticationView :
+            if state.phoneAuthStep == .enterPhoneNumber {
+                newButtonState = .disabled
+            } else if state.phoneAuthStep == .enterAuthCode {
+                newButtonState = (state.authCode.count >= 6 && state.isAuthNumberCorrect) ? .enabled : .disabled
+            } else {
+                newButtonState = .disabled
+            }
         default:
             newButtonState = .enabled
         }

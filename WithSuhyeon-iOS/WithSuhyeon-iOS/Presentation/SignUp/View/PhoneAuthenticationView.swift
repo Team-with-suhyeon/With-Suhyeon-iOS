@@ -65,6 +65,7 @@ struct PhoneAuthenticationView: View {
             
             Spacer()
         }
+        .padding(.top, 12)
         .padding(.horizontal, 20)
         .animation(.easeInOut, value: signUpFeature.state.phoneAuthStep)
     }

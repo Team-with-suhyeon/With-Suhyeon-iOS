@@ -19,6 +19,10 @@ class SignUpFeature: Feature {
         var isAuthButtonEnabled: Bool = false
         var isAuthNumberCorrect: Bool = false
         var phoneAuthStep: PhoneAuthStep = .enterPhoneNumber
+        // 닉네임 검증
+        var nickname: String = ""
+        var isNicknameValid: Bool = false
+        var nicknameErrorMessage: String? = nil
     }
     
     enum PhoneAuthStep {
@@ -34,6 +38,7 @@ class SignUpFeature: Feature {
         case requestAuthCode
         case updateAuthCode(String)
         case validateAuthCode
+        case updateNickname(String)
     }
     
     enum SideEffect {
@@ -79,7 +84,12 @@ class SignUpFeature: Feature {
     func handleIntent(_ intent: Intent) {
         switch intent {
         case .tapButton:
-            moveToNextStep()
+            switch currentContent {
+            case .authenticationView:
+                validateAuthCode()
+            default:
+                moveToNextStep()
+            }
         case .tapBackButton:
             moveToPreviousStep()
         case .updatePhoneNumber(let phoneNumber):
@@ -90,6 +100,9 @@ class SignUpFeature: Feature {
             updateAuthCode(authCode)
         case .validateAuthCode:
             validateAuthCode()
+        case .updateNickname(let nickname):
+            updateNickname(nickname)
+            
         }
     }
     
@@ -134,7 +147,6 @@ class SignUpFeature: Feature {
         
         state.authCode = authCode
         
-        
         if authCode.count < 6 {
             state.isAuthNumberCorrect = true
         }
@@ -178,6 +190,8 @@ class SignUpFeature: Feature {
             } else {
                 newButtonState = .disabled
             }
+        case .nickNameView :
+            newButtonState = state.isNicknameValid ? .enabled : .disabled
         default:
             newButtonState = .enabled
         }
@@ -195,5 +209,30 @@ class SignUpFeature: Feature {
     
     func updateIsAgree(_ newValue: Bool) {
         state.isAgree = newValue
+    }
+    
+    private func updateNickname(_ nickname: String) {
+        state.nickname = nickname
+        
+        if nickname.count < 2 {
+            state.isNicknameValid = false
+            state.nicknameErrorMessage = nil
+        } else if nickname.count > 12 {
+            state.isNicknameValid = false
+            state.nicknameErrorMessage = "최대 12글자 이하로 입력해주세요"
+        } else if !isNicknameValidFormat(nickname) {
+            state.isNicknameValid = false
+            state.nicknameErrorMessage = "특수기호를 제거해주세요"
+        } else {
+            state.isNicknameValid = true
+            state.nicknameErrorMessage = nil
+        }
+        
+        updateButtonState()
+    }
+    
+    private func isNicknameValidFormat(_ nickname: String) -> Bool {
+        let nicknameRegex = "^[가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z0-9]+$"
+        return NSPredicate(format: "SELF MATCHES %@", nicknameRegex).evaluate(with: nickname)
     }
 }

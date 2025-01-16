@@ -35,11 +35,7 @@ struct SignUpView: View {
                 buttonState: signUpFeature.state.buttonState,
                 clickable: signUpFeature.state.buttonState == .enabled,
                 onTapButton: {
-                    if signUpFeature.state.phoneAuthStep == .enterAuthCode {
-                        signUpFeature.send(.validateAuthCode)
-                    } else {
                         signUpFeature.send(.tapButton)
-                    }
                 }
             )
             .padding(.horizontal, 16)

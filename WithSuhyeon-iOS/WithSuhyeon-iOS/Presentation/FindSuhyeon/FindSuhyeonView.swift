@@ -93,7 +93,7 @@ struct FindSuhyeonView: View {
                             .foregroundColor(.gray950)
                     }
                     
-                    WithSuhyeonDropdownCell(
+                    FindSuhyeonDropdownCell(
                         title: "요청사항을 선택해줘",
                         dropdownState: .isSelected,
                         placeholder: "요청사항 선택하기(중복 선택 가능)",
@@ -125,27 +125,8 @@ struct FindSuhyeonView: View {
                             .foregroundColor(.gray950)
                     }
                     
-                    // 성별 선택
-                    HStack(spacing: 16) {
-                        WithSuhyeonSmallChip(
-                            title: "남자",
-                            chipState: selectedGender == "남자" ? .selected : .unselected,
-                            clickable: true
-                        ) {
-                            selectedGender = "남자"
-                        }
-                        
-                        WithSuhyeonSmallChip(
-                            title: "여자",
-                            chipState: selectedGender == "여자" ? .selected : .unselected,
-                            clickable: true
-                        ) {
-                            selectedGender = "여자"
-                        }
-                    }
-                    .padding(.horizontal, 16)
+                    FindSuhyeonGenderSelectCell(selectedGender: $selectedGender)
                 }
-                .padding(.horizontal, 16)
             }
         }
     }

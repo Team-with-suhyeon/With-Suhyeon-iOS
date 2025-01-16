@@ -50,7 +50,8 @@ struct FindSuhyeonView: View {
                             buttonState: .disabled,
                             errorText: "최대 00자까지 입력할 수 있어",
                             onTapButton: {},
-                            onChangeText: { text in }
+                            onChangeText: { text in
+                            }
                         )
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
@@ -66,7 +67,7 @@ struct FindSuhyeonView: View {
                         .allowsHitTesting(false)
                     }
                     
-                    WithSuhyeonDropdownCell(
+                    FindSuhyeonDropdownCell(
                         title: "언제 만날지 선택해줘",
                         dropdownState: .isSelected,
                         placeholder: "날짜를 선택해주세요",
@@ -79,7 +80,7 @@ struct FindSuhyeonView: View {
                             .foregroundColor(.gray950)
                     }
                     
-                    WithSuhyeonDropdownCell(
+                    FindSuhyeonDropdownCell(
                         title: "수현이 만날 곳을 선택해줘",
                         dropdownState: .isSelected,
                         placeholder: "장소를 선택해주세요",
@@ -104,18 +105,14 @@ struct FindSuhyeonView: View {
                     ) {
                         HStack {
                             ForEach(selectedRequests, id: \.self) { request in
-                                WithSuhyeonMiniButton(
-                                    title: request,
-                                    buttonState: .enabled,
-                                    clickable: false,
-                                    onTapButton: {}
+                                WithSuhyeonCategoryChip(
+                                    title: request
                                 )
-                                .padding(.vertical, 13)
                             }
                         }
                     }
                     
-                    WithSuhyeonDropdownCell(
+                    FindSuhyeonDropdownCell(
                         title: "수현이의 나이를 선택해줘",
                         dropdownState: .isSelected,
                         placeholder: "나이를 선택해주세요",

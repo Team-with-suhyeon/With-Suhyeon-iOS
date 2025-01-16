@@ -13,7 +13,7 @@ struct WithSuhyeonCategoryChip: View {
     var body: some View {
         Text(title)
             .foregroundColor(
-                Color.primary500
+                Color.primary400
             )
             .font(.caption01B)
             .padding(.horizontal, 10)

@@ -8,37 +8,40 @@
 import SwiftUI
 
 struct WithSuhyeonLongTextField: View {
+    
+    @FocusState var isFocused: Bool
     let placeholder: String
     let state: WithSuhyeonTextFieldState
     let keyboardType: UIKeyboardType
     let maxLength: Int
     let countable: Bool
-    let isFocused: Bool
     let errorText: String
     let onChangeText: (String) -> Void
+    let onFocusChanged: (Bool) -> Void
     
     @State private var text: String = ""
     
     init(placeholder: String,
-             state: WithSuhyeonTextFieldState,
-             keyboardType: UIKeyboardType,
-             maxLength: Int,
-             countable: Bool,
-             isFocused: Bool,
-             errorText: String,
-             onChangeText: @escaping (String) -> Void) {
-            
-            self.placeholder = placeholder
-            self.state = state
-            self.keyboardType = keyboardType
-            self.maxLength = maxLength
-            self.countable = countable
-            self.isFocused = isFocused
-            self.errorText = errorText
-            self.onChangeText = onChangeText
-            
-            UITextView.appearance().textContainerInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
-        }
+         state: WithSuhyeonTextFieldState,
+         keyboardType: UIKeyboardType,
+         maxLength: Int,
+         countable: Bool,
+         errorText: String,
+         onChangeText: @escaping (String) -> Void,
+         onFocusChanged: @escaping (Bool) -> Void
+    ) {
+        
+        self.placeholder = placeholder
+        self.state = state
+        self.keyboardType = keyboardType
+        self.maxLength = maxLength
+        self.countable = countable
+        self.errorText = errorText
+        self.onChangeText = onChangeText
+        self.onFocusChanged = onFocusChanged
+        
+        UITextView.appearance().textContainerInset = UIEdgeInsets(top: 16, left: 12, bottom: 16, right: 12)
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -56,13 +59,29 @@ struct WithSuhyeonLongTextField: View {
                             .stroke(Color.primary300, lineWidth: 1)
                     }
                 } else {
-                    if(state == .disabled){
+                    switch state {
+                    case .disabled:
                         RoundedRectangle(cornerRadius: 12)
                             .fill(Color.gray100)
+                    case .error:
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.red01, lineWidth: 1)
+                    case .editing:
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.gray100, lineWidth: 1)
                     }
                 }
                 
+                if text.isEmpty {
+                    Text(placeholder)
+                        .font(.body03R)
+                        .foregroundColor(.gray400)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 16)
+                }
+                
                 TextEditor(text: $text)
+                    .focused($isFocused)
                     .onChange(of: text, perform: { newText in
                         if newText.count <= maxLength {
                             text = newText
@@ -76,16 +95,8 @@ struct WithSuhyeonLongTextField: View {
                     .foregroundColor(state == .disabled ? .gray300 : .gray900)
                     .scrollContentBackground(.hidden)
                     .background(Color.clear)
-                    
-                    .disabled(state == .disabled)
                 
-                if text.isEmpty {
-                    Text(placeholder)
-                        .font(.body03R)
-                        .foregroundColor(.gray400)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 16)
-                }
+                    .disabled(state == .disabled)
                 
             }.frame(height: 188)
             
@@ -102,6 +113,8 @@ struct WithSuhyeonLongTextField: View {
                         .foregroundColor(.gray400)
                 }
             }
+        }.onChange(of: isFocused) { newValue in
+            onFocusChanged(newValue)
         }
     }
 }
@@ -115,9 +128,9 @@ struct WithSuhyeonLongTextField: View {
                 keyboardType: .numberPad,
                 maxLength: 100,
                 countable: true,
-                isFocused: true,
                 errorText: "최대 00자까지 입력할 수 있어",
-                onChangeText: {text in }
+                onChangeText: {text in },
+                onFocusChanged: {bool in }
             )
             .padding(.horizontal, 20)
             
@@ -127,9 +140,9 @@ struct WithSuhyeonLongTextField: View {
                 keyboardType: .numberPad,
                 maxLength: 100,
                 countable: false,
-                isFocused: true,
                 errorText: "최대 00자까지 입력할 수 있어",
-                onChangeText: {text in }
+                onChangeText: {text in },
+                onFocusChanged: {bool in }
             )
             .padding(.horizontal, 20)
             
@@ -139,9 +152,9 @@ struct WithSuhyeonLongTextField: View {
                 keyboardType: .numberPad,
                 maxLength: 100,
                 countable: true,
-                isFocused: true,
                 errorText: "최대 00자까지 입력할 수 있어",
-                onChangeText: {text in }
+                onChangeText: {text in },
+                onFocusChanged: {bool in }
             )
             .padding(.horizontal, 20)
             
@@ -151,9 +164,9 @@ struct WithSuhyeonLongTextField: View {
                 keyboardType: .numberPad,
                 maxLength: 100,
                 countable: true,
-                isFocused: true,
                 errorText: "최대 00자까지 입력할 수 있어",
-                onChangeText: {text in }
+                onChangeText: {text in },
+                onFocusChanged: {bool in }
             )
             .padding(.horizontal, 20)
             
@@ -163,9 +176,9 @@ struct WithSuhyeonLongTextField: View {
                 keyboardType: .numberPad,
                 maxLength: 100,
                 countable: true,
-                isFocused: false,
                 errorText: "최대 00자까지 입력할 수 있어",
-                onChangeText: {text in }
+                onChangeText: {text in },
+                onFocusChanged: {bool in }
             )
             .padding(.horizontal, 20)
             
@@ -175,9 +188,9 @@ struct WithSuhyeonLongTextField: View {
                 keyboardType: .numberPad,
                 maxLength: 100,
                 countable: true,
-                isFocused: true,
                 errorText: "필수로 입력해줘",
-                onChangeText: {text in }
+                onChangeText: {text in },
+                onFocusChanged: {bool in }
             )
             .padding(.horizontal, 20)
         }

@@ -12,11 +12,12 @@ class SignUpFeature: Feature {
     struct State {
         var progress: Double = 0.0
         var isAgree: Bool = false
+        var buttonState: WithSuhyeonButtonState = .disabled
     }
     
     enum Intent {
-        case nextStep
-        case previousStep
+        case tapButton
+        case tapBackButton
     }
     
     enum SideEffect {
@@ -32,11 +33,26 @@ class SignUpFeature: Feature {
     init() {
         bindIntents()
         updateProgress()
+        receiveState()
     }
     
     private func bindIntents() {
         intentSubject.sink { [weak self] intent in
             self?.handleIntent(intent)
+        }.store(in: &cancellables)
+    }
+    
+    private func receiveState() {
+        $state.sink { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.updateButtonState()
+            }
+        }.store(in: &cancellables)
+        
+        $currentContent.sink { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.updateButtonState()
+            }
         }.store(in: &cancellables)
     }
     
@@ -46,9 +62,9 @@ class SignUpFeature: Feature {
     
     func handleIntent(_ intent: Intent) {
         switch intent {
-        case .nextStep:
+        case .tapButton:
             moveToNextStep()
-        case .previousStep:
+        case .tapBackButton:
             moveToPreviousStep()
         }
     }
@@ -73,6 +89,23 @@ class SignUpFeature: Feature {
         if let currentIndex = SignUpContentCase.allCases.firstIndex(of: currentContent) {
             state.progress = Double(currentIndex + 1) / Double(SignUpContentCase.allCases.count) * 100
         }
+    }
+    
+    private func updateButtonState() {
+        let newButtonState: WithSuhyeonButtonState
+        
+        switch currentContent {
+        case .termsOfServiceView:
+            newButtonState = state.isAgree ? .enabled : .disabled
+        default:
+            newButtonState = .enabled
+        }
+        
+        guard state.buttonState != newButtonState else {
+            return
+        }
+        
+        state.buttonState = newButtonState
     }
     
     func changeSelectedContent(signUpContentCase: SignUpContentCase) {

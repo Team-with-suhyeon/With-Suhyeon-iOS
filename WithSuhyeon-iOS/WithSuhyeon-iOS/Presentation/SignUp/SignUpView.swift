@@ -26,23 +26,14 @@ struct SignUpView: View {
             
             WithSuhyeonButton(
                 title: "다음",
-                buttonState: isNextStepEnabled() ? .enabled : .disabled,
-                clickable: isNextStepEnabled(),
+                buttonState: signUpFeature.state.buttonState,
+                clickable: signUpFeature.state.buttonState == .enabled,
                 onTapButton: {
-                    signUpFeature.send(.nextStep)
+                    signUpFeature.send(.tapButton)
                 }
             )
             .padding(.horizontal, 16)
         }.environmentObject(signUpFeature)
-    }
-    
-    private func isNextStepEnabled() -> Bool {
-        switch signUpFeature.currentContent {
-        case .termsOfServiceView:
-            return signUpFeature.state.isAgree
-        default:
-            return true
-        }
     }
 }
 

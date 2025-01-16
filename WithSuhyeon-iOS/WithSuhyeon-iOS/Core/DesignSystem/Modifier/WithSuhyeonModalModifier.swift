@@ -23,28 +23,32 @@ struct WithSuhyeonModalModifier<ModalContent: View>: ViewModifier {
                 Color.black.opacity(0.3)
                     .onTapGesture { onDismiss() }
                     .ignoresSafeArea(.container, edges: .top)
-                
-                modalView()
-                    .transition(.move(edge: .bottom))
-                    .offset(y: offsetY)
-                    .gesture(
-                        DragGesture()
-                            .onChanged { value in
-                                if value.translation.height > 0 {
-                                    offsetY = value.translation.height
-                                }
-                            }
-                            .onEnded { value in
-                                if value.translation.height > 100 {
-                                    onDismiss()
-                                }
-                                offsetY = 0
-                            }
-                    )
             }
+            ZStack {
+                if isPresented {
+                    modalView()
+                        .transition(.move(edge: .bottom))
+                        .offset(y: offsetY)
+                        .gesture(
+                            DragGesture()
+                                .onChanged { value in
+                                    if value.translation.height > 0 {
+                                        offsetY = value.translation.height
+                                    }
+                                }
+                                .onEnded { value in
+                                    if value.translation.height > 100 {
+                                        onDismiss()
+                                    }
+                                    offsetY = 0
+                                }
+                        )
+                }
+            }
+            .animation(.easeInOut, value: isPresented)
         }
-        .animation(.easeInOut, value: isPresented)
     }
+    
     
     @ViewBuilder
     private func modalView() -> some View {

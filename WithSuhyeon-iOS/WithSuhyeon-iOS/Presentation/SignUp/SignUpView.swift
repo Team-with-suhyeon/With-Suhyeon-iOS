@@ -13,7 +13,13 @@ struct SignUpView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            WithSuhyeonTopNavigationBar(title: "", onTapLeft: {})
+            WithSuhyeonTopNavigationBar(
+                title: "",
+                onTapLeft: {
+                    signUpFeature.send(
+                        .tapBackButton
+                    )
+                })
             
             WithSuhyeonProgressBar(progress: signUpFeature.state.progress)
             

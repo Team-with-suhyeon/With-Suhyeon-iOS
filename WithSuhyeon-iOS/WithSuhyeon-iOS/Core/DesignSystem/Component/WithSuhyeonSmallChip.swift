@@ -47,7 +47,7 @@ struct WithSuhyeonSmallChip: View {
     }
 }
 
-struct ChipTestView: View {
+struct ChipTestView2: View {
     @State private var firstChipState: WithSuhyeonChipState = .unselected
     @State private var secondChipState: WithSuhyeonChipState = .selected
     
@@ -78,5 +78,5 @@ struct ChipTestView: View {
 }
 
 #Preview {
-    ChipTestView()
+    ChipTestView2()
 }

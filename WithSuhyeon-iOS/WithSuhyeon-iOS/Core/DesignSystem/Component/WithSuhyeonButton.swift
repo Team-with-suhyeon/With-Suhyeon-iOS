@@ -38,6 +38,8 @@ struct WithSuhyeonButton: View {
                     )
                     .font(.body01B)
             }
+            .frame(maxWidth: .infinity, maxHeight: 56)
+            .contentShape(Rectangle())
         }
         .frame(maxWidth: .infinity, maxHeight: 56)
         .background(

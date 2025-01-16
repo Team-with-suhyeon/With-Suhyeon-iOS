@@ -80,10 +80,8 @@ class GalleryUploadFeature: Feature {
         case .tapCloseButton:
             sideEffectSubject.send(.popBack)
         case .tapImage:
-            print("tap image")
             state.isImagePickerPresented = true
         case .tapDropdownButton:
-            print("tap dropdown")
             state.isCategorySelectSheetPresented = true
         case .tapCategoryItem(let index):
             if(state.selectedCategoryIndex == index) {

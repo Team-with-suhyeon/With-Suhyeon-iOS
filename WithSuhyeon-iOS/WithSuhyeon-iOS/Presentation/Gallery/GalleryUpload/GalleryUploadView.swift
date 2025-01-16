@@ -231,7 +231,6 @@ struct WithSuhyeonCategoryGrid: View {
         }
         
         if !currentRow.isEmpty { rows.append(currentRow) }
-        print(rows.count)
         return rows
     }
     

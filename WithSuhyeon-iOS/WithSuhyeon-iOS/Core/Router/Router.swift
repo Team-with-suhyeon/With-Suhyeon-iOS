@@ -27,4 +27,5 @@ public enum Destination: Hashable {
     case main
     case galleryUpload
     case galleryDetail(id: Int)
+    case chatRoom
 }

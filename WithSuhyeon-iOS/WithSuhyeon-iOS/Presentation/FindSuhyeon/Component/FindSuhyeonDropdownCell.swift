@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct FindSuhyeonDropdownCell<Content: View>: View {
-    var title: String
+struct FindSuhyeonDropdownCell<Content: View, TitleContent: View>: View {
+    var title: () -> TitleContent
     var dropdownState: WithSuhyeonDropdownState
     var placeholder: String
     var errorMessage: String
@@ -16,7 +16,7 @@ struct FindSuhyeonDropdownCell<Content: View>: View {
     let content: () -> Content
 
     init(
-        title: String,
+        @ViewBuilder title: @escaping () -> TitleContent,
         dropdownState: WithSuhyeonDropdownState,
         placeholder: String,
         errorMessage: String,
@@ -33,9 +33,7 @@ struct FindSuhyeonDropdownCell<Content: View>: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(title)
-                .font(.body03R)
-                .foregroundColor(.gray400)
+            title()
                 .padding(.horizontal, 16)
                 .padding(.top, 24)
 

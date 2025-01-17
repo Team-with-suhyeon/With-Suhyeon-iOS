@@ -5,15 +5,23 @@
 //  Created by  정지원 on 1/16/25.
 //
 
-
 import SwiftUI
 
-struct FindSuhyeonGenderSelectCell: View {
+struct FindSuhyeonGenderSelectCell<TitleContent: View>: View {
+    var title: TitleContent
     @Binding var selectedGender: String
+    
+    init(
+        @ViewBuilder title: () -> TitleContent,
+        selectedGender: Binding<String>
+    ) {
+        self.title = title()
+        self._selectedGender = selectedGender
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("수현이의 성별을 선택해줘")
+            title
                 .font(.body03R)
                 .foregroundColor(.gray400)
                 .padding(.top, 24)
@@ -44,5 +52,8 @@ struct FindSuhyeonGenderSelectCell: View {
 
 #Preview {
     @State var selectedGender: String = "여자"
-    FindSuhyeonGenderSelectCell(selectedGender: $selectedGender)
+    FindSuhyeonGenderSelectCell(
+        title: { Text("수현이의 성별을 선택해줘") },
+        selectedGender: $selectedGender
+    )
 }

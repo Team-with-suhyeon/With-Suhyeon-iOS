@@ -84,7 +84,6 @@ struct ChatRoomView: View {
                     }
                 }
                 .onTapGesture {
-                    hideKeyboard()
                     feature.send(.tapBackground)
                 }
                 .onReceive(feature.sideEffectSubject) { sideEffect in
@@ -113,12 +112,12 @@ struct ChatRoomView: View {
                     }
                 }
                 .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidHideNotification)) { _ in
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+                    DispatchQueue.main.async {
                         feature.send(.keyboardAppeared)
                     }
                 }
                 .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidShowNotification)) { _ in
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+                    DispatchQueue.main.async {
                         feature.send(.keyboardAppeared)
                     }
                 }

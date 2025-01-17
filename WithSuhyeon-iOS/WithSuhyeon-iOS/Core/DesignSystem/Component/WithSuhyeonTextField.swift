@@ -8,18 +8,48 @@
 import SwiftUI
 
 struct WithSuhyeonTextField: View {
+    
+    @FocusState private var isFocused: Bool
     let placeholder: String
     let state: WithSuhyeonTextFieldState
     let keyboardType: UIKeyboardType
     let maxLength: Int
     let countable: Bool
-    let isFocused: Bool
     let hasButton: Bool
     let buttonText: String
     let buttonState: WithSuhyeonButtonState
     let errorText: String
     let onTapButton: () -> Void
     let onChangeText: (String) -> Void
+    let onFocusChanged: (Bool) -> Void
+    
+    init(
+        placeholder: String,
+        state: WithSuhyeonTextFieldState,
+        keyboardType: UIKeyboardType,
+        maxLength: Int = 0,
+        countable: Bool,
+        hasButton: Bool,
+        buttonText: String = "",
+        buttonState: WithSuhyeonButtonState = .disabled,
+        errorText: String,
+        onTapButton: @escaping () -> Void = {},
+        onChangeText: @escaping (String) -> Void,
+        onFocusChanged: @escaping (Bool) -> Void
+    ) {
+        self.placeholder = placeholder
+        self.state = state
+        self.keyboardType = keyboardType
+        self.maxLength = maxLength
+        self.countable = countable
+        self.hasButton = hasButton
+        self.buttonText = buttonText
+        self.buttonState = buttonState
+        self.errorText = errorText
+        self.onTapButton = onTapButton
+        self.onChangeText = onChangeText
+        self.onFocusChanged = onFocusChanged
+    }
     
     @State private var text: String = ""
     
@@ -39,9 +69,16 @@ struct WithSuhyeonTextField: View {
                             .stroke(Color.primary300, lineWidth: 1)
                     }
                 } else {
-                    if(state == .disabled){
+                    switch state {
+                    case .disabled:
                         RoundedRectangle(cornerRadius: 12)
                             .fill(Color.gray100)
+                    case .error:
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.red01, lineWidth: 1)
+                    case .editing:
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.gray100, lineWidth: 1)
                     }
                 }
                 
@@ -61,6 +98,7 @@ struct WithSuhyeonTextField: View {
                 
                 TextField(placeholder, text: $text)
                     .onChange(of: text, perform: onChangeText)
+                    .focused($isFocused)
                     .keyboardType(keyboardType)
                     .font(.body03R)
                     .foregroundColor(state == .disabled ? .gray300 : .gray900)
@@ -85,6 +123,8 @@ struct WithSuhyeonTextField: View {
                         .foregroundColor(.gray400)
                 }
             }
+        }.onChange(of: isFocused){ value in
+            onFocusChanged(isFocused)
         }
     }
 }
@@ -97,13 +137,13 @@ struct WithSuhyeonTextField: View {
             keyboardType: .numberPad,
             maxLength: 20,
             countable: true,
-            isFocused: true,
             hasButton: true,
             buttonText: "입력번호확인",
             buttonState: .disabled,
             errorText: "최대 00자까지 입력할 수 있어",
             onTapButton: {},
-            onChangeText: {text in }
+            onChangeText: {text in },
+            onFocusChanged: {value in}
         )
         .padding(.horizontal, 20)
         
@@ -113,13 +153,13 @@ struct WithSuhyeonTextField: View {
             keyboardType: .numberPad,
             maxLength: 20,
             countable: false,
-            isFocused: true,
             hasButton: true,
             buttonText: "입력번호확인",
             buttonState: .enabled,
             errorText: "최대 00자까지 입력할 수 있어",
             onTapButton: {},
-            onChangeText: {text in }
+            onChangeText: {text in },
+            onFocusChanged: {value in}
         )
         .padding(.horizontal, 20)
         
@@ -129,13 +169,13 @@ struct WithSuhyeonTextField: View {
             keyboardType: .numberPad,
             maxLength: 20,
             countable: true,
-            isFocused: true,
             hasButton: false,
             buttonText: "입력번호확인",
             buttonState: .disabled,
             errorText: "최대 00자까지 입력할 수 있어",
             onTapButton: {},
-            onChangeText: {text in }
+            onChangeText: {text in },
+            onFocusChanged: {value in}
         )
         .padding(.horizontal, 20)
         WithSuhyeonTextField(
@@ -144,13 +184,13 @@ struct WithSuhyeonTextField: View {
             keyboardType: .numberPad,
             maxLength: 20,
             countable: false,
-            isFocused: true,
             hasButton: true,
             buttonText: "입력번호확인",
             buttonState: .disabled,
             errorText: "최대 00자까지 입력할 수 있어",
             onTapButton: {},
-            onChangeText: {text in }
+            onChangeText: {text in },
+            onFocusChanged: {value in}
         )
         .padding(.horizontal, 20)
         
@@ -160,13 +200,13 @@ struct WithSuhyeonTextField: View {
             keyboardType: .numberPad,
             maxLength: 20,
             countable: false,
-            isFocused: false,
             hasButton: true,
             buttonText: "입력번호확인",
             buttonState: .disabled,
             errorText: "최대 00자까지 입력할 수 있어",
             onTapButton: {},
-            onChangeText: {text in }
+            onChangeText: {text in },
+            onFocusChanged: {value in}
         )
         .padding(.horizontal, 20)
     }

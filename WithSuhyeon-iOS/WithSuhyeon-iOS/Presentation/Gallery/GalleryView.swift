@@ -10,10 +10,11 @@ import SwiftUI
 struct GalleryView: View {
     @EnvironmentObject private var router: RouterRegistry
     @StateObject private var galleryFeature = GalleryFeature()
-    @State private var scrollOffset: CGFloat = 0
-    
+    init() {
+        UIScrollView.appearance().bounces = false
+      }
     var body: some View {
-        ZStack {
+        ZStack(alignment: .bottomTrailing) {
             ScrollViewReader { proxy in
                 ObservableScrollView(
                     onPreferenceChange: { value in
@@ -54,6 +55,13 @@ struct GalleryView: View {
                 }
             }
             .edgesIgnoringSafeArea(.top)
+            
+            WithSuhyeonFloatingButton(scrollOffset: galleryFeature.state.scrollOffset, title: "업로드")
+                .padding(.trailing, 16)
+                .padding(.bottom, 16)
+                .onTapGesture {
+                    galleryFeature.send(.tapUploadButton)
+                }
         }
     }
 }

@@ -82,7 +82,7 @@ class ChatRoomFeature: Feature {
                 addMessages()
             }
         case .tapBackground:
-            sideEffectSubject.send(.scrollToLast)
+            sideEffectSubject.send(.keyboardDismiss)
         case .keyboardAppeared:
             sideEffectSubject.send(.scrollToLast)
             

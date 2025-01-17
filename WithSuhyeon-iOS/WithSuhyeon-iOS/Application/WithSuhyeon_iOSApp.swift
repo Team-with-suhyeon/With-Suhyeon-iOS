@@ -18,7 +18,7 @@ struct WithSuhyeon_iOSApp: App {
                 .navigationDestination(for: Destination.self){ destination in
                     switch destination {
                     case .main : MainTabBar()
-                    case .galleryUpload : MainTabBar()
+                    case .galleryUpload : GalleryUploadView()
                     case .galleryDetail(id: let id) : GalleryDetailView(id: id)
                     }
                 }

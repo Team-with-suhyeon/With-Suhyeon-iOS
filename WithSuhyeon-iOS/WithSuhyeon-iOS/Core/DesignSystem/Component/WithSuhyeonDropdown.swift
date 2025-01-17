@@ -54,6 +54,10 @@ struct WithSuhyeonDropdown<Content: View>:View {
                     .frame(alignment: .leading)
             }
         }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            onTapDropdown()
+        }
     }
 }
 

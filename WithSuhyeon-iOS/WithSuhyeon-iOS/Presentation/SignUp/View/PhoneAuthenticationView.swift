@@ -34,9 +34,6 @@ struct PhoneAuthenticationView: View {
                 onChangeText: { text in
                     signUpFeature.send(.updatePhoneNumber(text))
                 },
-                onFocusChanged: { value in
-                    
-                },
                 isUnderMaxLength: true
             )
             
@@ -53,15 +50,10 @@ struct PhoneAuthenticationView: View {
                         maxLength: 6,
                         countable: false,
                         hasButton: false,
-                        buttonText: "",
                         buttonState: .alert,
                         errorText: signUpFeature.state.isAuthNumberCorrect ? "" : "인증번호를 다시 확인해주세요",
-                        onTapButton: {},
                         onChangeText: { text in
                             signUpFeature.send(.updateAuthCode(text))
-                        },
-                        onFocusChanged: { value in
-                            
                         },
                         isUnderMaxLength: true
                     )

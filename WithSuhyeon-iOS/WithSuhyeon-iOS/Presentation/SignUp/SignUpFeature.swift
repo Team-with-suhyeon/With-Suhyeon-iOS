@@ -117,7 +117,6 @@ class SignUpFeature: Feature {
     }
     
     private func updatePhoneNumber(_ phoneNumber: String) {
-//        if(phoneNumber.count > 11) { return }
         state.phoneNumber = phoneNumber
         state.isExistsUser = false
         updateAuthButtonState()

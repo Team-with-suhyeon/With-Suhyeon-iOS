@@ -36,7 +36,7 @@ struct WithSuhyeonTextField: View {
         errorText: String,
         onTapButton: @escaping () -> Void = {},
         onChangeText: @escaping (String) -> Void,
-        onFocusChanged: @escaping (Bool) -> Void,
+        onFocusChanged: @escaping (Bool) -> Void = { value in },
         isUnderMaxLength: Bool = false
     ) {
         self.placeholder = placeholder

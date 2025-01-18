@@ -6,6 +6,7 @@
 	<string>$(BASE_URL)</string>
 	<key>UIAppFonts</key>
 	<array>
+		<string>SUIT-ExtraBold.otf</string>
 		<string>SUIT-Bold.otf</string>
 		<string>SUIT-SemiBold.otf</string>
 		<string>SUIT-Regular.otf</string>

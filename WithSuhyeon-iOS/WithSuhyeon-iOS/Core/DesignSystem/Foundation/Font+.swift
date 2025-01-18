@@ -8,6 +8,11 @@
 import SwiftUI
 
 public extension Font {
+    
+    static var heading00EB: Font {
+        return font(.suitExtraBold, ofSize: 32)
+    }
+    
     static var heading01B: Font {
         return font(.suitBold, ofSize: 32)
     }
@@ -130,6 +135,7 @@ public extension Font {
 }
 
 public enum FontName: String {
+    case suitExtraBold = "SUIT-ExtraBold"
     case suitBold = "SUIT-Bold"
     case suitSemiBold = "SUIT-SemiBold"
     case suitRegular = "SUIT-Regular"

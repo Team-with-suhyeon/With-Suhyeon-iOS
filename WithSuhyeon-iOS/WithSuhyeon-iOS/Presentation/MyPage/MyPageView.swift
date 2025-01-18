@@ -10,7 +10,8 @@ import SwiftUI
 import Kingfisher
 
 struct MyPageView : View {
-    let imageUrl: String = "https://reqres.in/img/faces/7-image.jpg"
+    @EnvironmentObject var router: RouterRegistry
+    @StateObject var feature = MyPageFeature()
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0){
@@ -24,12 +25,12 @@ struct MyPageView : View {
                 VStack(spacing: 0) {
                     VStack(alignment: .leading, spacing: 0) {
                         HStack(alignment: .center, spacing: 0) {
-                            KFImage(URL(string: imageUrl))
+                            KFImage(URL(string: feature.state.profileImageURL))
                                 .resizable()
                                 .clipShape(Circle())
                                 .frame(width: 48, height: 48)
                             
-                            Text("작심이")
+                            Text(feature.state.nickname)
                                 .font(.body02B)
                                 .padding(.leading, 12)
                                 .foregroundColor(.gray900)
@@ -46,7 +47,6 @@ struct MyPageView : View {
                                 .foregroundColor(.black)
                                 .padding(.top, 14)
                                 .padding(.bottom, 22)
-                                .frame(width: .infinity)
                             
                             Spacer()
                             
@@ -55,6 +55,10 @@ struct MyPageView : View {
                         .frame(height: 50)
                         .padding(.horizontal, 20)
                         .padding(.bottom, 8)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            feature.send(.tapMyPost)
+                        }
                     }
                     .background(
                         RoundedRectangle(cornerRadius: 16)
@@ -86,6 +90,10 @@ struct MyPageView : View {
                         .padding(.horizontal, 8)
                         .padding(.top, 8)
                         .frame(height: 50)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            feature.send(.tapBlockingAccountManagement)
+                        }
                         
                         HStack {
                             Image(icon: .icInfo18)
@@ -101,6 +109,10 @@ struct MyPageView : View {
                         .padding(.horizontal, 8)
                         .padding(.bottom, 8)
                         .frame(height: 50)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            feature.send(.tapSetInterest)
+                        }
                     }
                     .background(
                         RoundedRectangle(cornerRadius: 16)
@@ -123,6 +135,10 @@ struct MyPageView : View {
                         .padding(.horizontal, 8)
                         .padding(.top, 8)
                         .frame(height: 50)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            feature.send(.tapLogout)
+                        }
                         HStack {
                             Text("탈퇴하기")
                                 .font(.body03SB)
@@ -136,6 +152,10 @@ struct MyPageView : View {
                         .padding(.horizontal, 8)
                         .padding(.bottom, 8)
                         .frame(height: 50)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            feature.send(.tapWithdraw)
+                        }
                     }
                     .background(
                         RoundedRectangle(cornerRadius: 16)
@@ -146,7 +166,20 @@ struct MyPageView : View {
                 
             }
             .background(Color.gray100)
-        }.frame(width: .infinity)
+        }
+        .onReceive(feature.sideEffectSubject) { sideEffect in
+            switch sideEffect {
+                
+            case .navigateToMyPost:
+                router.navigate(to: .myPost)
+            case .navigateToBlockingAccountManagement:
+                router.navigate(to: .blockingAccountManagement)
+            case .navigateToSetInterest:
+                router.navigate(to: .setInterest)
+            case .navigateToInitialScreen:
+                router.clear()
+            }
+        }
     }
 }
 

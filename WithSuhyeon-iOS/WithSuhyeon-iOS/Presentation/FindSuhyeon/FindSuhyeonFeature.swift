@@ -32,7 +32,7 @@ struct FindSuhyeonFeature {
     
     struct Input {
         var selectedGender: String = "여자"
-        var selectedAgeRange: String = "20 ~ 24"
+        var selectedAgeRange: String = ""
         var selectedRequests: [String] = ["사진 촬영", "영상 통화", "전화 통화"]
         var selectedLocation: String = ""
         var selectedDate: String = ""

@@ -12,6 +12,7 @@ struct FindSuhyeonView: View {
     @State private var stateTitle = FindSuhyeonFeature.StateTitle()
     @State private var selectedGender: String = ""
     @State private var progress: Double = 100.0 / 7.0
+    @State private var isAgeModalPresented: Bool = false
 
     var body: some View {
         VStack {
@@ -133,13 +134,70 @@ struct FindSuhyeonView: View {
                 placeholder: "나이를 선택해주세요",
                 errorMessage: "",
                 onTapDropdown: {
-                    print("나이 선택 드롭다운 열림")
+                    isAgeModalPresented = true // 모달 표시
                 }
             ) {
-                EmptyView()
+                Text(input.selectedAgeRange.isEmpty ? "선택되지 않음" : input.selectedAgeRange)
+            }
+            .sheet(isPresented: $isAgeModalPresented) {
+                ageModalView()
+                    .presentationDetents([.height(598)]) // 모달 높이 설정
+                    .presentationDragIndicator(.hidden) // 드래그 핸들 표시
             }
         }
     }
+
+    private func ageModalView() -> some View {
+        VStack(spacing: 0) {
+            RoundedRectangle(cornerRadius: 11)
+                .fill(Color.gray200)
+                .frame(width: 60, height: 4)
+                .padding(.top, 12)
+            
+            HStack {
+                Text("나이대 선택")
+                    .font(.title02B)
+                    .foregroundColor(.gray950)
+                    .padding(.top, 24)
+                    .padding(.leading, 24)
+                Spacer()
+            }
+            .padding(.bottom, 32)
+            
+            VStack(spacing: 12) {
+                ForEach(["20 ~ 24", "25 ~ 29", "30 ~ 34", "35 ~ 39", "40세 이상"], id: \.self) { age in
+                    WithSuhyeonMultiSelectCheckBigChip(
+                        text: age,
+                        isSelected: input.selectedAgeRange == age,
+                        isDisabled: false,
+                        showIcon: false
+                    ) {
+                        input.selectedAgeRange = age
+                    }
+                }
+            }
+            .padding(.horizontal, 24)
+            .padding(.bottom, 32)
+            
+            Button(action: {
+                isAgeModalPresented = false
+            }) {
+                Text("선택완료")
+                    .font(.body01B)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity, minHeight: 56)
+                    .background(Color.primary500)
+                    .cornerRadius(16)
+            }
+            .padding(.horizontal, 24)
+            .padding(.bottom, 32)
+        }
+        .background(Color.white)
+        .cornerRadius(24, corners: [.topLeft, .topRight])
+        .ignoresSafeArea(edges: .bottom)
+    }
+
+
 
     private var locationSelectionView: some View {
         VStack(alignment: .leading) {

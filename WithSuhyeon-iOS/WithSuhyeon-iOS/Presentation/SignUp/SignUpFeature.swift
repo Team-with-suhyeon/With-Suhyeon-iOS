@@ -233,7 +233,7 @@ class SignUpFeature: Feature {
         } else if nickname.count > 12 {
             state.isNicknameValid = false
             state.nicknameErrorMessage = "최대 12글자 이하로 입력해주세요"
-        } else if !isNicknameValidFormat(nickname) {
+        } else if !NickNameValidator.isValid(nickname) {
             state.isNicknameValid = false
             state.nicknameErrorMessage = "특수기호를 제거해주세요"
         } else {
@@ -242,10 +242,5 @@ class SignUpFeature: Feature {
         }
         
         updateButtonState()
-    }
-    
-    private func isNicknameValidFormat(_ nickname: String) -> Bool {
-        let nicknameRegex = "^[가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z0-9]+$"
-        return NSPredicate(format: "SELF MATCHES %@", nicknameRegex).evaluate(with: nickname)
     }
 }

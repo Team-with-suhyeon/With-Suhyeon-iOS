@@ -34,7 +34,7 @@ struct FindSuhyeonView: View {
                             viewForState(state)
                                 .onTapGesture {
                                     stateTitle.progressState = state
-                                    FindSuhyeonFeature.reducer(input: input, state: &stateTitle)
+                                    FindSuhyeonFeature.reducer(input: &input, state: &stateTitle)
                                 }
                                 .transition(.move(edge: .top).combined(with: .opacity))
                         }
@@ -46,7 +46,7 @@ struct FindSuhyeonView: View {
             Button(action: {
                 withAnimation {
                     stateTitle.progressState = FindSuhyeonFeature.nextProgressState(current: stateTitle.progressState)
-                    FindSuhyeonFeature.reducer(input: input, state: &stateTitle)
+                    FindSuhyeonFeature.reducer(input: &input, state: &stateTitle)
                     increaseProgress()
                 }
             }) {
@@ -130,31 +130,21 @@ struct FindSuhyeonView: View {
     private var ageSelectionView: some View {
         VStack(alignment: .leading) {
             FindSuhyeonDropdownCell(
-                dropdownState: .isSelected,
+                dropdownState: input.dropdownState.toWithSuhyeonDropdownState(),
                 placeholder: "나이를 선택해주세요",
                 errorMessage: "",
                 onTapDropdown: {
+                    input.dropdownState = .isSelected
                     isAgeModalPresented = true
                 }
             ) {
-                displayTextForAgeSelection
+                Text(input.selectedAgeRange)
             }
             .sheet(isPresented: $isAgeModalPresented) {
                 ageModalView()
                     .presentationDetents([.height(598)])
                     .presentationDragIndicator(.hidden)
             }
-        }
-    }
-    
-    @ViewBuilder
-    private var displayTextForAgeSelection: some View {
-        if input.selectedAgeRange.isEmpty {
-            placeHolderText("선택되지 않음")
-        } else {
-            Text(input.selectedAgeRange)
-                .foregroundColor(.gray950)
-                .font(.body02R)
         }
     }
 
@@ -213,7 +203,7 @@ struct FindSuhyeonView: View {
     private var locationSelectionView: some View {
         VStack(alignment: .leading) {
             FindSuhyeonDropdownCell(
-                dropdownState: .isSelected,
+                dropdownState: .defaultState,
                 placeholder: "장소를 선택해주세요",
                 errorMessage: "",
                 onTapDropdown: {
@@ -224,6 +214,7 @@ struct FindSuhyeonView: View {
             }
         }
     }
+    
 
     private var requestsSelectionView: some View {
         VStack(alignment: .leading) {

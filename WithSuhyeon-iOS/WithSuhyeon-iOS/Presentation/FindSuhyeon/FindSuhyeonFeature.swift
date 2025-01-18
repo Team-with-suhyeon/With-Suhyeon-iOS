@@ -29,6 +29,20 @@ struct FindSuhyeonFeature {
             }
         }
     }
+
+    enum DropdownState {
+        case defaultState
+        case isSelected
+
+        func toWithSuhyeonDropdownState() -> WithSuhyeonDropdownState {
+            switch self {
+            case .defaultState:
+                return .defaultState
+            case .isSelected:
+                return .isSelected
+            }
+        }
+    }
     
     struct Input {
         var selectedGender: String = "여자"
@@ -37,6 +51,7 @@ struct FindSuhyeonFeature {
         var selectedLocation: String = ""
         var selectedDate: String = ""
         var selectedAmount: String = ""
+        var dropdownState: DropdownState = .defaultState
     }
     
     struct StateTitle {
@@ -49,20 +64,26 @@ struct FindSuhyeonFeature {
         var progressState: ProgressState = .genderSelection
     }
     
-    static func reducer(input: Input, state: inout StateTitle) -> Void {
+    static func reducer(input: inout Input, state: inout StateTitle) -> Void {
         switch state.progressState {
         case .genderSelection:
             state.genderTitle = "수현이의 성별을 선택해줘"
+            input.dropdownState = .defaultState
         case .ageSelection:
             state.ageTitle = "수현이의 나이대를 선택해줘"
+            input.dropdownState = .defaultState
         case .requestSelection:
             state.requestTitle = "요청사항을 선택해줘"
+            input.dropdownState = .defaultState
         case .locationSelection:
             state.locationTitle = "수현이 만날 곳을 선택해줘"
+            input.dropdownState = .defaultState
         case .dateSelection:
             state.dateTitle = "언제 만날지 선택해줘"
+            input.dropdownState = .defaultState
         case .gratuity:
             state.gratuityTitle = "주고 싶은 금액을 입력해줘"
+            input.dropdownState = .defaultState
         }
     }
     

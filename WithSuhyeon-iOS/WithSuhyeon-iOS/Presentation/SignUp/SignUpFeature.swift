@@ -27,6 +27,9 @@ class SignUpFeature: Feature {
         
         var birthYear: Int = 2006
         var isYearSelected: Bool = false
+        
+        var gender: String = ""
+        var isGenderSelected: Bool = false
     }
     
     enum PhoneAuthStep {
@@ -44,6 +47,7 @@ class SignUpFeature: Feature {
         case validateAuthCode
         case updateNickname(String)
         case selectedYear(Int)
+        case selectedGender(String)
     }
     
     enum SideEffect {
@@ -111,6 +115,8 @@ class SignUpFeature: Feature {
             updateNickname(nickname)
         case .selectedYear(let year):
             selectedBirthYear(year)
+        case .selectedGender(let gender):
+            selectedGender(gender)
         }
     }
     
@@ -254,5 +260,10 @@ class SignUpFeature: Feature {
     func selectedBirthYear(_ year: Int) {
         state.birthYear = year
         state.isYearSelected = true
+    }
+    
+    func selectedGender(_ gender: String){
+        state.gender = gender
+        state.isGenderSelected = true
     }
 }

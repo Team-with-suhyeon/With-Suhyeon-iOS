@@ -52,6 +52,8 @@ class SignUpFeature: Feature {
     private let intentSubject = PassthroughSubject<Intent, Never>()
     let sideEffectSubject = PassthroughSubject<SideEffect, Never>()
     
+    @Inject var nicknameValidateUseCase : NickNameValidateUseCase
+    
     init() {
         bindIntents()
         updateProgress()
@@ -233,7 +235,7 @@ class SignUpFeature: Feature {
         } else if nickname.count > 12 {
             state.isNicknameValid = false
             state.nicknameErrorMessage = "최대 12글자 이하로 입력해주세요"
-        } else if !NickNameValidator.isValid(nickname) {
+        } else if !nicknameValidateUseCase.execute(nickname) {
             state.isNicknameValid = false
             state.nicknameErrorMessage = "특수기호를 제거해주세요"
         } else {

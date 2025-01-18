@@ -11,10 +11,14 @@ import SwiftUI
 struct WithSuhyeon_iOSApp: App {
     @StateObject var router = RouterRegistry()
     
+    init() {
+        DIContainer.shared.registerDependencies()
+    }
+    
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $router.path) {
-                MainTabBar()
+                SignUpView()
                 .navigationDestination(for: Destination.self){ destination in
                     switch destination {
                     case .main : MainTabBar()

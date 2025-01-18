@@ -7,26 +7,15 @@
 
 import SwiftUI
 
-struct FindSuhyeonGenderSelectCell<TitleContent: View>: View {
-    var title: TitleContent
+struct FindSuhyeonGenderSelectCell: View {
     @Binding var selectedGender: String
-    
-    init(
-        @ViewBuilder title: () -> TitleContent,
-        selectedGender: Binding<String>
-    ) {
-        self.title = title()
+
+    init(selectedGender: Binding<String>) {
         self._selectedGender = selectedGender
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            title
-                .font(.body03R)
-                .foregroundColor(.gray400)
-                .padding(.top, 24)
-                .padding(.leading, 16)
-
             HStack(spacing: 16) {
                 WithSuhyeonSmallChip(
                     title: "남자",
@@ -52,8 +41,8 @@ struct FindSuhyeonGenderSelectCell<TitleContent: View>: View {
 
 #Preview {
     @State var selectedGender: String = "여자"
+    
     FindSuhyeonGenderSelectCell(
-        title: { Text("수현이의 성별을 선택해줘") },
         selectedGender: $selectedGender
     )
 }

@@ -18,15 +18,14 @@ struct PhoneAuthenticationView: View {
             
             WithSuhyeonTextField(
                 placeholder: "- 를 제외한 휴대폰 번호를 입력해주세요",
-                state: .editing,
+                state: signUpFeature.state.isExistsUser ? .error : .editing,
                 keyboardType: .numberPad,
                 maxLength: 11,
                 countable: false,
-                isFocused: true,
                 hasButton: true,
                 buttonText: signUpFeature.state.phoneAuthStep == .enterPhoneNumber ? "인증 요청" : "전송 완료",
                 buttonState: signUpFeature.state.isAuthButtonEnabled ? .enabled : .disabled,
-                errorText: "",
+                errorText: signUpFeature.state.isExistsUser ? "이미 가입된 번호입니다" : "",
                 onTapButton: {
                     withAnimation {
                         signUpFeature.send(.requestAuthCode)
@@ -34,7 +33,11 @@ struct PhoneAuthenticationView: View {
                 },
                 onChangeText: { text in
                     signUpFeature.send(.updatePhoneNumber(text))
-                }
+                },
+                onFocusChanged: { value in
+                    
+                },
+                isUnderMaxLength: true
             )
             
             if signUpFeature.state.phoneAuthStep == .enterAuthCode {
@@ -49,7 +52,6 @@ struct PhoneAuthenticationView: View {
                         keyboardType: .numberPad,
                         maxLength: 6,
                         countable: false,
-                        isFocused: true,
                         hasButton: false,
                         buttonText: "",
                         buttonState: .alert,
@@ -57,7 +59,11 @@ struct PhoneAuthenticationView: View {
                         onTapButton: {},
                         onChangeText: { text in
                             signUpFeature.send(.updateAuthCode(text))
-                        }
+                        },
+                        onFocusChanged: { value in
+                            
+                        },
+                        isUnderMaxLength: true
                     )
                 }
                 .transition(.move(edge: .top))

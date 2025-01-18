@@ -13,13 +13,14 @@ class SignUpFeature: Feature {
         var progress: Double = 0.0
         var isAgree: Bool = false
         var buttonState: WithSuhyeonButtonState = .disabled
-        // 핸드폰 인증
+        
         var phoneNumber: String = ""
         var authCode: String = ""
         var isAuthButtonEnabled: Bool = false
         var isAuthNumberCorrect: Bool = false
         var phoneAuthStep: PhoneAuthStep = .enterPhoneNumber
-        // 닉네임 검증
+        var isExistsUser: Bool = false
+        
         var nickname: String = ""
         var isNicknameValid: Bool = false
         var nicknameErrorMessage: String? = nil
@@ -109,24 +110,37 @@ class SignUpFeature: Feature {
     private func updateAuthButtonState() {
         switch state.phoneAuthStep {
         case .enterPhoneNumber:
-            state.isAuthButtonEnabled = state.phoneNumber.count >= 11
+            state.isAuthButtonEnabled = state.phoneNumber.count >= 11 && !state.isExistsUser
         default:
             state.isAuthButtonEnabled = false
         }
     }
     
     private func updatePhoneNumber(_ phoneNumber: String) {
+//        if(phoneNumber.count > 11) { return }
         state.phoneNumber = phoneNumber
+        state.isExistsUser = false
         updateAuthButtonState()
     }
     
     private func requestAuthCode() {
-        state.phoneAuthStep = .enterAuthCode
-        state.authCode = ""
-        state.isAuthButtonEnabled = false
+        let exists = validateExistsUser()
+        
+        if exists {
+            state.isExistsUser = true
+            state.isAuthButtonEnabled = false
+        } else {
+            state.isExistsUser = false
+            state.phoneAuthStep = .enterAuthCode
+            state.authCode = ""
+            state.isAuthButtonEnabled = false
+        }
         
         updateAuthButtonState()
-        updateButtonState()
+    }
+    
+    private func validateExistsUser() -> Bool {
+        return state.phoneNumber == "01012345678"
     }
     
     private func validateAuthCode() {

@@ -22,7 +22,6 @@ struct WriteNickNameView: View {
                 keyboardType: .default,
                 maxLength: 12,
                 countable: false,
-                isFocused: true,
                 hasButton: false,
                 buttonText: "",
                 buttonState: signUpFeature.state.isAuthButtonEnabled ? .enabled : .disabled,
@@ -30,6 +29,8 @@ struct WriteNickNameView: View {
                 onTapButton: {},
                 onChangeText: { text in
                     signUpFeature.send(.updateNickname(text))
+                },
+                onFocusChanged: { value in
                 }
             )
             Spacer()

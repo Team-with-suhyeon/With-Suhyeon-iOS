@@ -134,16 +134,27 @@ struct FindSuhyeonView: View {
                 placeholder: "나이를 선택해주세요",
                 errorMessage: "",
                 onTapDropdown: {
-                    isAgeModalPresented = true // 모달 표시
+                    isAgeModalPresented = true
                 }
             ) {
-                Text(input.selectedAgeRange.isEmpty ? "선택되지 않음" : input.selectedAgeRange)
+                displayTextForAgeSelection
             }
             .sheet(isPresented: $isAgeModalPresented) {
                 ageModalView()
-                    .presentationDetents([.height(598)]) // 모달 높이 설정
-                    .presentationDragIndicator(.hidden) // 드래그 핸들 표시
+                    .presentationDetents([.height(598)])
+                    .presentationDragIndicator(.hidden)
             }
+        }
+    }
+    
+    @ViewBuilder
+    private var displayTextForAgeSelection: some View {
+        if input.selectedAgeRange.isEmpty {
+            placeHolderText("선택되지 않음")
+        } else {
+            Text(input.selectedAgeRange)
+                .foregroundColor(.gray950)
+                .font(.body02R)
         }
     }
 
@@ -286,6 +297,12 @@ struct FindSuhyeonView: View {
 
     private func increaseProgress() {
         progress = min(progress + 100.0 / 7.0, 100.0)
+    }
+    
+    private func placeHolderText(_ text: String) -> some View {
+        Text(text)
+            .foregroundColor(.gray400)
+            .font(.body03R)
     }
 }
 

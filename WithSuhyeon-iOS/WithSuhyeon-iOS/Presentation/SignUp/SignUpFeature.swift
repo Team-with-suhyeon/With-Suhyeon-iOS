@@ -30,6 +30,15 @@ class SignUpFeature: Feature {
         
         var gender: String = ""
         var isGenderSelected: Bool = false
+        
+        var profileImageList: [(imageName: WithSuhyeonIcon, tag: String)] = [
+            (.icBookmark24 ,"Red"),
+            (.icHome24 ,"Red"),
+            (.icChat24,"Red"),
+            (.icMenu24 ,"Red")
+        ]
+        var selectedProfileImageIndex: Int? = nil
+        var isProfileImageSelected: Bool = false
     }
     
     enum PhoneAuthStep {
@@ -48,6 +57,7 @@ class SignUpFeature: Feature {
         case updateNickname(String)
         case selectedYear(Int)
         case selectedGender(String)
+        case selectedProfileImage(Int?)
     }
     
     enum SideEffect {
@@ -117,6 +127,8 @@ class SignUpFeature: Feature {
             selectedBirthYear(year)
         case .selectedGender(let gender):
             selectedGender(gender)
+        case .selectedProfileImage(let index):
+            updateProfileImage(index!)
         }
     }
     
@@ -265,5 +277,10 @@ class SignUpFeature: Feature {
     func selectedGender(_ gender: String){
         state.gender = gender
         state.isGenderSelected = true
+    }
+    
+    func updateProfileImage(_ index: Int){
+        state.selectedProfileImageIndex = index
+        state.isProfileImageSelected = true
     }
 }

@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "name=ic_find, Size=16.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

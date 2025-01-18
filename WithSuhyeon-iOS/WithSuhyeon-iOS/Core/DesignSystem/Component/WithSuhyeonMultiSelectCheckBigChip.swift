@@ -48,11 +48,11 @@ struct WithSuhyeonMultiSelectCheckBigChip: View {
             .padding(.vertical, 8)
             .background(
                 RoundedRectangle(cornerRadius: 20)
-                    .fill(isDisabled ? Color.gray100 : (isSelected ? Color.primary100 : Color.gray25))
+                    .fill(isDisabled ? Color.gray100 : (isSelected ? Color.primary50 : Color.gray25))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 20)
-                    .stroke(isSelected ? Color.primary500 : Color.gray100, lineWidth: 1)
+                    .stroke(isSelected ? Color.primary100 : Color.clear, lineWidth: 1)
             )
         }
         .buttonStyle(PlainButtonStyle())

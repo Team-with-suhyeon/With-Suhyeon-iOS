@@ -142,6 +142,16 @@ struct GalleryUploadView: View {
                         router.popBack()
                     }
                 }
+                .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidHideNotification)) { _ in
+                    DispatchQueue.main.async {
+                        feature.send(.keyboardDisappeared)
+                    }
+                }
+                .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidShowNotification)) { _ in
+                    DispatchQueue.main.async {
+                        feature.send(.keyboardAppeared)
+                    }
+                }
             }
             WithSuhyeonButton(title: "완료", buttonState: .enabled) {
                 

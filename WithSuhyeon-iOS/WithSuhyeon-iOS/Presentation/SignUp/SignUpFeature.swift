@@ -39,6 +39,12 @@ class SignUpFeature: Feature {
         ]
         var selectedProfileImageIndex: Int? = nil
         var isProfileImageSelected: Bool = false
+        
+        var mainLocationIndex: Int = -1
+        var subLocationIndex: Int? = nil
+        var isLocationSelected: Bool {
+            return subLocationIndex != nil
+        }
     }
     
     enum PhoneAuthStep {
@@ -58,6 +64,7 @@ class SignUpFeature: Feature {
         case selectedYear(Int)
         case selectedGender(String)
         case selectedProfileImage(Int?)
+        case updateLocation(Int, Int)
     }
     
     enum SideEffect {
@@ -129,6 +136,8 @@ class SignUpFeature: Feature {
             selectedGender(gender)
         case .selectedProfileImage(let index):
             updateProfileImage(index!)
+        case .updateLocation(let mainLocationIndex, let subLocationIndex):
+            updateLocation(mainLocationIndex, subLocationIndex)
         }
     }
     
@@ -230,6 +239,12 @@ class SignUpFeature: Feature {
             }
         case .nickNameView :
             newButtonState = state.isNicknameValid ? .enabled : .disabled
+        case .genderView :
+            newButtonState = state.isGenderSelected ? .enabled : .disabled
+        case .profileImageView :
+            newButtonState = state.isProfileImageSelected ? .enabled : .disabled
+        case .activeAreaView :
+            newButtonState = state.isLocationSelected ? .enabled : .disabled
         default:
             newButtonState = .enabled
         }
@@ -277,10 +292,25 @@ class SignUpFeature: Feature {
     func selectedGender(_ gender: String){
         state.gender = gender
         state.isGenderSelected = true
+        
+        updateButtonState()
     }
     
     func updateProfileImage(_ index: Int){
         state.selectedProfileImageIndex = index
         state.isProfileImageSelected = true
+        
+        updateButtonState()
+    }
+    
+    func updateLocation(_ mainIndex: Int, _ subIndex: Int) {
+        state.mainLocationIndex = mainIndex
+        
+        if mainIndex == 0 {
+            state.subLocationIndex = 0
+        } else{
+            state.subLocationIndex = subIndex
+        }
+        updateButtonState()
     }
 }

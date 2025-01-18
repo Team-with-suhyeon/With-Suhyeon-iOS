@@ -15,13 +15,19 @@ struct WithSuhyeon_iOSApp: App {
         WindowGroup {
             NavigationStack(path: $router.path) {
                 MainTabBar()
-                .navigationDestination(for: Destination.self){ destination in
-                    switch destination {
-                    case .main : MainTabBar()
-                    case .galleryUpload : GalleryUploadView()
-                    case .galleryDetail(id: let id) : GalleryDetailView(id: id)
+                    .navigationDestination(for: Destination.self){ destination in
+                        switch destination {
+                        case .main : MainTabBar()
+                        case .galleryUpload : GalleryUploadView()
+                            
+                                .navigationBarBackButtonHidden(true)
+                        case .galleryDetail(id: let id) : GalleryDetailView(id: id)
+                            
+                                .navigationBarBackButtonHidden(true)
+                        case .chatRoom : ChatRoomView()
+                                .navigationBarBackButtonHidden(true)
+                        }
                     }
-                }
             }
             .environmentObject(router)
         }

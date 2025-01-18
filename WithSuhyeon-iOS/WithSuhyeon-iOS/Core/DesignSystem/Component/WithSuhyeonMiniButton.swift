@@ -21,7 +21,7 @@ struct WithSuhyeonMiniButton: View {
     }
     
     var body: some View {
-        Button(action: {}) {
+        Button(action: onTapButton) {
             Text(title)
                 .foregroundColor(
                     buttonState == .disabled ? Color.gray300 : Color.primary500

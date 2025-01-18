@@ -13,11 +13,33 @@ class SignUpFeature: Feature {
         var progress: Double = 0.0
         var isAgree: Bool = false
         var buttonState: WithSuhyeonButtonState = .disabled
+        
+        var phoneNumber: String = ""
+        var authCode: String = ""
+        var isAuthButtonEnabled: Bool = false
+        var isAuthNumberCorrect: Bool = false
+        var phoneAuthStep: PhoneAuthStep = .enterPhoneNumber
+        var isExistsUser: Bool = false
+        
+        var nickname: String = ""
+        var isNicknameValid: Bool = false
+        var nicknameErrorMessage: String? = nil
+    }
+    
+    enum PhoneAuthStep {
+        case enterPhoneNumber
+        case enterAuthCode
+        case completed
     }
     
     enum Intent {
         case tapButton
         case tapBackButton
+        case updatePhoneNumber(String)
+        case requestAuthCode
+        case updateAuthCode(String)
+        case validateAuthCode
+        case updateNickname(String)
     }
     
     enum SideEffect {
@@ -29,6 +51,8 @@ class SignUpFeature: Feature {
     private var cancellables = Set<AnyCancellable>()
     private let intentSubject = PassthroughSubject<Intent, Never>()
     let sideEffectSubject = PassthroughSubject<SideEffect, Never>()
+    
+    @Inject var nicknameValidateUseCase : NickNameValidateUseCase
     
     init() {
         bindIntents()
@@ -63,10 +87,86 @@ class SignUpFeature: Feature {
     func handleIntent(_ intent: Intent) {
         switch intent {
         case .tapButton:
-            moveToNextStep()
+            switch currentContent {
+            case .authenticationView:
+                validateAuthCode()
+            default:
+                moveToNextStep()
+            }
         case .tapBackButton:
             moveToPreviousStep()
+        case .updatePhoneNumber(let phoneNumber):
+            updatePhoneNumber(phoneNumber)
+        case .requestAuthCode:
+            requestAuthCode()
+        case .updateAuthCode(let authCode):
+            updateAuthCode(authCode)
+        case .validateAuthCode:
+            validateAuthCode()
+        case .updateNickname(let nickname):
+            updateNickname(nickname)
+            
         }
+    }
+    
+    private func updateAuthButtonState() {
+        switch state.phoneAuthStep {
+        case .enterPhoneNumber:
+            state.isAuthButtonEnabled = state.phoneNumber.count >= 11 && !state.isExistsUser
+        default:
+            state.isAuthButtonEnabled = false
+        }
+    }
+    
+    private func updatePhoneNumber(_ phoneNumber: String) {
+        state.phoneNumber = phoneNumber
+        state.isExistsUser = false
+        updateAuthButtonState()
+    }
+    
+    private func requestAuthCode() {
+        let exists = validateExistsUser()
+        
+        if exists {
+            state.isExistsUser = true
+            state.isAuthButtonEnabled = false
+        } else {
+            state.isExistsUser = false
+            state.phoneAuthStep = .enterAuthCode
+            state.authCode = ""
+            state.isAuthButtonEnabled = false
+        }
+        
+        updateAuthButtonState()
+    }
+    
+    private func validateExistsUser() -> Bool {
+        return state.phoneNumber == "01012345678"
+    }
+    
+    private func validateAuthCode() {
+        if state.authCode == "123456" {
+            state.isAuthNumberCorrect = true
+            state.phoneAuthStep = .completed
+            moveToNextStep()
+        } else {
+            state.isAuthNumberCorrect = false
+        }
+        updateButtonState()
+    }
+    
+    private func updateAuthCode(_ authCode: String) {
+        if authCode.count > 6 {
+            return
+        }
+        
+        state.authCode = authCode
+        
+        if authCode.count < 6 {
+            state.isAuthNumberCorrect = true
+        }
+        
+        updateAuthButtonState()
     }
     
     private func moveToNextStep() {
@@ -95,8 +195,18 @@ class SignUpFeature: Feature {
         let newButtonState: WithSuhyeonButtonState
         
         switch currentContent {
-        case .termsOfServiceView:
+        case .termsOfServiceView :
             newButtonState = state.isAgree ? .enabled : .disabled
+        case .authenticationView :
+            if state.phoneAuthStep == .enterPhoneNumber {
+                newButtonState = .disabled
+            } else if state.phoneAuthStep == .enterAuthCode {
+                newButtonState = (state.authCode.count >= 6 && state.isAuthNumberCorrect) ? .enabled : .disabled
+            } else {
+                newButtonState = .disabled
+            }
+        case .nickNameView :
+            newButtonState = state.isNicknameValid ? .enabled : .disabled
         default:
             newButtonState = .enabled
         }
@@ -114,5 +224,25 @@ class SignUpFeature: Feature {
     
     func updateIsAgree(_ newValue: Bool) {
         state.isAgree = newValue
+    }
+    
+    private func updateNickname(_ nickname: String) {
+        state.nickname = nickname
+        
+        if nickname.count < 2 {
+            state.isNicknameValid = false
+            state.nicknameErrorMessage = nil
+        } else if nickname.count > 12 {
+            state.isNicknameValid = false
+            state.nicknameErrorMessage = "최대 12글자 이하로 입력해주세요"
+        } else if !nicknameValidateUseCase.execute(nickname) {
+            state.isNicknameValid = false
+            state.nicknameErrorMessage = "특수기호를 제거해주세요"
+        } else {
+            state.isNicknameValid = true
+            state.nicknameErrorMessage = nil
+        }
+        
+        updateButtonState()
     }
 }

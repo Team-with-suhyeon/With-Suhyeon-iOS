@@ -9,7 +9,6 @@ import SwiftUI
 
 struct MainTabBar : View {
     @EnvironmentObject var router: RouterRegistry
-    @State private var selectedTab: MainTab = .home
     
     init() {
         UITabBar.appearance().isHidden = true
@@ -17,7 +16,7 @@ struct MainTabBar : View {
     
     var body: some View {
         VStack(spacing: 0) {
-            TabView(selection: $selectedTab) {
+            TabView(selection: $router.selectedTab) {
                 HomeView()
                     .tag(MainTab.home)
                 FindSuhyeonView()
@@ -41,11 +40,11 @@ struct MainTabBar : View {
                         TabItem(
                             title: tab.title,
                             icon: tab.icon,
-                            titleColor: tab == selectedTab ? Color.primary700 : Color.gray800,
-                            iconColor: tab == selectedTab ? Color.primary500 : Color.black)
+                            titleColor: tab == router.selectedTab ? Color.primary700 : Color.gray800,
+                            iconColor: tab == router.selectedTab ? Color.primary500 : Color.black)
                     }
                     .onTapGesture {
-                        selectedTab = tab
+                        router.navigateTab(to: tab)
                     }
                     .frame(maxWidth: .infinity)
                 }

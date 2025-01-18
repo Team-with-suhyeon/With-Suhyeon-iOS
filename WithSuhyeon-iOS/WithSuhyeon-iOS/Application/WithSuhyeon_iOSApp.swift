@@ -22,13 +22,18 @@ struct WithSuhyeon_iOSApp: App {
                     .navigationDestination(for: Destination.self){ destination in
                         switch destination {
                         case .main : MainTabBar()
+                                .navigationBarBackButtonHidden(true)
                         case .galleryUpload : GalleryUploadView()
-                            
                                 .navigationBarBackButtonHidden(true)
                         case .galleryDetail(id: let id) : GalleryDetailView(id: id)
-                            
                                 .navigationBarBackButtonHidden(true)
                         case .chatRoom : ChatRoomView()
+                                .navigationBarBackButtonHidden(true)
+                        case .blockingAccountManagement: BlockingAccountManagement()
+                                .navigationBarBackButtonHidden(true)
+                        case .myPost: MyPost()
+                                .navigationBarBackButtonHidden(true)
+                        case .setInterest: SetInterest()
                                 .navigationBarBackButtonHidden(true)
                         }
                     }

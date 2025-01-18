@@ -18,7 +18,7 @@ struct WithSuhyeon_iOSApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $router.path) {
-                SignUpView()
+                MainTabBar()
                 .navigationDestination(for: Destination.self){ destination in
                     switch destination {
                     case .main : MainTabBar()

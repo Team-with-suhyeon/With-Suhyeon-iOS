@@ -34,6 +34,7 @@ class GalleryUploadFeature: Feature {
             (.icArchive24, "스키장"),
             (.icArchive24, "사회")]
         var selectedCategoryIndex: Int? = nil
+        var focusedTextField: String? = nil
     }
     
     enum Intent {
@@ -47,6 +48,8 @@ class GalleryUploadFeature: Feature {
         case writeTitle(String)
         case writeComment(String)
         case dismissSheet
+        case keyboardAppeared
+        case keyboardDisappeared
     }
     
     enum SideEffect {
@@ -93,9 +96,9 @@ class GalleryUploadFeature: Feature {
             }
             state.selectedCategory = index.map { [state.categories[$0].title] } ?? []
         case .focusOnTitleTextField:
-            sideEffectSubject.send(.scrollTo(tag: "title"))
+            state.focusedTextField = "title"
         case .focusOnCommentTextField:
-            sideEffectSubject.send(.scrollTo(tag: "comment"))
+            state.focusedTextField = "comment"
         case .tapCompleteButton:
             do {}
         case .writeTitle(let title):
@@ -104,6 +107,11 @@ class GalleryUploadFeature: Feature {
             updateComment(comment)
         case .dismissSheet:
             state.isCategorySelectSheetPresented = false
+        case .keyboardAppeared:
+            guard let focusedTextField = state.focusedTextField else { return }
+            sideEffectSubject.send(.scrollTo(tag: focusedTextField))
+        case .keyboardDisappeared:
+            state.focusedTextField = nil
         }
     }
     

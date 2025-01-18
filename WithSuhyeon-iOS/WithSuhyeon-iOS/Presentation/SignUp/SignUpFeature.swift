@@ -65,10 +65,11 @@ class SignUpFeature: Feature {
         case selectedGender(String)
         case selectedProfileImage(Int?)
         case updateLocation(Int, Int)
+        case completeSignUp
     }
     
     enum SideEffect {
-        
+        case navigateToSignUpComplete
     }
     
     @Published private(set) var state = State()
@@ -138,6 +139,8 @@ class SignUpFeature: Feature {
             updateProfileImage(index!)
         case .updateLocation(let mainLocationIndex, let subLocationIndex):
             updateLocation(mainLocationIndex, subLocationIndex)
+        case .completeSignUp:
+            sideEffectSubject.send(.navigateToSignUpComplete)
         }
     }
     

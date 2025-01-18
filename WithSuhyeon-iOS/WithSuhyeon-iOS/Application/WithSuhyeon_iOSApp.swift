@@ -35,6 +35,8 @@ struct WithSuhyeon_iOSApp: App {
                                 .navigationBarBackButtonHidden(true)
                         case .setInterest: SetInterest()
                                 .navigationBarBackButtonHidden(true)
+                        case .signUpComplete: SignUpCompleteView()
+                                .navigationBarBackButtonHidden(true)
                         }
                     }
             }

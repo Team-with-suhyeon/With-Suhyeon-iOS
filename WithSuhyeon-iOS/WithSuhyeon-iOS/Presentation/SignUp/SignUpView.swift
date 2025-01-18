@@ -35,11 +35,22 @@ struct SignUpView: View {
                 buttonState: signUpFeature.state.buttonState,
                 clickable: signUpFeature.state.buttonState == .enabled,
                 onTapButton: {
-                    signUpFeature.send(.tapButton)
+                    if signUpFeature.currentContent == .activeAreaView {
+                        signUpFeature.send(.completeSignUp)
+                    } else {
+                        signUpFeature.send(.tapButton)
+                    }
                 }
             )
             .padding(.horizontal, 16)
         }.environmentObject(signUpFeature)
+            .onReceive(signUpFeature.sideEffectSubject) { sideEffect in
+                switch sideEffect {
+                case .navigateToSignUpComplete:
+                    router.navigate(to: .signUpComplete)
+                }
+                
+            }
     }
 }
 

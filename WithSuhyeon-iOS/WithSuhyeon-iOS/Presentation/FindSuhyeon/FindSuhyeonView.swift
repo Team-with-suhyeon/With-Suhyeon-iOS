@@ -12,7 +12,7 @@ struct FindSuhyeonView: View {
     @State private var stateTitle = FindSuhyeonFeature.StateTitle()
     @State private var selectedGender: String = ""
     @State private var progress: Double = 100.0 / 7.0
-    
+
     var body: some View {
         VStack {
             HStack {
@@ -23,9 +23,9 @@ struct FindSuhyeonView: View {
                     .padding(.trailing, 10)
             }
             .padding(.bottom, 8)
-            
+
             WithSuhyeonProgressBar(progress: progress)
-            
+
             ScrollView {
                 VStack {
                     ForEach(FindSuhyeonFeature.ProgressState.allCases.reversed(), id: \.self) { state in
@@ -41,10 +41,13 @@ struct FindSuhyeonView: View {
                 }
                 .animation(.easeInOut, value: stateTitle.progressState)
             }
-            
+
             Button(action: {
-                stateTitle.progressState = FindSuhyeonFeature.nextProgressState(current: stateTitle.progressState)
-                FindSuhyeonFeature.reducer(input: input, state: &stateTitle)
+                withAnimation {
+                    stateTitle.progressState = FindSuhyeonFeature.nextProgressState(current: stateTitle.progressState)
+                    FindSuhyeonFeature.reducer(input: input, state: &stateTitle)
+                    increaseProgress()
+                }
             }) {
                 Text("다음 단계")
                     .frame(maxWidth: .infinity)
@@ -57,7 +60,7 @@ struct FindSuhyeonView: View {
         }
         .padding()
     }
-    
+
     @ViewBuilder
     private func viewForState(_ state: FindSuhyeonFeature.ProgressState) -> some View {
         switch state {
@@ -67,7 +70,7 @@ struct FindSuhyeonView: View {
                 isHighlighted: state == stateTitle.progressState
             )
             genderSelectionView
-            
+
         case .ageSelection:
             selectionView(
                 title: stateTitle.ageTitle,
@@ -100,7 +103,7 @@ struct FindSuhyeonView: View {
             gratuityView
         }
     }
-    
+
     private func selectionView(title: String, isHighlighted: Bool) -> some View {
         VStack(alignment: .leading) {
             HStack {
@@ -114,7 +117,7 @@ struct FindSuhyeonView: View {
             }
         }
     }
-    
+
     private var genderSelectionView: some View {
         VStack(alignment: .leading) {
             FindSuhyeonGenderSelectCell(
@@ -122,7 +125,7 @@ struct FindSuhyeonView: View {
             )
         }
     }
-    
+
     private var ageSelectionView: some View {
         VStack(alignment: .leading) {
             FindSuhyeonDropdownCell(
@@ -137,7 +140,7 @@ struct FindSuhyeonView: View {
             }
         }
     }
-    
+
     private var locationSelectionView: some View {
         VStack(alignment: .leading) {
             FindSuhyeonDropdownCell(
@@ -152,7 +155,7 @@ struct FindSuhyeonView: View {
             }
         }
     }
-    
+
     private var requestsSelectionView: some View {
         VStack(alignment: .leading) {
             FindSuhyeonDropdownCell(
@@ -163,7 +166,7 @@ struct FindSuhyeonView: View {
                 }
             ) {
                 HStack {
-                    ForEach(input.selectedRequests, id: \ .self) { request in
+                    ForEach(input.selectedRequests, id: \.self) { request in
                         WithSuhyeonCategoryChip(
                             title: request
                         )
@@ -173,7 +176,7 @@ struct FindSuhyeonView: View {
             .transition(.move(edge: .top).combined(with: .opacity))
         }
     }
-    
+
     private var dateSelectionView: some View {
         VStack(alignment: .leading) {
             FindSuhyeonDropdownCell(
@@ -188,7 +191,7 @@ struct FindSuhyeonView: View {
             }
         }
     }
-    
+
     private var gratuityView: some View {
         VStack(alignment: .leading) {
             ZStack {
@@ -208,7 +211,7 @@ struct FindSuhyeonView: View {
                 )
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
-                
+
                 HStack {
                     Spacer()
                     Text("원")
@@ -222,7 +225,12 @@ struct FindSuhyeonView: View {
         }
         .transition(.move(edge: .top).combined(with: .opacity))
     }
+
+    private func increaseProgress() {
+        progress = min(progress + 100.0 / 7.0, 100.0)
+    }
 }
+
 
 
 #Preview {

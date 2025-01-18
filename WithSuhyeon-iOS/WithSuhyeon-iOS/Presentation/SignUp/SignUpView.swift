@@ -28,7 +28,7 @@ struct SignUpView: View {
                 .padding(.leading, 16)
                 .padding(.vertical, 20)
             
-            SignUpContent(selectedTab: $signUpFeature.currentContent)
+            SignUpContent(selectedTab: signUpFeature.currentContent)
             
             WithSuhyeonButton(
                 title: "다음",

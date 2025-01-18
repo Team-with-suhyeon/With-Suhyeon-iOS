@@ -8,5 +8,10 @@
 import Foundation
 
 public enum Configuration {
-    static let baseURL: String = ""
+    static let baseURL: String = {
+        guard let url = Bundle.main.infoDictionary?["BASE_URL"] as? String else {
+            fatalError("No Configuration Found")
+        }
+        return url
+    }()
 }

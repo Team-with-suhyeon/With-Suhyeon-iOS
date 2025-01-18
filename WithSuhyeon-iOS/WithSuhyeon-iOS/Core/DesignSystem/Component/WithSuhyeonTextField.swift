@@ -22,6 +22,7 @@ struct WithSuhyeonTextField: View {
     let onTapButton: () -> Void
     let onChangeText: (String) -> Void
     let onFocusChanged: (Bool) -> Void
+    let isUnderMaxLength: Bool
     
     init(
         placeholder: String,
@@ -35,7 +36,8 @@ struct WithSuhyeonTextField: View {
         errorText: String,
         onTapButton: @escaping () -> Void = {},
         onChangeText: @escaping (String) -> Void,
-        onFocusChanged: @escaping (Bool) -> Void
+        onFocusChanged: @escaping (Bool) -> Void,
+        isUnderMaxLength: Bool = false
     ) {
         self.placeholder = placeholder
         self.state = state
@@ -49,6 +51,7 @@ struct WithSuhyeonTextField: View {
         self.onTapButton = onTapButton
         self.onChangeText = onChangeText
         self.onFocusChanged = onFocusChanged
+        self.isUnderMaxLength = isUnderMaxLength
     }
     
     @State private var text: String = ""
@@ -97,7 +100,11 @@ struct WithSuhyeonTextField: View {
                 }
                 
                 TextField(placeholder, text: $text)
-                    .onChange(of: text, perform: onChangeText)
+                    .onChange(of: text) { value in
+                        let newValue = isUnderMaxLength ? String(value.prefix(maxLength)) : value
+                        onChangeText(newValue)
+                        text = newValue
+                    }
                     .focused($isFocused)
                     .keyboardType(keyboardType)
                     .font(.body03R)

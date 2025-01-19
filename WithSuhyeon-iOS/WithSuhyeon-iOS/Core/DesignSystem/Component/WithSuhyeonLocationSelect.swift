@@ -10,14 +10,14 @@ import SwiftUI
 struct WithSuhyeonLocationSelect: View {
     let withSuhyeonLocation: [WithSuhyeonLocation]
     let selectedMainLocationIndex: Int
-    let selectedSubLocationIndex: Int
+    let selectedSubLocationIndex: Int?
     let onTabSelected: (Int, Int) -> Void
     
     var body: some View {
         HStack(spacing: 0) {
             ScrollView {
                 VStack(spacing: 0) {
-                    ForEach(withSuhyeonLocation.indices) { index in
+                    ForEach(withSuhyeonLocation.indices, id:\.self) { index in
                         ZStack {
                             Text(withSuhyeonLocation[index].location)
                                 .font(.body02SB)
@@ -43,33 +43,35 @@ struct WithSuhyeonLocationSelect: View {
             }
             Divider()
                 .foregroundColor(.gray100)
-            ScrollView {
-                VStack(alignment: .leading, spacing: 0) {
-                    ForEach(withSuhyeonLocation[selectedMainLocationIndex].subLocation.indices) { index in
-                        ZStack(alignment: .leading) {
-                            HStack {
-                                Text(withSuhyeonLocation[selectedMainLocationIndex].subLocation[index])
-                                    .font(.body03SB)
-                                    .foregroundColor(.gray500)
-                                Spacer()
+            if selectedMainLocationIndex == -1 { Spacer() } else {
+                
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: 0) {
+                        ForEach(withSuhyeonLocation[selectedMainLocationIndex].subLocation.indices, id:\.self) { index in
+                            ZStack(alignment: .leading) {
+                                HStack {
+                                    Text(withSuhyeonLocation[selectedMainLocationIndex].subLocation[index])
+                                        .font(.body03SB)
+                                        .foregroundColor(.gray500)
+                                    Spacer()
+                                }
+                                .padding(.leading, 12)
+                                .padding(.vertical, 10)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(selectedSubLocationIndex == index ? Color.primary50 : Color.clear)
+                                )
+                                .frame(width: .infinity)
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    onTabSelected(selectedMainLocationIndex, index)
+                                }
                             }
-                            .padding(.leading, 12)
-                            .padding(.vertical, 10)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(selectedSubLocationIndex == index ? Color.primary50 : Color.clear)
-                            )
-                            .frame(width: .infinity)
-                            .contentShape(Rectangle())
-                            .onTapGesture {
-                                onTabSelected(selectedMainLocationIndex, index)
-                            }
+                            .frame(height: 50)
+                            .padding(.leading, 8)
+                            .padding(.trailing, 16)
                         }
-                        .frame(height: 50)
-                        .padding(.leading, 8)
-                        .padding(.trailing, 16)
-                    }
-                }
+                    }}
             }
         }.frame(height: .infinity)
     }

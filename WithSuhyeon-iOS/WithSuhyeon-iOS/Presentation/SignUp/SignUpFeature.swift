@@ -31,12 +31,30 @@ class SignUpFeature: Feature {
         var gender: String = ""
         var isGenderSelected: Bool = false
         
-        var profileImageList: [(imageName: WithSuhyeonIcon, tag: String)] = [
-            (.icBookmark24 ,"Red"),
-            (.icHome24 ,"Red"),
-            (.icChat24,"Red"),
-            (.icMenu24 ,"Red")
+        var profileImages: [ProfileImage] = [
+            ProfileImage(
+                beforeImage: .imgBlueSumaBefore,
+                defaultImage: .imgBlueSuma,
+                selectedImage: .imgBlueSumaBorder
+            ),
+            ProfileImage(
+                beforeImage: .imgPurpleSumaBefore,
+                defaultImage: .imgPurpleSuma,
+                selectedImage: .imgPurpleSumaBorder
+            ),
+            ProfileImage(
+                beforeImage: .imgRedSumBefore,
+                defaultImage: .imgRedSuma,
+                selectedImage: .imgRedSumaBorder
+            ),
+            ProfileImage(
+                beforeImage: .imgGreenSumaBefore,
+                defaultImage: .imgGreenSuma,
+                selectedImage: .imgGreenSumaBorder
+            )
         ]
+        
+        var profileImageStates: [ProfileImageState] = [.unselected, .unselected, .unselected, .unselected]
         var selectedProfileImageIndex: Int? = nil
         var isProfileImageSelected: Bool = false
         
@@ -47,10 +65,22 @@ class SignUpFeature: Feature {
         }
     }
     
+    struct ProfileImage {
+        let beforeImage: WithSuhyeonImage
+        let defaultImage: WithSuhyeonImage
+        let selectedImage: WithSuhyeonImage
+    }
+    
     enum PhoneAuthStep {
         case enterPhoneNumber
         case enterAuthCode
         case completed
+    }
+    
+    enum ProfileImageState {
+        case unselected
+        case selected
+        case confirmed
     }
     
     enum Intent {
@@ -63,7 +93,8 @@ class SignUpFeature: Feature {
         case updateNickname(String)
         case selectedYear(Int)
         case selectedGender(String)
-        case selectedProfileImage(Int?)
+        case selectedProfileImage(Int)
+        case confirmProfileImage
         case updateLocation(Int, Int)
         case completeSignUp
     }
@@ -136,7 +167,9 @@ class SignUpFeature: Feature {
         case .selectedGender(let gender):
             selectedGender(gender)
         case .selectedProfileImage(let index):
-            updateProfileImage(index!)
+            updateProfileImageState(selectedIndex: index)
+        case .confirmProfileImage:
+            confirmProfileImage()
         case .updateLocation(let mainLocationIndex, let subLocationIndex):
             updateLocation(mainLocationIndex, subLocationIndex)
         case .completeSignUp:
@@ -299,11 +332,20 @@ class SignUpFeature: Feature {
         updateButtonState()
     }
     
-    func updateProfileImage(_ index: Int){
-        state.selectedProfileImageIndex = index
+    func updateProfileImageState(selectedIndex: Int) {
+        state.profileImageStates = state.profileImageStates.map { _ in .unselected }
+        
+        state.profileImageStates[selectedIndex] = .selected
+        state.selectedProfileImageIndex = selectedIndex
         state.isProfileImageSelected = true
         
         updateButtonState()
+    }
+    
+    func confirmProfileImage() {
+        if let selectedIndex = state.selectedProfileImageIndex {
+            state.profileImageStates[selectedIndex] = .confirmed
+        }
     }
     
     func updateLocation(_ mainIndex: Int, _ subIndex: Int) {

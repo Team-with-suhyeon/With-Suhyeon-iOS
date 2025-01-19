@@ -24,7 +24,7 @@ public protocol Router {
 }
 
 public enum Destination: Hashable {
-    case main
+    case main(fromSignUp: Bool)
     case galleryUpload
     case galleryDetail(id: Int)
     case chatRoom

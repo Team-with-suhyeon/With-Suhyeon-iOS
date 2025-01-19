@@ -9,20 +9,20 @@ import SwiftUI
 
 struct GenderButton: View {
     let gender: String
-    let icon: WithSuhyeonIcon?
+    let image: WithSuhyeonImage?
     let isSelected: Bool
     let onTap: () -> Void
     
-    init(gender: String, icon: WithSuhyeonIcon? = nil, isSelected: Bool = false, onTap: @escaping () -> Void) {
+    init(gender: String, image: WithSuhyeonImage, isSelected: Bool = false, onTap: @escaping () -> Void) {
         self.gender = gender
-        self.icon = icon
+        self.image = image
         self.isSelected = isSelected
         self.onTap = onTap
     }
     
     var body: some View {
         VStack(spacing: 8) {
-            Image(icon: .icChat24)
+            Image(image: image!)
                 .renderingMode(.template)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
@@ -53,13 +53,13 @@ struct GenderButton: View {
     HStack {
         GenderButton(
             gender: "남자",
-            icon: .icBookmark24,
+            image: .imgBoySuma,
             isSelected: false,
             onTap: { }
         )
         GenderButton(
             gender: "여자",
-            icon: .icTrash24,
+            image: .imgBoySuma,
             isSelected: true,
             onTap: { }
         )

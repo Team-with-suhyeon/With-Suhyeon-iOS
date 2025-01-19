@@ -9,9 +9,13 @@ import SwiftUI
 
 struct MainTabBar : View {
     @EnvironmentObject var router: RouterRegistry
+    @StateObject var feature = MainTabBarFeature()
     
-    init() {
+    @State var fromSignup: Bool = false
+    init(fromSignup: Bool) {
         UITabBar.appearance().isHidden = true
+        
+        self._fromSignup = State(initialValue: fromSignup)
     }
     
     var body: some View {
@@ -52,9 +56,35 @@ struct MainTabBar : View {
             .background(Color.white)
             .padding(.top, 10)
         }
+        .onAppear {
+            if fromSignup {
+                feature.send(.openBlockingAccountSheet)
+            }
+        }
+        .withSuhyeonSheet(
+            isPresented: feature.state.blockingAccountSheetIsPresent,
+            title: "차단하실 계정이 있을까요?",
+            description: "차단하고자하는 전화번호를 입력해주시면, 앱내에서 숨기기\n처리됩니다. 마이페이지에서 추가할 수 있습니다",
+            sheetContent: {
+                Image(image: .imgBlock)
+            },
+            onDismiss: {
+                feature.send(.dismissBlockingAccountSheet)
+            },
+            onTapButton: {
+                feature.send(.tapNavigateToBlockingAccountButton)
+            }
+        )
+        .onReceive(feature.sideEffectSubject) { sideEffect in
+            switch sideEffect {
+                
+            case .navigateToBlockingAccountManagement:
+                router.navigate(to: .blockingAccountManagement)
+            }
+        }
     }
 }
 
 #Preview {
-    MainTabBar()
+ //   MainTabBar(true)
 }

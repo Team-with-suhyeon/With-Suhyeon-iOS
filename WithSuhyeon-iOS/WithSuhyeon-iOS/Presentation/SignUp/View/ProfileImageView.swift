@@ -13,49 +13,84 @@ struct ProfileImageView: View {
     var body: some View {
         VStack(spacing: 60) {
             if let selectedIndex = signUpFeature.state.selectedProfileImageIndex {
-                Image(icon: signUpFeature.state.profileImageList[selectedIndex].imageName)
+                Image(image: signUpFeature.state.profileImages[selectedIndex].defaultImage)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 180, height: 180)
                     .background(Circle().fill(Color.gray.opacity(0.2)))
             } else {
-                Circle()
-                    .fill(Color.gray100)
+                Image(image: .imgProfileDefault)
                     .frame(width: 180, height: 180)
             }
             
             
             HStack(spacing: 8){
-                ForEach(0..<signUpFeature.state.profileImageList.count, id: \.self){ index in
+                ForEach(0..<signUpFeature.state.profileImages.count, id: \.self) { index in
                     Button(action: {
                         withAnimation(.easeInOut){
-                            signUpFeature.send(.selectedProfileImage(index))
+                            signUpFeature.updateProfileImageState(selectedIndex: index)
                         }
                     }){
-                        Image(icon: signUpFeature.state.profileImageList[index].imageName)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 76, height: 76)
-                            .background(
-                                Circle()
-                                    .fill(Color.gray.opacity(0.2))
-                            )
-                            .overlay(
-                                Circle()
-                                    .stroke(
-                                        signUpFeature.state.selectedProfileImageIndex == index ? Color.gray900 : Color.clear,
-                                        lineWidth: 1
-                                    )
-                            )
+                        switch signUpFeature.state.profileImageStates[index] {
+                        case .unselected:
+                            Image(image: signUpFeature.state.profileImages[index].beforeImage)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 76, height: 76)
+                                .background(
+                                    Circle()
+                                        .fill(Color.gray.opacity(0.2))
+                                )
+                        case .selected:
+                            Image(image: signUpFeature.state.profileImages[index].selectedImage)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 76, height: 76)
+                                .background(
+                                    Circle()
+                                        .fill(Color.gray.opacity(0.2))
+                                )
+
+                        case .confirmed:
+                            Image(image: signUpFeature.state.profileImages[index].defaultImage)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 76, height: 76)
+                                .background(
+                                    Circle()
+                                        .fill(Color.gray.opacity(0.2))
+                                )
+                        }
+                        
+                        
                     }
-                    
                 }
-                
             }
             .padding(.horizontal, 23)
             Spacer()
         }
         .padding(.top, 63)
+    }
+}
+
+struct ProfileImage: View {
+    let selectedImage: WithSuhyeonImage
+    let beforeImage: WithSuhyeonImage
+    let defaultImage: WithSuhyeonImage
+    let state: SignUpFeature.ProfileImageState
+    
+    var body: some View {
+        ZStack {
+        }
+        
+        Image(image: selectedImage)
+            .resizable()
+            .scaledToFit()
+            .frame(width: 76, height: 76)
+            .background(
+                Circle()
+                    .fill(Color.gray.opacity(0.2))
+            )
     }
 }
 

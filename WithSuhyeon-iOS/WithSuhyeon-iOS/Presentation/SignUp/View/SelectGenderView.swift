@@ -15,7 +15,7 @@ struct SelectGenderView: View {
             HStack(spacing: 15) {
                 GenderButton(
                     gender: "남자",
-                    icon: .icArchive24,
+                    image: .imgBoySuma,
                     isSelected: signUpFeature.state.gender == "남자",
                     onTap: {
                         withAnimation(.easeInOut) {
@@ -25,7 +25,7 @@ struct SelectGenderView: View {
                 )
                 GenderButton(
                     gender: "여자",
-                    icon: .icArchive24,
+                    image: .imgGirlSuma,
                     isSelected: signUpFeature.state.gender == "여자",
                     onTap: {
                         withAnimation(.easeInOut) {

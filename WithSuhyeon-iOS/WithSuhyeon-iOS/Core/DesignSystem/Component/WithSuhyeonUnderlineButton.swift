@@ -11,6 +11,7 @@ struct WithSuhyeonUnderlineButton: View {
     let title: String
     let onTap: () -> Void
     
+    
     var body: some View {
         Button(action: {
             onTap()
@@ -25,7 +26,6 @@ struct WithSuhyeonUnderlineButton: View {
                     .frame(height: 1)
                     .padding(.top, -2)
             }
-            .frame(width: 25)
         }
         .buttonStyle(PlainButtonStyle())
     }

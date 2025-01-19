@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SignUpCompleteView: View {
     @EnvironmentObject private var router: RouterRegistry
+    @State private var showBottomSheet: Bool = false
     
     var body: some View {
         VStack(alignment: .center, spacing: 25){
@@ -23,11 +24,12 @@ struct SignUpCompleteView: View {
             Spacer()
             
             WithSuhyeonButton(title: "완료", buttonState: .enabled, onTapButton: {
-                router.navigate(to: .main)
+                router.navigate(to: .main(fromSignUp: true))
             })
             .padding(.horizontal, 8)
         }
         .padding(.top, 168)
+
     }
 }
 

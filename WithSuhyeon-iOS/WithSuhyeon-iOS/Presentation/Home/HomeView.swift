@@ -10,6 +10,11 @@ import SwiftUI
 struct HomeView : View {
     @State var money: Int = 1000
     let moneyTarget: Int = 4737
+    
+    @EnvironmentObject private var router: RouterRegistry
+    @State private var showBottomSheet: Bool = false
+    @State private var isButtonEnabled: Bool = true
+    
     init() {
         UIScrollView.appearance().bounces = true
     }
@@ -146,7 +151,7 @@ struct HomeView : View {
                     }
                 }
             }
-                
+            
         }
         .frame(maxHeight: .infinity)
         .onAppear {
@@ -163,7 +168,12 @@ struct HomeView : View {
                     }
                 }
             }
+            
+            if case let .main(fromSignUp) = router.currentDestination(), fromSignUp {
+                showBottomSheet = true
+            }
         }
+        
     }
 }
 

@@ -12,5 +12,17 @@ extension DIContainer {
         DIContainer.shared.register(type: NickNameValidateUseCase.self) {
             NickNameValidateUseCase()
         }
+        
+        DIContainer.shared.register(type: ChatApiProtocol.self) {
+            ChatAPI()
+        }
+        
+        DIContainer.shared.register(type: ChatRepository.self) {
+            DefaultChatRepository()
+        }
+        
+        DIContainer.shared.register(type: ChatSocketProtocol.self) {
+            ChatSocket()
+        }
     }
 }

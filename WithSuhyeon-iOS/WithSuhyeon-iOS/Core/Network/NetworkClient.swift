@@ -22,7 +22,7 @@ final class NetworkClient: NetworkRequestable {
             .session
             .request(target)
             .validate()
-            .publishDecodable(type: T.self)
+            .publishDecodable(type: ResponseData<T>.self)
             .tryMap { response in
                 guard let statusCode = response.response?.statusCode,
                       let data = response.data else {
@@ -33,7 +33,7 @@ final class NetworkClient: NetworkRequestable {
                 case 200...299:
                     if let decodedData = response.value {
                         print(decodedData)
-                        return decodedData
+                        return decodedData.result
                     } else {
                         throw NetworkError.parsingError
                     }

@@ -11,4 +11,8 @@ extension Image {
     init(icon: WithSuhyeonIcon){
         self.init(icon.rawValue)
     }
+    
+    init(image: WithSuhyeonImage){
+        self.init(image.rawValue)
+    }
 }

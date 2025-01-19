@@ -17,6 +17,10 @@ public class RouterRegistry: Router, ObservableObject {
         path.append(destination)
     }
     
+    public func navigateTab(to tab: MainTab) {
+        selectedTab = tab
+    }
+    
     public func popBack() {
         path.removeLast()
     }

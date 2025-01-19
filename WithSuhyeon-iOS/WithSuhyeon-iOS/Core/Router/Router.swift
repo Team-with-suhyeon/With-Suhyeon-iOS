@@ -28,4 +28,7 @@ public enum Destination: Hashable {
     case galleryUpload
     case galleryDetail(id: Int)
     case chatRoom
+    case blockingAccountManagement
+    case myPost
+    case setInterest
 }

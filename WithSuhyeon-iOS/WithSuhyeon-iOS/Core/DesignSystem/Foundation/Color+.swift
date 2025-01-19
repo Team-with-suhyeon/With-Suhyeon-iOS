@@ -81,4 +81,8 @@ public extension Color {
     static let red02 = Color(hex: "#FFA59D")
     
     static let red03 = Color(hex: "#FEF3F2")
+    
+    static let homeGradientStart = Color(hex: "#4703B5")
+    
+    static let homeGradientEnd = Color(hex: "#207AFC")
 }

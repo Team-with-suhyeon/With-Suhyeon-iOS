@@ -10,22 +10,21 @@ import Combine
 
 class ChatRoomFeature: Feature {
     struct State {
-        var messages: [ChatMessage] =
-        [
-            ChatMessage(imageUrl: "https://reqres.in/img/faces/7-image.jpg", message: "수현이 찾아요", isMine: false, time: "오후 8:40", date: "2025년 1월 2일"),
-            ChatMessage(imageUrl: "https://reqres.in/img/faces/7-image.jpg", message: "안녕하세요 강남역에서 만나실래요", isMine: true, time: "오후 8:41", date: "2025년 1월 2일"),
-            ChatMessage(imageUrl: "https://reqres.in/img/faces/7-image.jpg", message: "8시 어떠신가요?", isMine: true, time: "오후 8:42", date: "2025년 1월 2일"),
-            ChatMessage(imageUrl: "https://reqres.in/img/faces/7-image.jpg", message: "7시요", isMine: false, time: "오후 8:43", date: "2025년 1월 3일"),
-            ChatMessage(imageUrl: "https://reqres.in/img/faces/7-image.jpg", message: "꺼지쇼", isMine: true, time: "오후 8:44", date: "2025년 1월 3일"),
-            ChatMessage(imageUrl: "https://reqres.in/img/faces/7-image.jpg", message: "넵", isMine: false, time: "오후 8:45", date: "2025년 1월 4일"),
-        ]
+        var messages: [Message] = []
         
-        var groupedMessages: [(String, [ChatMessage])] {
+        var groupedMessages: [(String, [Message])] {
             Dictionary(grouping: messages) { $0.date }
                 .sorted { $0.key < $1.key }
         }
         
         var inputText: String = ""
+        
+        var ownerChatRoomID: String = ""
+        var peerChatRoomID: String = ""
+        var ownerID: Int = 0
+        var peerID: Int = 0
+        var postID: Int = 0
+        var nickname: String = ""
     }
     
     enum Intent {
@@ -43,8 +42,11 @@ class ChatRoomFeature: Feature {
         case navigateToPromise
         case scrollTo(tag: String)
         case scrollToLast
+        case scrollToLastWithOutAnimation
         case keyboardDismiss
     }
+    
+    @Inject var chatRepository: ChatRepository
     
     @Published private(set) var state = State()
     private var cancellables = Set<AnyCancellable>()
@@ -52,7 +54,14 @@ class ChatRoomFeature: Feature {
     private let intentSubject = PassthroughSubject<Intent, Never>()
     let sideEffectSubject = PassthroughSubject<SideEffect, Never>()
     
-    init() {
+    init(ownerChatRoomId: String, peerChatRoomId: String, ownerID: Int, peerID: Int, postID: Int, nickname: String) {
+        state.ownerChatRoomID = ownerChatRoomId
+        state.peerChatRoomID = peerChatRoomId
+        state.ownerID = ownerID
+        state.peerID = peerID
+        state.postID = postID
+        state.nickname = nickname
+        
         bindIntents()
     }
     
@@ -72,6 +81,7 @@ class ChatRoomFeature: Feature {
         case .write(let inputText):
             updateInputText(input: inputText)
         case .tapBackButton:
+            exitChatRoom()
             sideEffectSubject.send(.popBack)
         case .tapPromiseButton:
             sideEffectSubject.send(.navigateToPromise)
@@ -93,9 +103,74 @@ class ChatRoomFeature: Feature {
         state.inputText = input
     }
     
+    func joinChatRoom() {
+        chatRepository.patchJoinChatRooms(id: state.ownerChatRoomID){ [weak self] result in
+            if result {
+                print("성공")
+            }
+        }
+    }
+    
+    func exitChatRoom() {
+        chatRepository.patchExitChatRooms(id: state.ownerChatRoomID){ [weak self] result in
+            if result {
+                print("성공")
+            }
+        }
+    }
+    
+    func getMessages() {
+        chatRepository.getChatMessages(id: state.ownerChatRoomID){ [weak self] result in
+            self?.state.messages = result
+            self?.sideEffectSubject.send(.scrollToLastWithOutAnimation)
+        }
+    }
+    
     func addMessages(){
-        state.messages.append(ChatMessage(imageUrl: "https://reqres.in/img/faces/7-image.jpg", message: state.inputText, isMine: true, time: "오후 8:45", date: "2025년 1월 4일"))
+        state.messages.append(Message(message: state.inputText, isMine: true, date: getCurrentDate(), time: getCurrentTime()))
+        let chatRequest =
+        Send(
+            ownerChatRoomId: state.ownerChatRoomID,
+            peerChatRoomId: state.peerChatRoomID,
+            senderID: state.ownerID,
+            receiverID: state.peerID,
+            postID: state.postID,
+            content: state.inputText,
+            type: "MESSAGE"
+        )
+        
+        chatRepository.sendChat(message: chatRequest)
+        
         state.inputText = ""
         sideEffectSubject.send(.scrollToLast)
+    }
+    
+    func getCurrentTime() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "a h:mm"
+        formatter.locale = Locale(identifier: "ko_KR")
+        return formatter.string(from: Date())
+    }
+    
+    func getCurrentDate() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy년 M월 d일"
+        formatter.locale = Locale(identifier: "ko_KR")
+        return formatter.string(from: Date())
+    }
+    
+    func chatRoomPublishing() {
+        chatRepository.receivcChat()
+            .sink { completion in
+                switch completion {
+                case .finished:
+                    print("finish")
+                case .failure(let error):
+                    print(error)
+                }
+            } receiveValue: { [weak self] result in
+                self?.state.messages.append(result)
+            }
+            .store(in: &cancellables)
     }
 }

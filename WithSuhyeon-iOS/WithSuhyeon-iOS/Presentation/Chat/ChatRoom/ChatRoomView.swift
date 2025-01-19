@@ -10,12 +10,24 @@ import SwiftUI
 struct ChatRoomView: View {
     
     @EnvironmentObject var router: RouterRegistry
-    @StateObject var feature = ChatRoomFeature()
+    @StateObject var feature : ChatRoomFeature
+    
+    init(ownerChatRoomId: String, peerChatRoomId: String, ownerID: Int, peerID: Int, postID: Int, nickname: String) {
+        self._feature = StateObject(wrappedValue: ChatRoomFeature(
+            ownerChatRoomId: ownerChatRoomId,
+            peerChatRoomId: peerChatRoomId,
+            ownerID: ownerID,
+            peerID: peerID,
+            postID: postID,
+            nickname: nickname
+        )
+        )
+    }
     
     var body : some View {
         VStack(spacing: 0) {
             WithSuhyeonTopNavigationBar(
-                title: "작심이",
+                title: feature.state.nickname,
                 leftIcon: .icArrowLeft24,
                 onTapLeft: {
                     feature.send(.tapBackButton)
@@ -55,7 +67,7 @@ struct ChatRoomView: View {
                 .frame(height: 1)
             ScrollViewReader { proxy in
                 ScrollView {
-                    LazyVStack(alignment: .leading, spacing: 0) {
+                    VStack(alignment: .leading, spacing: 0) {
                         ForEach(feature.state.groupedMessages.indices, id: \.self) { index in
                             VStack(alignment: .center, spacing: 8) {
                                 Text(feature.state.groupedMessages[index].0)
@@ -66,7 +78,7 @@ struct ChatRoomView: View {
                                 
                                 ForEach(feature.state.groupedMessages[index].1.indices, id: \.self) { index2 in
                                     MessageContainer(
-                                        imageUrl: feature.state.groupedMessages[index].1[index2].imageUrl,
+                                        imageUrl: "https://reqres.in/img/faces/7-image.jpg",
                                         message: feature.state.groupedMessages[index].1[index2].message,
                                         isMine: feature.state.groupedMessages[index].1[index2].isMine,
                                         time: feature.state.groupedMessages[index].1[index2].time
@@ -109,6 +121,10 @@ struct ChatRoomView: View {
                         }
                     case .keyboardDismiss:
                         hideKeyboard()
+                    case .scrollToLastWithOutAnimation:
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+                            proxy.scrollTo("bottom")
+                        }
                     }
                 }
                 .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidHideNotification)) { _ in
@@ -155,9 +171,14 @@ struct ChatRoomView: View {
                 .padding(.horizontal, 16)
             }
         }
+        .onAppear {
+            feature.joinChatRoom()
+            feature.getMessages()
+            feature.chatRoomPublishing()
+        }
     }
 }
 
 #Preview {
-    ChatRoomView()
+    //ChatRoomView()
 }

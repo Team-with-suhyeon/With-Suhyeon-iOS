@@ -92,7 +92,7 @@ struct ChatRoomView: View {
                     case .popBack:
                         router.popBack()
                     case .navigateToPromise:
-                        router.navigate(to: .main)
+                        router.navigate(to: .main(fromSignUp: false))
                     case .scrollTo(tag: let tag):
                         DispatchQueue.main.async {
                             withAnimation {

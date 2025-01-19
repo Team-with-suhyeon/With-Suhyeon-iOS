@@ -24,12 +24,63 @@ class SignUpFeature: Feature {
         var nickname: String = ""
         var isNicknameValid: Bool = false
         var nicknameErrorMessage: String? = nil
+        
+        var birthYear: Int = 2006
+        var isYearSelected: Bool = false
+        
+        var gender: String = ""
+        var isGenderSelected: Bool = false
+        
+        var profileImages: [ProfileImage] = [
+            ProfileImage(
+                beforeImage: .imgBlueSumaBefore,
+                defaultImage: .imgBlueSuma,
+                selectedImage: .imgBlueSumaBorder
+            ),
+            ProfileImage(
+                beforeImage: .imgPurpleSumaBefore,
+                defaultImage: .imgPurpleSuma,
+                selectedImage: .imgPurpleSumaBorder
+            ),
+            ProfileImage(
+                beforeImage: .imgRedSumBefore,
+                defaultImage: .imgRedSuma,
+                selectedImage: .imgRedSumaBorder
+            ),
+            ProfileImage(
+                beforeImage: .imgGreenSumaBefore,
+                defaultImage: .imgGreenSuma,
+                selectedImage: .imgGreenSumaBorder
+            )
+        ]
+        
+        var profileImageStates: [ProfileImageState] = [.unselected, .unselected, .unselected, .unselected]
+        var selectedProfileImageIndex: Int? = nil
+        var isProfileImageSelected: Bool = false
+        
+        var mainLocationIndex: Int = -1
+        var subLocationIndex: Int? = nil
+        var isLocationSelected: Bool {
+            return subLocationIndex != nil
+        }
+    }
+    
+    struct ProfileImage {
+        let beforeImage: WithSuhyeonImage
+        let defaultImage: WithSuhyeonImage
+        let selectedImage: WithSuhyeonImage
     }
     
     enum PhoneAuthStep {
         case enterPhoneNumber
         case enterAuthCode
         case completed
+    }
+    
+    enum ProfileImageState {
+        case unselected
+        case selected
+        case confirmed
     }
     
     enum Intent {
@@ -40,10 +91,16 @@ class SignUpFeature: Feature {
         case updateAuthCode(String)
         case validateAuthCode
         case updateNickname(String)
+        case selectedYear(Int)
+        case selectedGender(String)
+        case selectedProfileImage(Int)
+        case confirmProfileImage
+        case updateLocation(Int, Int)
+        case completeSignUp
     }
     
     enum SideEffect {
-        
+        case navigateToSignUpComplete
     }
     
     @Published private(set) var state = State()
@@ -105,7 +162,18 @@ class SignUpFeature: Feature {
             validateAuthCode()
         case .updateNickname(let nickname):
             updateNickname(nickname)
-            
+        case .selectedYear(let year):
+            selectedBirthYear(year)
+        case .selectedGender(let gender):
+            selectedGender(gender)
+        case .selectedProfileImage(let index):
+            updateProfileImageState(selectedIndex: index)
+        case .confirmProfileImage:
+            confirmProfileImage()
+        case .updateLocation(let mainLocationIndex, let subLocationIndex):
+            updateLocation(mainLocationIndex, subLocationIndex)
+        case .completeSignUp:
+            sideEffectSubject.send(.navigateToSignUpComplete)
         }
     }
     
@@ -207,6 +275,12 @@ class SignUpFeature: Feature {
             }
         case .nickNameView :
             newButtonState = state.isNicknameValid ? .enabled : .disabled
+        case .genderView :
+            newButtonState = state.isGenderSelected ? .enabled : .disabled
+        case .profileImageView :
+            newButtonState = state.isProfileImageSelected ? .enabled : .disabled
+        case .activeAreaView :
+            newButtonState = state.isLocationSelected ? .enabled : .disabled
         default:
             newButtonState = .enabled
         }
@@ -243,6 +317,45 @@ class SignUpFeature: Feature {
             state.nicknameErrorMessage = nil
         }
         
+        updateButtonState()
+    }
+    
+    func selectedBirthYear(_ year: Int) {
+        state.birthYear = year
+        state.isYearSelected = true
+    }
+    
+    func selectedGender(_ gender: String){
+        state.gender = gender
+        state.isGenderSelected = true
+        
+        updateButtonState()
+    }
+    
+    func updateProfileImageState(selectedIndex: Int) {
+        state.profileImageStates = state.profileImageStates.map { _ in .unselected }
+        
+        state.profileImageStates[selectedIndex] = .selected
+        state.selectedProfileImageIndex = selectedIndex
+        state.isProfileImageSelected = true
+        
+        updateButtonState()
+    }
+    
+    func confirmProfileImage() {
+        if let selectedIndex = state.selectedProfileImageIndex {
+            state.profileImageStates[selectedIndex] = .confirmed
+        }
+    }
+    
+    func updateLocation(_ mainIndex: Int, _ subIndex: Int) {
+        state.mainLocationIndex = mainIndex
+        
+        if mainIndex == 0 {
+            state.subLocationIndex = 0
+        } else{
+            state.subLocationIndex = subIndex
+        }
         updateButtonState()
     }
 }

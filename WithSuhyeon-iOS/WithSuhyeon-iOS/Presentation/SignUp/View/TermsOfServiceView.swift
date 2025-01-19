@@ -33,6 +33,7 @@ struct TermsOfServiceView: View {
                             toggleAgreeCheck(at: index)
                         }
                         WithSuhyeonUnderlineButton(title: "보기") {}
+                            .frame(width: 25, height: 22)
                     }
                 }
             }

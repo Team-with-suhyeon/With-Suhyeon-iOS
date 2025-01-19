@@ -18,10 +18,10 @@ struct WithSuhyeon_iOSApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $router.path) {
-                MainTabBar()
+                MainTabBar(fromSignup: false)
                     .navigationDestination(for: Destination.self){ destination in
                         switch destination {
-                        case .main : MainTabBar()
+                        case .main(let fromSignUp) : MainTabBar(fromSignup: fromSignUp)
                                 .navigationBarBackButtonHidden(true)
                         case .galleryUpload : GalleryUploadView()
                                 .navigationBarBackButtonHidden(true)

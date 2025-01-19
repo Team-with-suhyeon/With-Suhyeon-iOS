@@ -5,6 +5,8 @@ struct BlockingAccountManagement: View {
     @EnvironmentObject var router: RouterRegistry
     @StateObject var myPageFeature = MyPageFeature()
     
+    
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             WithSuhyeonTopNavigationBar(title: "차단 계정 관리", rightIcon: .icXclose24, onTapRight: {
@@ -25,9 +27,9 @@ struct BlockingAccountManagement: View {
             .padding(.bottom, 24)
             .padding(.top, 20)
             
-            Divider()
-            
-            
+            Rectangle()
+                .frame(height: 4)
+                .foregroundColor(Color.gray50)
             
             VStack(alignment: .leading, spacing: 8) {
                 Text("휴대폰 번호")
@@ -57,7 +59,9 @@ struct BlockingAccountManagement: View {
             }
             .padding(.all, 16)
             
-            Divider()
+            Rectangle()
+                .frame(height: 4)
+                .foregroundColor(Color.gray50)
             
             VStack(alignment: .leading) {
                 if !myPageFeature.state.blockingAccountList.isEmpty {

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8B7951852D3D58E20077A833 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 8B7951842D3D58E20077A833 /* Lottie */; };
 		8BA72DEC2D2E22A9007654D1 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 8BA72DEB2D2E22A9007654D1 /* Alamofire */; };
 		8BA72DEF2D2E22B7007654D1 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = 8BA72DEE2D2E22B7007654D1 /* Then */; };
 		8BA72DF22D2E22C7007654D1 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 8BA72DF12D2E22C7007654D1 /* Kingfisher */; };
@@ -74,6 +75,7 @@
 				8BA72DF22D2E22C7007654D1 /* Kingfisher in Frameworks */,
 				8BA72DEC2D2E22A9007654D1 /* Alamofire in Frameworks */,
 				8BA72DEF2D2E22B7007654D1 /* Then in Frameworks */,
+				8B7951852D3D58E20077A833 /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -137,6 +139,7 @@
 				8BA72DEB2D2E22A9007654D1 /* Alamofire */,
 				8BA72DEE2D2E22B7007654D1 /* Then */,
 				8BA72DF12D2E22C7007654D1 /* Kingfisher */,
+				8B7951842D3D58E20077A833 /* Lottie */,
 			);
 			productName = "WithSuhyeon-iOS";
 			productReference = 8BA72D872D2E1EF9007654D1 /* WithSuhyeon-iOS.app */;
@@ -224,6 +227,7 @@
 				8BA72DEA2D2E22A9007654D1 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				8BA72DED2D2E22B7007654D1 /* XCRemoteSwiftPackageReference "Then" */,
 				8BA72DF02D2E22C7007654D1 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				8B7951832D3D58E20077A833 /* XCRemoteSwiftPackageReference "lottie-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8BA72D882D2E1EF9007654D1 /* Products */;
@@ -604,6 +608,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		8B7951832D3D58E20077A833 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.5.1;
+			};
+		};
 		8BA72DEA2D2E22A9007654D1 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
@@ -631,6 +643,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		8B7951842D3D58E20077A833 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8B7951832D3D58E20077A833 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
+		};
 		8BA72DEB2D2E22A9007654D1 /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 8BA72DEA2D2E22A9007654D1 /* XCRemoteSwiftPackageReference "Alamofire" */;

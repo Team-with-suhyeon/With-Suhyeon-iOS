@@ -40,6 +40,13 @@ struct WithSuhyeon_iOSApp: App {
                                 .navigationBarBackButtonHidden(true)
                         case .findSuhyeonDetail(id: let id): FindSuhyeonDetailView()
                                 .navigationBarBackButtonHidden(true)
+                        case .login: LoginView()
+                                .navigationBarBackButtonHidden(true)
+                        case .signUp: SignUpView()
+                                .navigationBarBackButtonHidden(true)
+                        case .loginComplete: LoginCompleteView()
+                                .navigationBarBackButtonHidden(true)
+                        case .startView: StartView()
                         }
                     }
             }

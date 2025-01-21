@@ -23,7 +23,6 @@ struct GenderButton: View {
     var body: some View {
         VStack(spacing: 8) {
             Image(image: image!)
-                .renderingMode(.template)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 78, height: 78)

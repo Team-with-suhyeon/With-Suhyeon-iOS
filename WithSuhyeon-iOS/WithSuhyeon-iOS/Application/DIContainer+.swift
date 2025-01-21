@@ -24,5 +24,14 @@ extension DIContainer {
         DIContainer.shared.register(type: ChatSocketProtocol.self) {
             ChatSocket()
         }
+        
+        DIContainer.shared.register(type: AuthRepository.self) {
+            AuthRepositoryImpl()
+        }
+        
+        DIContainer.shared.register(type:  AuthAPIProtocol.self) {
+            AuthAPI()
+        }
+        
     }
 }

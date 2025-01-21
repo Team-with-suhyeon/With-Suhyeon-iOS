@@ -44,6 +44,11 @@ enum FindShuhyeonViewType {
 }
 
 class FindSuhyeonFeature: Feature {
+    struct GenderState {
+        var selectedGender: String = ""
+        var isGenderSelected: Bool = false
+    }
+    
     struct AgeState {
         var selectedAgeRange: String = ""
         var buttonEnable: Bool = false
@@ -52,6 +57,7 @@ class FindSuhyeonFeature: Feature {
     
     struct RequestState {
         var selectedRequests: [String] = []
+        var buttonEnable: Bool = false
         var dropdownState: DropdownState = .defaultState
     }
     
@@ -60,6 +66,7 @@ class FindSuhyeonFeature: Feature {
         var selectedSubLocationIndex: Int = 0
         var tempSelectedLocation: String = ""
         var selectedDate: String = ""
+        var buttonEnable: Bool = false
         var dropdownState: DropdownState = .defaultState
     }
     
@@ -68,6 +75,7 @@ class FindSuhyeonFeature: Feature {
         var selectedHour: Int = 9
         var selectedMinute: Int = 0
         var selectedAmPm: String = "오전"
+        var buttonEnable: Bool = false
         var dropdownState: DropdownState = .defaultState
         
         var tempDateIndex: Int = 0
@@ -77,9 +85,9 @@ class FindSuhyeonFeature: Feature {
     }
     
     struct State {
-        var selectedGender: String = "여자"
         var selectedAmount: String = ""
         
+        var gender = GenderState()
         var age = AgeState()
         var request = RequestState()
         var location = LocationState()
@@ -102,8 +110,8 @@ class FindSuhyeonFeature: Feature {
         case selectDateTime(dateIndex: Int, hour: Int, minute: Int, amPm: String)
         case confirmDateTimeSelection
         case progressToNext
-        case onTapGenderChip(String)
         case dismissBottomSheet
+        case onTapGenderChip(String)
         case tapAgeDropdown(FindSuhyeonAlertType)
         case tapRequestDropdown(FindSuhyeonAlertType)
         case tapLocationDropdown(FindSuhyeonAlertType)
@@ -191,32 +199,31 @@ class FindSuhyeonFeature: Feature {
         case .selectAgeRange(let age):
             state.age.selectedAgeRange = age
             state.age.buttonEnable = true
-            state.age.dropdownState = .isSelected
             
         case .selectRequest(let request):
             if !state.request.selectedRequests.contains(request) {
                 state.request.selectedRequests.append(request)
-                state.request.dropdownState = .isSelected
             }
+            state.request.buttonEnable = true
             
         case .selectLocation(let mainIndex, let subIndex):
             state.location.selectedMainLocationIndex = mainIndex
             state.location.selectedSubLocationIndex = subIndex
             state.location.tempSelectedLocation = WithSuhyeonLocation.location[mainIndex].subLocation[subIndex]
-            state.location.dropdownState = .isSelected
+            state.location.buttonEnable = true
             
         case .selectDateTime(let dateIndex, let hour, let minute, let amPm):
             state.dateTime.tempDateIndex = dateIndex
             state.dateTime.tempHour = hour
             state.dateTime.tempMinute = minute
             state.dateTime.tempAmPm = amPm
+            state.dateTime.buttonEnable = true
             
         case .confirmDateTimeSelection:
             state.dateTime.selectedDateIndex = state.dateTime.tempDateIndex
             state.dateTime.selectedHour = state.dateTime.tempHour
             state.dateTime.selectedMinute = state.dateTime.tempMinute
             state.dateTime.selectedAmPm = state.dateTime.tempAmPm
-            state.dateTime.dropdownState = .isSelected
             state.isPresent = false
             
         case .progressToNext:
@@ -224,7 +231,11 @@ class FindSuhyeonFeature: Feature {
             sideEffectSubject.send(.navigateToNextStep)
             
         case .onTapGenderChip(let gender):
-            state.selectedGender = gender
+            state.gender.selectedGender = gender
+            withAnimation {
+                if !state.gender.isGenderSelected { send(.progressToNext) }
+            }
+            state.gender.isGenderSelected = true
         case .dismissBottomSheet:
             state.isPresent = false
         case .tapAgeDropdown(let type):
@@ -241,7 +252,6 @@ class FindSuhyeonFeature: Feature {
             state.isPresent = true
         case .tapBottomSheetButton:
             switch state.alertType {
-                
             case .ageSelect: break
             case .requestSelect: break
             case .locationSelect: break

@@ -13,7 +13,7 @@ struct WithSuhyeon_iOSApp: App {
     
     init() {
         DIContainer.shared.registerDependencies()
-        WebSocketClient.shared.connect(target: WebSocketTarget())
+        //WebSocketClient.shared.connect(target: WebSocketTarget())
     }
     
     var body: some Scene {

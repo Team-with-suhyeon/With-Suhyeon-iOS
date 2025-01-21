@@ -2,7 +2,7 @@
 //  FindSuhyeonView.swift
 //  WithSuhyeon-iOS
 //
-//  Created by 우상욱 on 1/12/25.
+//  Created by 정지원 on 1/12/25.
 //
 
 import SwiftUI
@@ -15,50 +15,44 @@ struct FindSuhyeonView: View {
     private let amPm = ["오전", "오후"]
     
     var body: some View {
-        VStack {
-            HStack {
-                Spacer()
-                Image(icon: .icXclose24)
-                    .resizable()
-                    .frame(width: 24, height: 24)
-                    .padding(.trailing, 10)
-            }
-            .padding(.bottom, 8)
-            
-            WithSuhyeonProgressBar(progress: progressPercentage)
-            
-            ScrollView {
-                VStack(spacing: 16) {
-                    ForEach(FindSuhyeonFeature.ProgressState.allCases.reversed(), id: \.self) { state in
+        ZStack {
+            VStack {
+                WithSuhyeonTopNavigationBar(title: "", rightIcon: .icXclose24, onTapRight: {})
+                
+                WithSuhyeonProgressBar(progress: progressPercentage)
+                
+                
+                ScrollView {
+                    VStack(spacing: 16) {
+                        ForEach(FindSuhyeonFeature.ProgressState.allCases.reversed(), id: \.self) { state in
                             if state.rawValue <= feature.state.progressState.rawValue {
                                 viewForState(state)
-                                    .onTapGesture {
-                                        feature.send(.progressToNext)
-                                        feature.send(.setAgeDropdownState(.defaultState))
-                                    }
-                                    .transition(.move(edge: .top).combined(with: .opacity))
+                                //                                    .onTapGesture {
+                                //                                        feature.send(.progressToNext)
+                                //                                        feature.send(.setAgeDropdownState(.defaultState))
+                                //                                    }
+                                //                                    .transition(.move(edge: .top).combined(with: .opacity))
                             }
                         }
-                    .animation(.easeInOut, value: feature.state.progressState)
-                }
-                
-                Button(action: {
-                    withAnimation {
-                        feature.send(.progressToNext)
+                        .animation(.easeInOut, value: feature.state.progressState)
                     }
-                }) {
-                    Text("다음 단계")
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 48)
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
-                        .padding(.horizontal)
                 }
             }
+            .edgesIgnoringSafeArea(.all)
             .withSuhyeonModal(
                 isPresented: feature.state.isPresent,
-                isButtonEnabled: feature.state.age.buttonEnable,
+                isButtonEnabled: {
+                    switch feature.state.alertType {
+                    case .ageSelect:
+                        feature.state.age.buttonEnable
+                    case .requestSelect:
+                        feature.state.request.buttonEnable
+                    case .locationSelect:
+                        feature.state.location.buttonEnable
+                    case .dateSelect:
+                        feature.state.dateTime.buttonEnable
+                    }
+                }(),
                 title: feature.state.alertType.title,
                 modalContent: {
                     switch feature.state.alertType {
@@ -70,7 +64,6 @@ struct FindSuhyeonView: View {
                         locationModalView()
                     case .dateSelect:
                         dateTimeModalView()
-                        
                     }
                 },
                 onDismiss: {
@@ -78,12 +71,40 @@ struct FindSuhyeonView: View {
                 },
                 onTapButton: {
                     switch feature.state.alertType {
+                    case .ageSelect:
+                        if feature.state.age.dropdownState.toWithSuhyeonDropdownState() == .defaultState {
+                            withAnimation {
+                                feature.send(.progressToNext)
+                            }
+                            feature.send(.setAgeDropdownState(.isSelected))
+                        }
+                    case .requestSelect:
+                        if feature.state.request.dropdownState.toWithSuhyeonDropdownState() == .defaultState {
+                            withAnimation {
+                                feature.send(.progressToNext)
+                            }
+                            feature.send(.setRequestDropdownState(.isSelected))
+                        }
+                    case .locationSelect:
+                        if feature.state.location.dropdownState.toWithSuhyeonDropdownState() == .defaultState {
+                            withAnimation {
+                                feature.send(.progressToNext)
+                            }
+                            feature.send(.setLocationDropdownState(.isSelected))
+                        }
                     case .dateSelect:
                         feature.send(.confirmDateTimeSelection)
+                        if feature.state.dateTime.dropdownState.toWithSuhyeonDropdownState() == .defaultState {
+                            withAnimation {
+                                feature.send(.progressToNext)
+                            }
+                            feature.send(.setDateTimeDropdownState(.isSelected))
+                        }
                     default:
                         break
                     }
-                })
+                }
+            )
             .padding()
         }
     }
@@ -132,7 +153,7 @@ struct FindSuhyeonView: View {
                 .padding(.top, titleTopPadding(for: .genderSelection))
                 .padding(.bottom, titleBottomPadding(for: .genderSelection))
 
-            FindSuhyeonGenderSelectCell(selectedGender: feature.state.selectedGender) { value in
+            FindSuhyeonGenderSelectCell(selectedGender: feature.state.gender.selectedGender) { value in
                 feature.send(.onTapGenderChip(value))
             }
         }
@@ -154,7 +175,6 @@ struct FindSuhyeonView: View {
                 errorMessage: "",
                 onTapDropdown: {
                     feature.send(.tapAgeDropdown(.ageSelect))
-                    feature.send(.setAgeDropdownState(.isSelected))
                 }
             ) {
                 Text(feature.state.age.selectedAgeRange)
@@ -178,7 +198,6 @@ struct FindSuhyeonView: View {
                 errorMessage: "",
                 onTapDropdown: {
                     feature.send(.tapRequestDropdown(.requestSelect))
-                    feature.send(.setRequestDropdownState(.isSelected))
                 }
             ) {
                 ForEach(feature.state.request.selectedRequests, id: \.self) { request in
@@ -204,7 +223,6 @@ struct FindSuhyeonView: View {
                 errorMessage: "",
                 onTapDropdown: {
                     feature.send(.tapLocationDropdown(.locationSelect))
-                    feature.send(.setLocationDropdownState(.isSelected))
                 }
             ) {
                 Text(feature.state.location.tempSelectedLocation)
@@ -228,7 +246,6 @@ struct FindSuhyeonView: View {
                 errorMessage: "",
                 onTapDropdown: {
                     feature.send(.tapDateTimeDropdown(.dateSelect))
-                    feature.send(.setDateTimeDropdownState(.isSelected))
                 }
             ) {
                 let selectedDate = dates[feature.state.dateTime.selectedDateIndex]
@@ -301,7 +318,6 @@ struct FindSuhyeonView: View {
                     showIcon: false
                 ) {
                     feature.send(.selectRequest(request))
-                    
                 }
             }
         }
@@ -393,4 +409,3 @@ struct FindSuhyeonView: View {
 #Preview {
     FindSuhyeonView()
 }
-

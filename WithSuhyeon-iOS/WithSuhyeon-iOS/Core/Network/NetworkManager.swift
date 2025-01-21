@@ -14,13 +14,19 @@ final class NetworkManager {
     
     let loggers = [NetworkLogger()] as [EventMonitor]
     var session: Session
+    var noneAuthSession: Session
     
     private init() {
         let configuration = URLSessionConfiguration.default
-        
+        self.noneAuthSession = Session(
+            configuration: configuration,
+            eventMonitors: loggers
+        )
         self.session = Session(
             configuration: configuration,
             eventMonitors: loggers
         )
+        
+        
     }
 }

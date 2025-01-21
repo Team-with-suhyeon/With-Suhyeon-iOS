@@ -48,6 +48,8 @@ struct SignUpView: View {
                 switch sideEffect {
                 case .navigateToSignUpComplete:
                     router.navigate(to: .signUpComplete)
+                case .navigateToStartView:
+                    router.navigate(to: .startView)
                 }
                 
             }

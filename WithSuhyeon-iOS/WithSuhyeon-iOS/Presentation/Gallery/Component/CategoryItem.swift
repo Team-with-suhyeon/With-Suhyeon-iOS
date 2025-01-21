@@ -91,14 +91,18 @@ struct CategoryItem: View {
             calculatedCircleWidth = 60 + ((afterTextWidth - 18) * progress)
         }
         
-        withAnimation(.easeInOut(duration: 0.3)) {
+        /*withAnimation(.easeInOut(duration: 0.3)) {
             self.circleWidth = calculatedCircleWidth
             self.circleHeight = calculatedCircleHeight
             self.iconSize = calculatedIconSize
             self.textHeight = calculatedTextHeight
-        }
+        }*/
         
         DispatchQueue.main.async {
+            self.circleWidth = calculatedCircleWidth
+            self.circleHeight = calculatedCircleHeight
+            self.iconSize = calculatedIconSize
+            self.textHeight = calculatedTextHeight
             self.insideTextOpacity = calculatedInsideTextOpacity
             self.outsideTextOpacity = calculatedOutsideTextOpacity
             self.allTextOpacity = calculatedAllTextOpacity

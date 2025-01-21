@@ -60,7 +60,6 @@ struct PhoneAuthenticationView: View {
                 }
                 .transition(.move(edge: .top))
             }
-            
             Spacer()
         }
         .padding(.top, 12)

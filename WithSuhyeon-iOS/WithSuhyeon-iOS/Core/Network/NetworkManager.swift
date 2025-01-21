@@ -18,15 +18,19 @@ final class NetworkManager {
     
     private init() {
         let configuration = URLSessionConfiguration.default
+        
+        let noAuthInterceptor = NoAuthInterceptor()
         self.noneAuthSession = Session(
             configuration: configuration,
+            interceptor: noAuthInterceptor,
             eventMonitors: loggers
         )
+        
+        let authInterceptor = AuthInterceptor()
         self.session = Session(
             configuration: configuration,
+            interceptor: authInterceptor,
             eventMonitors: loggers
         )
-        
-        
     }
 }

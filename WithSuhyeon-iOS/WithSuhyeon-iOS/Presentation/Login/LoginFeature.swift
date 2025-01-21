@@ -17,7 +17,6 @@ class LoginFeature: Feature {
         var phoneAuthStep: PhoneAuthStep = .enterPhoneNumber
         var isExistsUser: Bool = false
         var buttonState: WithSuhyeonButtonState = .disabled
-        var loginResponse: LoginResponseDTO? = nil
     }
     
     enum Intent {
@@ -162,7 +161,6 @@ class LoginFeature: Feature {
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {
-                    self?.state.loginResponse = response
                     self?.sideEffectSubject.send(.navigateToLoginComplete)
                 }
             case .failure(let error):

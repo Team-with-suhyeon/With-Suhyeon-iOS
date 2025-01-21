@@ -27,7 +27,7 @@ class AuthRepositoryImpl: AuthRepository {
             }.store(in: &subscriptions)
     }
     
-    func login(phoneNumber: String, completion: @escaping (Result<LoginResponseDTO, NetworkError>) -> Void) {
+    func login(phoneNumber: String, completion: @escaping (Result<Void, NetworkError>) -> Void) {
         authAPI.login(requestDTO: LoginRequestDTO(phoneNumber: phoneNumber))
             .sink { completion in
                 switch completion {
@@ -43,7 +43,7 @@ class AuthRepositoryImpl: AuthRepository {
                     try KeyChainManager.save(key: "accessToken", value: response.accessToken)
                     try KeyChainManager.save(key: "refreshToken", value: response.refreshToken)
                     
-                    completion(.success(response))
+                    completion(.success(()))
                 } catch {
                     print("토큰 저장 실패: \(error)")
                     completion(.failure(.unknownError))

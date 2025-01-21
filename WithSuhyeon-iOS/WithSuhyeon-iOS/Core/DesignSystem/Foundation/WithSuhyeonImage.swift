@@ -23,4 +23,8 @@ public enum WithSuhyeonImage: String {
     case imgRedSumBefore = "img_red_suma_before"
     case imgRedSumaBorder = "img_red_suma_border"
     case imgProfileDefault = "img_profile_default"
+    case imgDoNotDisturb = "img_do_not_disturb"
+    case imgSeekAndHide = "img_seek_and_hide"
+    case imgStudyCafe = "img_study_cafe"
+    case imgMegaphone = "img_megaphone"
 }

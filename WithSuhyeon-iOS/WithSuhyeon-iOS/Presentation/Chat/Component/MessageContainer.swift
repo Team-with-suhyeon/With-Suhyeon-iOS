@@ -60,7 +60,7 @@ struct MessageContainer: View {
             }
             .padding(.leading, 8)
             .padding(.trailing, 16)
-        }.frame(width: .infinity)
+        }
     }
 }
 

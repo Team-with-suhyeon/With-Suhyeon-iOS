@@ -176,6 +176,9 @@ struct GalleryUploadView: View {
             },
             onDismiss: {
                 feature.send(.dismissSheet)
+            },
+            onTapButton: {
+                
             }
         )
     }

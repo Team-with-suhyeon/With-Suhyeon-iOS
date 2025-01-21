@@ -5,10 +5,115 @@
 //  Created by  정지원 on 1/17/25.
 //
 
-import Foundation
+import SwiftUI
 import Combine
 
-struct FindSuhyeonFeature {
+enum FindSuhyeonAlertType {
+    case ageSelect
+    case requestSelect
+    case locationSelect
+    case dateSelect
+    
+    var title: String {
+        switch self {
+        case .ageSelect: "나이대 선택"
+        case .requestSelect: "요청사항 선택"
+        case .locationSelect: "만날위치 선택"
+        case .dateSelect: "날짜와 시간을 선택해줘"
+            
+        }
+    }
+}
+
+enum FindShuhyeonViewType {
+    case genderSelect
+    case ageSelect
+    case requestSelect
+    case locationSelect
+    case dateSelect
+    
+    var title: String {
+        switch self {
+        case .genderSelect: "수현이의 성별을 선택해줘"
+        case .ageSelect: "수현이의 나이대를 선택해줘"
+        case .requestSelect: "요청사항을 선택해줘"
+        case .locationSelect: "수현이 만날 곳을 선택해줘"
+        case .dateSelect: "언제 만날지 선택해줘"
+        }
+    }
+}
+
+class FindSuhyeonFeature: Feature {
+    struct AgeState {
+        var selectedAgeRange: String = ""
+        var buttonEnable: Bool = false
+        var dropdownState: DropdownState = .defaultState
+    }
+    
+    struct RequestState {
+        var selectedRequests: [String] = []
+        var dropdownState: DropdownState = .defaultState
+    }
+    
+    struct LocationState {
+        var selectedMainLocationIndex: Int = 0
+        var selectedSubLocationIndex: Int = 0
+        var tempSelectedLocation: String = ""
+        var selectedDate: String = ""
+        var dropdownState: DropdownState = .defaultState
+    }
+    
+    struct DateTimeState {
+        var selectedDateIndex: Int = 0
+        var selectedHour: Int = 9
+        var selectedMinute: Int = 0
+        var selectedAmPm: String = "오전"
+        var dropdownState: DropdownState = .defaultState
+        
+        var tempDateIndex: Int = 0
+        var tempHour: Int = 9
+        var tempMinute: Int = 0
+        var tempAmPm: String = "오전"
+    }
+    
+    struct State {
+        var selectedGender: String = "여자"
+        var selectedAmount: String = ""
+        
+        var age = AgeState()
+        var request = RequestState()
+        var location = LocationState()
+        var dateTime = DateTimeState()
+        
+        var isPresent: Bool = false
+        var alertType: FindSuhyeonAlertType = .ageSelect
+        
+        var progressState: ProgressState = .genderSelection
+    }
+    
+    enum Intent {
+        case setAgeDropdownState(DropdownState)
+        case setRequestDropdownState(DropdownState)
+        case setLocationDropdownState(DropdownState)
+        case setDateTimeDropdownState(DropdownState)
+        case selectAgeRange(String)
+        case selectRequest(String)
+        case selectLocation(main: Int, sub: Int)
+        case selectDateTime(dateIndex: Int, hour: Int, minute: Int, amPm: String)
+        case confirmDateTimeSelection
+        case progressToNext
+        case onTapGenderChip(String)
+        case dismissBottomSheet
+        case tapAgeDropdown(FindSuhyeonAlertType)
+        case tapRequestDropdown(FindSuhyeonAlertType)
+        case tapLocationDropdown(FindSuhyeonAlertType)
+        case tapDateTimeDropdown(FindSuhyeonAlertType)
+        case tapBottomSheetButton
+    }
+    
+    enum SideEffect {
+        case navigateToNextStep
+    }
     
     enum ProgressState: Int, CaseIterable {
         case genderSelection
@@ -44,77 +149,105 @@ struct FindSuhyeonFeature {
         }
     }
     
-    enum Action {
-        case setDropdownState(DropdownState)
-        case progressToNext
-        case selectAgeRange(String)
-        case selectRequest(String)
-        case deselectRequest(String)
-        case selectLocation(main: Int, sub: Int)
-        case confirmLocation
+    @Published private(set) var state = State()
+    private var cancellables = Set<AnyCancellable>()
+    
+    private let intentSubject = PassthroughSubject<Intent, Never>()
+    let sideEffectSubject = PassthroughSubject<SideEffect, Never>()
+    
+    init() {
+        bindIntents()
     }
     
-    struct Input {
-        var selectedGender: String = "여자"
-        var selectedAgeRange: String = ""
-        var selectedRequests: [String] = []
-        var selectedLocation: String = ""
-        var selectedDate: String = ""
-        var selectedAmount: String = ""
-        var dropdownState: DropdownState = .defaultState
-        var selectedMainLocationIndex: Int = 0
-        var selectedSubLocationIndex: Int = 0
-        var tempSelectedLocation: String = ""
+    private func bindIntents() {
+        intentSubject.sink { [weak self] intent in
+            self?.handleIntent(intent)
+        }.store(in: &cancellables)
     }
     
-    struct StateTitle {
-        var genderTitle: String = "수현이의 성별을 선택해줘"
-        var ageTitle: String = "수현이의 나이대를 선택해줘"
-        var requestTitle: String = "요청사항을 선택해줘"
-        var locationTitle: String = "수현이 만날 곳을 선택해줘"
-        var dateTitle: String = "언제 만날지 선택해줘"
-        var gratuityTitle: String = "주고 싶은 금액을 입력해줘"
-        var progressState: ProgressState = .genderSelection
+    func send(_ intent: Intent) {
+        intentSubject.send(intent)
     }
     
-    static func reducer(input: inout Input, state: inout StateTitle, action: Action) -> Void {
-        switch action {
-        case .setDropdownState(let newState):
-            input.dropdownState = newState
+    func handleIntent(_ intent: Intent) {
+        switch intent {
+        case .setAgeDropdownState(let newState):
+            state.age.dropdownState = state.age.selectedAgeRange.isEmpty ? .defaultState : newState
+            state.isPresent = true
+            print(state.age.dropdownState)
             
-        case .selectRequest(let request):
-            if !input.selectedRequests.contains(request) {
-                input.selectedRequests.append(request)
-                // 상태 변경 유지
-                input.dropdownState = .isSelected
-            }
-        case .deselectRequest(let request):
-            input.selectedRequests.removeAll { $0 == request }
-            if input.selectedRequests.isEmpty {
-                // 아무것도 선택되지 않았으면 초기 상태로
-                input.dropdownState = .defaultState
-            }
+        case .setRequestDropdownState(let newState):
+            state.request.dropdownState = state.request.selectedRequests.isEmpty ? .defaultState : newState
+            state.isPresent = true
+            
+            
+        case .setLocationDropdownState(let newState):
+            state.location.dropdownState = state.location.tempSelectedLocation.isEmpty ? .defaultState : newState
+            
+        case .setDateTimeDropdownState(let newState):
+            state.dateTime.dropdownState = (state.dateTime.selectedDateIndex == 0) ? .defaultState : newState
+            state.isPresent = true
             
         case .selectAgeRange(let age):
-            input.selectedAgeRange = age
-            input.dropdownState = .isSelected
+            state.age.selectedAgeRange = age
+            state.age.buttonEnable = true
+            state.age.dropdownState = .isSelected
+            
+        case .selectRequest(let request):
+            if !state.request.selectedRequests.contains(request) {
+                state.request.selectedRequests.append(request)
+                state.request.dropdownState = .isSelected
+            }
             
         case .selectLocation(let mainIndex, let subIndex):
-            input.selectedMainLocationIndex = mainIndex
-            input.selectedSubLocationIndex = subIndex
-            input.tempSelectedLocation = WithSuhyeonLocation.location[mainIndex].subLocation[subIndex]
+            state.location.selectedMainLocationIndex = mainIndex
+            state.location.selectedSubLocationIndex = subIndex
+            state.location.tempSelectedLocation = WithSuhyeonLocation.location[mainIndex].subLocation[subIndex]
+            state.location.dropdownState = .isSelected
             
-        case .confirmLocation:
-            input.selectedLocation = input.tempSelectedLocation
-            input.dropdownState = .isSelected
+        case .selectDateTime(let dateIndex, let hour, let minute, let amPm):
+            state.dateTime.tempDateIndex = dateIndex
+            state.dateTime.tempHour = hour
+            state.dateTime.tempMinute = minute
+            state.dateTime.tempAmPm = amPm
+            
+        case .confirmDateTimeSelection:
+            state.dateTime.selectedDateIndex = state.dateTime.tempDateIndex
+            state.dateTime.selectedHour = state.dateTime.tempHour
+            state.dateTime.selectedMinute = state.dateTime.tempMinute
+            state.dateTime.selectedAmPm = state.dateTime.tempAmPm
+            state.dateTime.dropdownState = .isSelected
+            state.isPresent = false
             
         case .progressToNext:
-            state.progressState = nextProgressState(current: state.progressState)
+            state.progressState = state.progressState.next
+            sideEffectSubject.send(.navigateToNextStep)
+            
+        case .onTapGenderChip(let gender):
+            state.selectedGender = gender
+        case .dismissBottomSheet:
+            state.isPresent = false
+        case .tapAgeDropdown(let type):
+            state.alertType = type
+            state.isPresent = true
+        case .tapRequestDropdown(let type):
+            state.alertType = type
+            state.isPresent = true
+        case .tapLocationDropdown(let type):
+            state.alertType = type
+            state.isPresent = true
+        case .tapDateTimeDropdown(let type):
+            state.alertType = type
+            state.isPresent = true
+        case .tapBottomSheetButton:
+            switch state.alertType {
+                
+            case .ageSelect: break
+            case .requestSelect: break
+            case .locationSelect: break
+            case .dateSelect: break
+            }
+            state.isPresent = false
         }
-    }
-    
-    
-    static func nextProgressState(current: ProgressState) -> ProgressState {
-        return current.next
     }
 }

@@ -8,11 +8,8 @@
 import SwiftUI
 
 struct FindSuhyeonGenderSelectCell: View {
-    @Binding var selectedGender: String
-
-    init(selectedGender: Binding<String>) {
-        self._selectedGender = selectedGender
-    }
+    let selectedGender: String
+    let onTapSmallChip: (String) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -22,7 +19,7 @@ struct FindSuhyeonGenderSelectCell: View {
                     chipState: selectedGender == "남자" ? .selected : .unselected,
                     clickable: true
                 ) {
-                    selectedGender = "남자"
+                    onTapSmallChip("남자")
                 }
 
                 WithSuhyeonSmallChip(
@@ -30,7 +27,7 @@ struct FindSuhyeonGenderSelectCell: View {
                     chipState: selectedGender == "여자" ? .selected : .unselected,
                     clickable: true
                 ) {
-                    selectedGender = "여자"
+                    onTapSmallChip("여자")
                 }
             }
             .padding(.horizontal, 16)
@@ -43,6 +40,7 @@ struct FindSuhyeonGenderSelectCell: View {
     @State var selectedGender: String = "여자"
     
     FindSuhyeonGenderSelectCell(
-        selectedGender: $selectedGender
+        selectedGender: selectedGender,
+        onTapSmallChip: { value in }
     )
 }

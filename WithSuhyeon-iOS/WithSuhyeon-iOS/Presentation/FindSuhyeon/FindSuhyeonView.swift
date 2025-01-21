@@ -8,13 +8,11 @@
 import SwiftUI
 
 struct FindSuhyeonView: View {
-    @State private var input = FindSuhyeonFeature.Input()
-    @State private var stateTitle = FindSuhyeonFeature.StateTitle()
-    @State private var selectedGender: String = ""
-    @State private var progress: Double = 100.0 / 7.0
-    @State private var isAgeModalPresented: Bool = false
-    @State private var isRequestsModalPresented: Bool = false
-    @State private var isLocationModalPresented: Bool = false
+    @StateObject private var feature = FindSuhyeonFeature()
+    private let dates: [String] = generateDatesForYear()
+    private let hours = Array(1...12)
+    private let minutes = stride(from: 0, to: 60, by: 5).map { $0 }
+    private let amPm = ["오전", "오후"]
     
     var body: some View {
         VStack {
@@ -27,353 +25,227 @@ struct FindSuhyeonView: View {
             }
             .padding(.bottom, 8)
             
-            WithSuhyeonProgressBar(progress: progress)
+            WithSuhyeonProgressBar(progress: progressPercentage)
             
             ScrollView {
-                VStack {
+                VStack(spacing: 16) {
                     ForEach(FindSuhyeonFeature.ProgressState.allCases.reversed(), id: \.self) { state in
-                        if state.rawValue <= stateTitle.progressState.rawValue {
-                            viewForState(state)
-                                .onTapGesture {
-                                    stateTitle.progressState = state
-                                    FindSuhyeonFeature.reducer(input: &input, state: &stateTitle, action: .setDropdownState(.defaultState))
-                                }
-                                .transition(.move(edge: .top).combined(with: .opacity))
+                            if state.rawValue <= feature.state.progressState.rawValue {
+                                viewForState(state)
+                                    .onTapGesture {
+                                        feature.send(.progressToNext)
+                                        feature.send(.setAgeDropdownState(.defaultState))
+                                    }
+                                    .transition(.move(edge: .top).combined(with: .opacity))
+                            }
                         }
+                    .animation(.easeInOut, value: feature.state.progressState)
+                }
+                
+                Button(action: {
+                    withAnimation {
+                        feature.send(.progressToNext)
                     }
+                }) {
+                    Text("다음 단계")
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 48)
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                        .padding(.horizontal)
                 }
-                .animation(.easeInOut, value: stateTitle.progressState)
             }
-            
-            Button(action: {
-                withAnimation {
-                    stateTitle.progressState = FindSuhyeonFeature.nextProgressState(current: stateTitle.progressState)
-                    FindSuhyeonFeature.reducer(input: &input, state: &stateTitle, action: .setDropdownState(.isSelected))
-                    increaseProgress()
-                }
-            }) {
-                Text("다음 단계")
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 48)
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-                    .padding(.horizontal)
-            }
+            .withSuhyeonModal(
+                isPresented: feature.state.isPresent,
+                isButtonEnabled: feature.state.age.buttonEnable,
+                title: feature.state.alertType.title,
+                modalContent: {
+                    switch feature.state.alertType {
+                    case .ageSelect:
+                        ageModalView()
+                    case .requestSelect:
+                        requestsModalView()
+                    case .locationSelect:
+                        locationModalView()
+                    case .dateSelect:
+                        dateTimeModalView()
+                        
+                    }
+                },
+                onDismiss: {
+                    feature.send(.dismissBottomSheet)
+                },
+                onTapButton: {
+                    switch feature.state.alertType {
+                    case .dateSelect:
+                        feature.send(.confirmDateTimeSelection)
+                    default:
+                        break
+                    }
+                })
+            .padding()
         }
-        .padding()
     }
     
     @ViewBuilder
     private func viewForState(_ state: FindSuhyeonFeature.ProgressState) -> some View {
         switch state {
         case .genderSelection:
-            selectionView(
-                title: stateTitle.genderTitle,
-                isHighlighted: state == stateTitle.progressState
-            )
             genderSelectionView
-            
         case .ageSelection:
-            selectionView(
-                title: stateTitle.ageTitle,
-                isHighlighted: state == stateTitle.progressState
-            )
             ageSelectionView
         case .requestSelection:
-            selectionView(
-                title: stateTitle.requestTitle,
-                isHighlighted: state == stateTitle.progressState
-            )
             requestsSelectionView
         case .locationSelection:
-            selectionView(
-                title: stateTitle.locationTitle,
-                isHighlighted: state == stateTitle.progressState
-            )
             locationSelectionView
         case .dateSelection:
-            selectionView(
-                title: stateTitle.dateTitle,
-                isHighlighted: state == stateTitle.progressState
-            )
-            dateSelectionView
+            dateTimeSelectionView
         case .gratuity:
-            selectionView(
-                title: stateTitle.gratuityTitle,
-                isHighlighted: state == stateTitle.progressState
-            )
             gratuityView
         }
     }
     
-    private func selectionView(title: String, isHighlighted: Bool) -> some View {
-        VStack(alignment: .leading) {
-            HStack {
-                Text(title)
-                    .foregroundColor(isHighlighted ? .gray950 : .gray400)
-                    .font(isHighlighted ? .title02B : .body03R)
-                    .padding(.leading, 16)
-                    .padding(.top, isHighlighted ? 20 : 24)
-                    .padding(.bottom, isHighlighted ? 20 : 8)
-                Spacer()
+    private func titleFont(for state: FindSuhyeonFeature.ProgressState) -> Font {
+        return state == feature.state.progressState ? .title02B : .body03R
+    }
+    
+    private func titleColor(for state: FindSuhyeonFeature.ProgressState) -> Color {
+        return state == feature.state.progressState ? .black : .gray400
+    }
+    
+    private func titleBottomPadding(for state: FindSuhyeonFeature.ProgressState) -> CGFloat {
+        return state == feature.state.progressState ? 20 : 0
+    }
+    
+    private func titleTopPadding(for state: FindSuhyeonFeature.ProgressState) -> CGFloat {
+        return state == feature.state.progressState ? 0 : 24
+    }
+
+    private var genderSelectionView: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(FindShuhyeonViewType.genderSelect.title)
+                .font(titleFont(for: .genderSelection))
+                .foregroundColor(titleColor(for: .genderSelection))
+                .animation(.easeInOut, value: feature.state.progressState)
+                .padding(.horizontal, 16)
+                .padding(.top, titleTopPadding(for: .genderSelection))
+                .padding(.bottom, titleBottomPadding(for: .genderSelection))
+
+            FindSuhyeonGenderSelectCell(selectedGender: feature.state.selectedGender) { value in
+                feature.send(.onTapGenderChip(value))
             }
         }
     }
-    
-    private var genderSelectionView: some View {
-        VStack(alignment: .leading) {
-            FindSuhyeonGenderSelectCell(
-                selectedGender: $selectedGender
-            )
-        }
-    }
-    
+
     private var ageSelectionView: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(FindShuhyeonViewType.ageSelect.title)
+                .font(titleFont(for: .ageSelection))
+                .foregroundColor(titleColor(for: .ageSelection))
+                .animation(.easeInOut, value: feature.state.progressState)
+                .padding(.horizontal, 16)
+                .padding(.top, titleTopPadding(for: .ageSelection))
+                .padding(.bottom, titleBottomPadding(for: .ageSelection))
+            
             FindSuhyeonDropdownCell(
-                dropdownState: input.dropdownState.toWithSuhyeonDropdownState(),
+                dropdownState: feature.state.age.dropdownState.toWithSuhyeonDropdownState(),
                 placeholder: "나이를 선택해주세요",
                 errorMessage: "",
                 onTapDropdown: {
-                    FindSuhyeonFeature.reducer(input: &input, state: &stateTitle, action: .setDropdownState(.isSelected))
-                    isAgeModalPresented = true
+                    feature.send(.tapAgeDropdown(.ageSelect))
+                    feature.send(.setAgeDropdownState(.isSelected))
                 }
             ) {
-                Text(input.selectedAgeRange)
+                Text(feature.state.age.selectedAgeRange)
             }
-            .onAppear {
-                // 뷰가 처음 로드될 때 상태를 .defaultState로 설정
-                if input.selectedAgeRange.isEmpty {
-                    FindSuhyeonFeature.reducer(input: &input, state: &stateTitle, action: .setDropdownState(.defaultState))
-                }
-            }
-            .sheet(isPresented: $isAgeModalPresented) {
-                ageModalView()
-                    .presentationDetents([.height(598)])
-                    .presentationDragIndicator(.hidden)
-            }
-            .transition(.move(edge: .top).combined(with: .opacity))
         }
     }
-    
-    private func ageModalView() -> some View {
-        VStack(spacing: 0) {
-            RoundedRectangle(cornerRadius: 11)
-                .fill(Color.gray200)
-                .frame(width: 60, height: 4)
-                .padding(.top, 12)
-            
-            HStack {
-                Text("나이대 선택")
-                    .font(.title02B)
-                    .foregroundColor(.gray950)
-                    .padding(.top, 24)
-                    .padding(.leading, 24)
-                Spacer()
-            }
-            .padding(.bottom, 32)
-            
-            VStack(spacing: 12) {
-                ForEach(["20 ~ 24", "25 ~ 29", "30 ~ 34", "35 ~ 39", "40세 이상"], id: \.self) { age in
-                    WithSuhyeonMultiSelectCheckBigChip(
-                        text: age,
-                        isSelected: input.selectedAgeRange == age,
-                        isDisabled: false,
-                        showIcon: false
-                    ) {
-                        FindSuhyeonFeature.reducer(input: &input, state: &stateTitle, action: .selectAgeRange(age))
-                    }
-                }
-            }
-            .padding(.horizontal, 24)
-            .padding(.bottom, 32)
-            
-            Button(action: {
-                isAgeModalPresented = false
-            }) {
-                Text("선택완료")
-                    .font(.body01B)
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity, minHeight: 56)
-                    .background(Color.primary500)
-                    .cornerRadius(16)
-            }
-            .padding(.horizontal, 24)
-            .padding(.bottom, 32)
-        }
-        .background(Color.white)
-        .cornerRadius(24, corners: [.topLeft, .topRight])
-        .ignoresSafeArea(edges: .bottom)
-    }
-    
+
     private var requestsSelectionView: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(FindShuhyeonViewType.requestSelect.title)
+                .font(titleFont(for: .requestSelection))
+                .foregroundColor(titleColor(for: .requestSelection))
+                .animation(.easeInOut, value: feature.state.progressState)
+                .padding(.horizontal, 16)
+                .padding(.top, titleTopPadding(for: .requestSelection))
+                .padding(.bottom, titleBottomPadding(for: .requestSelection))
+            
             FindSuhyeonDropdownCell(
-                dropdownState: input.dropdownState.toWithSuhyeonDropdownState(),
+                dropdownState: feature.state.request.dropdownState.toWithSuhyeonDropdownState(),
                 placeholder: "요청사항 선택하기(중복 선택 가능)",
                 errorMessage: "",
                 onTapDropdown: {
-                    isRequestsModalPresented = true
+                    feature.send(.tapRequestDropdown(.requestSelect))
+                    feature.send(.setRequestDropdownState(.isSelected))
                 }
             ) {
-                HStack(spacing: 8) {
-                    if input.selectedRequests.isEmpty {
-                        placeHolderText("요청사항 선택하기(중복 선택 가능)")
-                    } else {
-                        ForEach(input.selectedRequests, id: \.self) { request in
-                            WithSuhyeonCategoryChip(title: request)
-                        }
-                    }
+                ForEach(feature.state.request.selectedRequests, id: \.self) { request in
+                    WithSuhyeonCategoryChip(title: request)
                 }
             }
-            .sheet(isPresented: $isRequestsModalPresented) {
-                requestsModalView()
-                    .presentationDetents([.height(598)]) // 모달 높이 설정
-                    .presentationDragIndicator(.hidden) // 드래그 핸들러 숨김
-                
-            }
-            .transition(.move(edge: .top).combined(with: .opacity))
         }
     }
-    
-    private func requestsModalView() -> some View {
-        VStack(spacing: 0) {
-            HStack {
-                Text("요청사항 선택")
-                    .font(.title02B)
-                    .foregroundColor(.gray950)
-                    .padding(.top, 24)
-                    .padding(.leading, 24)
-                Spacer()
-            }
-            .padding(.bottom, 8)
-            
-            Text("중복 선택 가능")
-                .font(.caption02R)
-                .foregroundColor(.gray400)
-                .padding(.leading, 24)
-                .padding(.bottom, 32)
-            
-            // 요청사항 리스트
-            VStack(spacing: 12) {
-                ForEach(["사진 촬영", "전화 통화", "영상 통화"], id: \.self) { request in
-                    WithSuhyeonMultiSelectCheckBigChip(
-                        text: request,
-                        isSelected: input.selectedRequests.contains(request),
-                        isDisabled: false,
-                        showIcon: false
-                    ) {
-                        if input.selectedRequests.contains(request) {
-                            FindSuhyeonFeature.reducer(input: &input, state: &stateTitle, action: .deselectRequest(request))
-                        } else {
-                            FindSuhyeonFeature.reducer(input: &input, state: &stateTitle, action: .selectRequest(request))
-                        }
-                    }
-                }
-            }
-            .padding(.horizontal, 24)
-            
-            Button(action: {
-                isRequestsModalPresented = false
-            }) {
-                Text("선택완료")
-                    .font(.body01B)
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity, minHeight: 56)
-                    .background(Color.primary500)
-                    .cornerRadius(16)
-            }
-            .padding(.horizontal, 24)
-            .padding(.top, 32)
-            .padding(.bottom, 32)
-        }
-        .background(Color.white)
-        .cornerRadius(24, corners: [.topLeft, .topRight])
-        .ignoresSafeArea(edges: .bottom)
-    }
-    
-    
+
     private var locationSelectionView: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(FindShuhyeonViewType.locationSelect.title)
+                .font(titleFont(for: .locationSelection))
+                .foregroundColor(titleColor(for: .locationSelection))
+                .animation(.easeInOut, value: feature.state.progressState)
+                .padding(.horizontal, 16)
+                .padding(.top, titleTopPadding(for: .locationSelection))
+                .padding(.bottom, titleBottomPadding(for: .locationSelection))
+            
             FindSuhyeonDropdownCell(
-                dropdownState: input.selectedLocation.isEmpty ?
-                    .defaultState :
-                    .isSelected,
+                dropdownState: feature.state.location.dropdownState.toWithSuhyeonDropdownState(),
                 placeholder: "장소를 선택해주세요",
                 errorMessage: "",
                 onTapDropdown: {
-                    FindSuhyeonFeature.reducer(input: &input, state: &stateTitle, action: .setDropdownState(.isSelected))
-                    isLocationModalPresented = true
+                    feature.send(.tapLocationDropdown(.locationSelect))
+                    feature.send(.setLocationDropdownState(.isSelected))
                 }
             ) {
-                Text(input.selectedLocation.isEmpty ? "장소를 선택해주세요" : input.selectedLocation)
+                Text(feature.state.location.tempSelectedLocation)
             }
-            .sheet(isPresented: $isLocationModalPresented) {
-                locationModalView()
-                    .presentationDetents([.height(598)])
-                    .presentationDragIndicator(.hidden)
-            }
-            .transition(.move(edge: .top).combined(with: .opacity))
         }
     }
 
-    private func locationModalView() -> some View {
-        VStack {
-            Text("만날 위치 선택")
-                .font(.title02B)
-                .foregroundColor(.gray950)
-                .padding(.top, 24)
-                .padding(.leading, 24)
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-            WithSuhyeonLocationSelect(
-                withSuhyeonLocation: WithSuhyeonLocation.location,
-                selectedMainLocationIndex: input.selectedMainLocationIndex,
-                selectedSubLocationIndex: input.selectedSubLocationIndex,
-                onTabSelected: { mainIndex, subIndex in
-                    FindSuhyeonFeature.reducer(input: &input, state: &stateTitle, action: .selectLocation(main: mainIndex, sub: subIndex))
-                }
-            )
-            .padding(.top, 16)
-
-            Spacer()
-
-            WithSuhyeonButton(
-                title: "선택완료",
-                buttonState: input.tempSelectedLocation.isEmpty ? .disabled : .enabled,
-                onTapButton: {
-                    FindSuhyeonFeature.reducer(input: &input, state: &stateTitle, action: .confirmLocation)
-                    isLocationModalPresented = false
-                }
-            )
-            .padding(.horizontal, 24)
-            .padding(.bottom, 32)
-        }
-        .background(Color.white)
-        .cornerRadius(24, corners: [.topLeft, .topRight])
-        .ignoresSafeArea(edges: .bottom)
-    }
-
-    
-    private var dateSelectionView: some View {
-        VStack(alignment: .leading) {
+    private var dateTimeSelectionView: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(FindShuhyeonViewType.dateSelect.title)
+                .font(titleFont(for: .dateSelection))
+                .foregroundColor(titleColor(for: .dateSelection))
+                .animation(.easeInOut, value: feature.state.progressState)
+                .padding(.horizontal, 16)
+                .padding(.top, titleTopPadding(for: .dateSelection))
+                .padding(.bottom, titleBottomPadding(for: .dateSelection))
+            
             FindSuhyeonDropdownCell(
-                dropdownState: .isSelected,
-                placeholder: "날짜를 선택해주세요",
+                dropdownState: feature.state.dateTime.dropdownState.toWithSuhyeonDropdownState(),
+                placeholder: "날짜 및 시간 선택하기",
                 errorMessage: "",
                 onTapDropdown: {
-                    print("날짜 선택 열림")
+                    feature.send(.tapDateTimeDropdown(.dateSelect))
+                    feature.send(.setDateTimeDropdownState(.isSelected))
                 }
             ) {
-                Text(input.selectedDate)
+                let selectedDate = dates[feature.state.dateTime.selectedDateIndex]
+                let selectedTime = "\(feature.state.dateTime.selectedAmPm) \(String(format: "%02d", feature.state.dateTime.selectedHour)):\(String(format: "%02d", feature.state.dateTime.selectedMinute))"
+                Text("\(selectedDate) \(selectedTime)")
             }
         }
     }
     
     private var gratuityView: some View {
-        VStack(alignment: .leading) {
-            ZStack {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("주고싶은 금액을 입력해줘")
+                .font(.title02B)
+                .foregroundColor(.black)
+                .padding(.horizontal, 16)
+                .padding(.bottom, 20)
+            ZStack(alignment: .trailing) {
                 WithSuhyeonTextField(
                     placeholder: "금액 입력하기",
                     state: .editing,
@@ -386,12 +258,12 @@ struct FindSuhyeonView: View {
                     errorText: "최대 00자까지 입력할 수 있어",
                     onTapButton: {},
                     onChangeText: { text in },
-                    onFocusChanged: {value in}
+                    onFocusChanged: { _ in }
                 )
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
                 
-                HStack {
+                ZStack {
                     Spacer()
                     Text("원")
                         .font(.body02B)
@@ -399,23 +271,126 @@ struct FindSuhyeonView: View {
                         .padding(.bottom, 6)
                         .foregroundColor(.gray400)
                 }
-                .allowsHitTesting(false)
             }
         }
-        .transition(.move(edge: .top).combined(with: .opacity))
     }
     
-    private func increaseProgress() {
-        progress = min(progress + 100.0 / 7.0, 100.0)
+    private func ageModalView() -> some View {
+        VStack {
+            ForEach(["20 ~ 24", "25 ~ 29", "30 ~ 34", "35 ~ 39", "40세 이상"], id: \.self) { age in
+                WithSuhyeonMultiSelectCheckBigChip(
+                    text: age,
+                    isSelected: feature.state.age.selectedAgeRange == age,
+                    isDisabled: false,
+                    showIcon: false
+                ) {
+                    feature.send(.selectAgeRange(age))
+                }
+            }
+        }
+        .padding()
     }
     
-    private func placeHolderText(_ text: String) -> some View {
-        Text(text)
-            .foregroundColor(.gray400)
-            .font(.body03R)
+    private func requestsModalView() -> some View {
+        VStack {
+            ForEach(["사진 촬영", "전화 통화", "영상 통화"], id: \.self) { request in
+                WithSuhyeonMultiSelectCheckBigChip(
+                    text: request,
+                    isSelected: feature.state.request.selectedRequests.contains(request),
+                    isDisabled: false,
+                    showIcon: false
+                ) {
+                    feature.send(.selectRequest(request))
+                    
+                }
+            }
+        }
+        .padding()
+    }
+    
+    private func locationModalView() -> some View {
+        VStack {
+            WithSuhyeonLocationSelect(
+                withSuhyeonLocation: WithSuhyeonLocation.location,
+                selectedMainLocationIndex: feature.state.location.selectedMainLocationIndex,
+                selectedSubLocationIndex: feature.state.location.selectedSubLocationIndex,
+                onTabSelected: { mainIndex, subIndex in
+                    feature.send(.selectLocation(main: mainIndex, sub: subIndex))
+                }
+            )
+        }
+        .padding()
+    }
+    
+    private func dateTimeModalView() -> some View {
+        CustomDatePicker(
+            selectedDateIndex: feature.state.dateTime.tempDateIndex,
+            selectedHour: feature.state.dateTime.tempHour,
+            selectedMinute: feature.state.dateTime.tempMinute,
+            selectedAmPm: feature.state.dateTime.tempAmPm,
+            dates: dates,
+            hours: hours,
+            minutes: minutes,
+            amPm: amPm,
+            onDateChange: { index in
+                feature.send(.selectDateTime(
+                    dateIndex: index,
+                    hour: feature.state.dateTime.tempHour,
+                    minute: feature.state.dateTime.tempMinute,
+                    amPm: feature.state.dateTime.tempAmPm
+                ))
+            },
+            onHourChange: { hour in
+                feature.send(.selectDateTime(
+                    dateIndex: feature.state.dateTime.tempDateIndex,
+                    hour: hour,
+                    minute: feature.state.dateTime.tempMinute,
+                    amPm: feature.state.dateTime.tempAmPm
+                ))
+            },
+            onMinuteChange: { minute in
+                feature.send(.selectDateTime(
+                    dateIndex: feature.state.dateTime.tempDateIndex,
+                    hour: feature.state.dateTime.tempHour,
+                    minute: minute,
+                    amPm: feature.state.dateTime.tempAmPm
+                ))
+            },
+            onAmPmChange: { amPm in
+                feature.send(.selectDateTime(
+                    dateIndex: feature.state.dateTime.tempDateIndex,
+                    hour: feature.state.dateTime.tempHour,
+                    minute: feature.state.dateTime.tempMinute,
+                    amPm: amPm
+                ))
+            }
+        )
+        
+    }
+    
+    
+    static func generateDatesForYear() -> [String] {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "M월 d일 E"
+        formatter.locale = Locale(identifier: "ko_KR")
+        let calendar = Calendar.current
+        
+        let startDate = calendar.date(from: DateComponents(year: 2025, month: 1, day: 1))!
+        let endDate = calendar.date(from: DateComponents(year: 2025, month: 12, day: 31))!
+        
+        return stride(from: startDate, to: endDate, by: 60 * 60 * 24).map {
+            formatter.string(from: $0)
+        }
+    }
+    
+    private var progressPercentage: Double {
+        let totalSteps = Double(FindSuhyeonFeature.ProgressState.allCases.count)
+        let currentStep = Double(feature.state.progressState.rawValue + 1)
+        return (currentStep / totalSteps) * 100
     }
 }
 
 #Preview {
     FindSuhyeonView()
 }
+

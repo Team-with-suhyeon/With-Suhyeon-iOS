@@ -84,6 +84,7 @@ class SignUpFeature: Feature {
     }
     
     enum Intent {
+        case tapBackToStart
         case tapButton
         case tapBackButton
         case updatePhoneNumber(String)
@@ -101,6 +102,7 @@ class SignUpFeature: Feature {
     
     enum SideEffect {
         case navigateToSignUpComplete
+        case navigateToStartView
     }
     
     @Published private(set) var state = State()
@@ -143,6 +145,8 @@ class SignUpFeature: Feature {
     
     func handleIntent(_ intent: Intent) {
         switch intent {
+        case .tapBackToStart:
+            sideEffectSubject.send(.navigateToStartView)
         case .tapButton:
             switch currentContent {
             case .authenticationView:
@@ -151,7 +155,11 @@ class SignUpFeature: Feature {
                 moveToNextStep()
             }
         case .tapBackButton:
-            moveToPreviousStep()
+            if currentContent == .termsOfServiceView {
+                sideEffectSubject.send(.navigateToStartView)
+            } else {
+                moveToPreviousStep()
+            }
         case .updatePhoneNumber(let phoneNumber):
             updatePhoneNumber(phoneNumber)
         case .requestAuthCode:

@@ -61,6 +61,6 @@ class MyPageFeature: Feature {
             sideEffectSubject.send(.navigateToInitialScreen)
         case .tapWithdraw:
             sideEffectSubject.send(.navigateToInitialScreen)
-       }
+        }
     }
 }

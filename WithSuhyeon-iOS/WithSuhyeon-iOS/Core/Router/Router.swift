@@ -31,5 +31,9 @@ public enum Destination: Hashable {
     case blockingAccountManagement
     case myPost
     case setInterest
-    case signUpComplete 
+    case signUp
+    case signUpComplete
+    case login
+    case loginComplete
+    case startView
 }

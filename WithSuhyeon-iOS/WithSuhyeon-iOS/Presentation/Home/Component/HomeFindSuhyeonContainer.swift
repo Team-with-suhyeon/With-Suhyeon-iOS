@@ -59,6 +59,9 @@ struct HomeFindSuhyeonContainer: View {
             RoundedRectangle(cornerRadius: 24)
                 .stroke(Color.gray100, lineWidth: 1)
         )
+        .background(
+            Color.white
+        )
     }
 }
 

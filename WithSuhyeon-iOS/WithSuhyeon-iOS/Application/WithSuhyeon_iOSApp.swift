@@ -13,6 +13,7 @@ struct WithSuhyeon_iOSApp: App {
     
     init() {
         DIContainer.shared.registerDependencies()
+        WebSocketClient.shared.connect(target: WebSocketTarget())
     }
     
     var body: some Scene {
@@ -27,7 +28,7 @@ struct WithSuhyeon_iOSApp: App {
                                 .navigationBarBackButtonHidden(true)
                         case .galleryDetail(id: let id) : GalleryDetailView(id: id)
                                 .navigationBarBackButtonHidden(true)
-                        case .chatRoom : ChatRoomView()
+                        case let .chatRoom(ownerRoomID, peerRoomID, ownerID, peerID, postID, nickname) : ChatRoomView(ownerChatRoomId: ownerRoomID, peerChatRoomId: peerRoomID, ownerID: ownerID, peerID: peerID, postID: postID, nickname: nickname)
                                 .navigationBarBackButtonHidden(true)
                         case .blockingAccountManagement: BlockingAccountManagement()
                                 .navigationBarBackButtonHidden(true)

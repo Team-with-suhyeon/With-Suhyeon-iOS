@@ -24,15 +24,15 @@ struct ChatView : View {
                 LazyVStack(spacing: 0) {
                     ForEach(feature.state.chatList.indices, id: \.self) { index in
                         ChatUserContainer(
-                            imageUrl: feature.state.chatList[index].imageUrl,
+                            imageUrl: "https://reqres.in/img/faces/7-image.jpg",
                             nickname: feature.state.chatList[index].nickname,
-                            lastChat: feature.state.chatList[index].lastChat,
+                            lastChat: feature.state.chatList[index].lastMessage,
                             date: feature.state.chatList[index].date,
-                            count: feature.state.chatList[index].count
+                            count: feature.state.chatList[index].unreadCount
                         )
                         .padding(.vertical, 20)
                         .onTapGesture {
-                            feature.send(.tapItem)
+                            feature.send(.tapItem(index: index))
                         }
                         
                         if index < feature.state.chatList.count - 1 {
@@ -42,11 +42,23 @@ struct ChatView : View {
                 }
             }
         }
+        .onAppear {
+            feature.getChatRooms()
+        }
         .onReceive(feature.sideEffectSubject) { sideEffect in
             switch sideEffect {
                 
-            case .navigateToChatRoom:
-                router.navigate(to: .chatRoom)
+            case let .navigateToChatRoom(ownerRoomId, peerRoomId, ownerId, peerId, postId, nickname):
+                router.navigate(
+                    to: .chatRoom(
+                        ownerRoomId: ownerRoomId,
+                        peerRoomId: peerRoomId,
+                        ownerId: ownerId,
+                        peerId: peerId,
+                        postId: postId,
+                        nickname: nickname
+                    )
+                )
             }
         }
     }

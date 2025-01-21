@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct SignUpContent: View {
-    @Binding var selectedTab: SignUpContentCase
-    init(selectedTab: Binding<SignUpContentCase>) {
-        self._selectedTab = selectedTab
+    let selectedTab: SignUpContentCase
+    init(selectedTab: SignUpContentCase) {
+        self.selectedTab = selectedTab
         UITabBar.appearance().isHidden = true
     }
     
     var body: some View {
-        TabView(selection: $selectedTab) {
+        TabView(selection: Binding(get: { selectedTab }, set: { value in })) {
             TermsOfServiceView()
                 .tag(SignUpContentCase.termsOfServiceView)
             PhoneAuthenticationView()

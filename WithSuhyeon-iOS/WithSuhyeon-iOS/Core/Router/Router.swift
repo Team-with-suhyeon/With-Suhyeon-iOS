@@ -24,11 +24,12 @@ public protocol Router {
 }
 
 public enum Destination: Hashable {
-    case main
+    case main(fromSignUp: Bool)
     case galleryUpload
     case galleryDetail(id: Int)
-    case chatRoom
+    case chatRoom(ownerRoomId: String, peerRoomId: String, ownerId: Int, peerId: Int, postId: Int, nickname: String)
     case blockingAccountManagement
     case myPost
     case setInterest
+    case signUpComplete 
 }

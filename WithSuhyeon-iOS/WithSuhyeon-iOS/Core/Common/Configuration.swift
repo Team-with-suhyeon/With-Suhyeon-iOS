@@ -14,4 +14,11 @@ public enum Configuration {
         }
         return url
     }()
+    
+    static let socketURL: String = {
+        guard let url = Bundle.main.infoDictionary?["SOCKET_URL"] as? String else {
+            fatalError("No Configuration Found")
+        }
+        return url
+    }()
 }

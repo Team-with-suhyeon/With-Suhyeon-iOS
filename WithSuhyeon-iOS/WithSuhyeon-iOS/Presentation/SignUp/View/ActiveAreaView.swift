@@ -8,11 +8,26 @@
 import SwiftUI
 
 struct ActiveAreaView: View {
+    @EnvironmentObject var signUpFeature: SignUpFeature
+    
     var body: some View {
-        Text("활동 지역 선택")
+        VStack(spacing: 0) {
+            WithSuhyeonLocationSelect(
+                withSuhyeonLocation: WithSuhyeonLocation.location,
+                selectedMainLocationIndex: signUpFeature.state.mainLocationIndex,
+                selectedSubLocationIndex: signUpFeature.state.subLocationIndex,
+                onTabSelected: { mainIndex, subIndex in
+                    signUpFeature.send(.updateLocation(mainIndex, subIndex))
+                }
+            )
+            .frame(maxHeight: .infinity)
+        }
+        .frame(maxHeight: .infinity)
     }
 }
 
+
 #Preview {
     ActiveAreaView()
+        .environmentObject(SignUpFeature())
 }

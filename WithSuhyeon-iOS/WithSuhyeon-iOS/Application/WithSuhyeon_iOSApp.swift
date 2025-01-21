@@ -13,27 +13,30 @@ struct WithSuhyeon_iOSApp: App {
     
     init() {
         DIContainer.shared.registerDependencies()
+        WebSocketClient.shared.connect(target: WebSocketTarget())
     }
     
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $router.path) {
-                MainTabBar()
+                MainTabBar(fromSignup: false)
                     .navigationDestination(for: Destination.self){ destination in
                         switch destination {
-                        case .main : MainTabBar()
+                        case .main(let fromSignUp) : MainTabBar(fromSignup: fromSignUp)
                                 .navigationBarBackButtonHidden(true)
                         case .galleryUpload : GalleryUploadView()
                                 .navigationBarBackButtonHidden(true)
                         case .galleryDetail(id: let id) : GalleryDetailView(id: id)
                                 .navigationBarBackButtonHidden(true)
-                        case .chatRoom : ChatRoomView()
+                        case let .chatRoom(ownerRoomID, peerRoomID, ownerID, peerID, postID, nickname) : ChatRoomView(ownerChatRoomId: ownerRoomID, peerChatRoomId: peerRoomID, ownerID: ownerID, peerID: peerID, postID: postID, nickname: nickname)
                                 .navigationBarBackButtonHidden(true)
                         case .blockingAccountManagement: BlockingAccountManagement()
                                 .navigationBarBackButtonHidden(true)
                         case .myPost: MyPost()
                                 .navigationBarBackButtonHidden(true)
                         case .setInterest: SetInterest()
+                                .navigationBarBackButtonHidden(true)
+                        case .signUpComplete: SignUpCompleteView()
                                 .navigationBarBackButtonHidden(true)
                         }
                     }

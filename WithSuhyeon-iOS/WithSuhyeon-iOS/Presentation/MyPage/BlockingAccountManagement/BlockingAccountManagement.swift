@@ -3,7 +3,7 @@ import SwiftUI
 
 struct BlockingAccountManagement: View {
     @EnvironmentObject var router: RouterRegistry
-    @StateObject var myPageFeature = MyPageFeature()
+    @StateObject var blockingAccountManagementFeature = BlockingAccountManagementFeature()
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -16,7 +16,7 @@ struct BlockingAccountManagement: View {
                 Text("차단할 번호를 입력해주세요")
                     .font(.title02B)
                     .foregroundColor(.black)
-
+                
                 Text("차단한 사용자는 xx님의 게시글과 xx님이 다운로드한 사진들을\n볼 수 없습니다.")
                     .font(.caption01SB)
                     .foregroundColor(.gray400)
@@ -36,21 +36,21 @@ struct BlockingAccountManagement: View {
                 
                 WithSuhyeonTextField(
                     placeholder: "- 를 제외한 휴대폰 번호를 입력해주세요",
-                    state: myPageFeature.state.isValidPhoneNumber ? .editing : .error,
+                    state: blockingAccountManagementFeature.state.isValidPhoneNumber ? .editing : .error,
                     keyboardType: .numberPad,
                     maxLength: 11,
                     countable: false,
                     hasButton: true,
                     buttonText: "차단하기",
                     buttonState: .enabled,
-                    errorText: myPageFeature.state.errorMessage,
+                    errorText: blockingAccountManagementFeature.state.errorMessage,
                     onTapButton: {
                         withAnimation {
-                            myPageFeature.send(.tapBlockingAccountButton)
+                            blockingAccountManagementFeature.send(.tapBlockingAccountButton)
                         }
                     },
                     onChangeText: { text in
-                        myPageFeature.send(.updatePhoneNumber(text))
+                        blockingAccountManagementFeature.send(.updatePhoneNumber(text))
                     },
                     isUnderMaxLength: true
                 )
@@ -62,14 +62,14 @@ struct BlockingAccountManagement: View {
                 .foregroundColor(Color.gray50)
             
             VStack(alignment: .leading) {
-                if !myPageFeature.state.blockingAccountList.isEmpty {
-                    Text("차단된 연락처 \(myPageFeature.state.blockingAccountList.count)")
+                if !blockingAccountManagementFeature.state.blockingAccountList.isEmpty {
+                    Text("차단된 연락처 \(blockingAccountManagementFeature.state.blockingAccountList.count)")
                         .font(.caption01SB)
                         .foregroundColor(.black)
                         .padding(.top, 24)
                         .padding(.bottom, 12)
                     
-                    ForEach(myPageFeature.state.blockingAccountList, id: \.self) { number in
+                    ForEach(blockingAccountManagementFeature.state.blockingAccountList, id: \.self) { number in
                         HStack {
                             Text(number)
                                 .font(.body03SB)
@@ -78,7 +78,7 @@ struct BlockingAccountManagement: View {
                             Spacer()
                             Button(action: {
                                 withAnimation {
-                                    myPageFeature.send(.deleteBlockedNumber(number))
+                                    blockingAccountManagementFeature.send(.deleteBlockedNumber(number))
                                 }
                             }) {
                                 Image(icon: .icXclose24)

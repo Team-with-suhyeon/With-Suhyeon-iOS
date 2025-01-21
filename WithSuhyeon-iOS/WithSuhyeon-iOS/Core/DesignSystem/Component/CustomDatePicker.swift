@@ -108,7 +108,6 @@ struct CustomDatePicker: View {
                 }
             }
         }
-        .padding()
     }
 }
 

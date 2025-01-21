@@ -14,6 +14,7 @@ struct WithSuhyeonModalModifier<ModalContent: View>: ViewModifier {
     let title: String
     let modalContent: () -> ModalContent
     let onDismiss: () -> Void
+    let onTapButton: () -> Void
     
     func body(content: Content) -> some View {
         ZStack(alignment: .bottom) {
@@ -75,6 +76,7 @@ struct WithSuhyeonModalModifier<ModalContent: View>: ViewModifier {
             
             Button(action: {
                 print("선택완료 버튼 선택")
+                onTapButton()
                 onDismiss()
             }) {
                 Text("선택완료")
@@ -100,7 +102,8 @@ extension View {
         isButtonEnabled: Bool,
         title: String,
         @ViewBuilder modalContent: @escaping () -> ModalContent,
-        onDismiss: @escaping () -> Void
+        onDismiss: @escaping () -> Void,
+        onTapButton: @escaping () -> Void
     ) -> some View {
         self.modifier(
             WithSuhyeonModalModifier(
@@ -108,7 +111,8 @@ extension View {
                 isButtonEnabled: isButtonEnabled,
                 title: title,
                 modalContent: modalContent,
-                onDismiss: onDismiss
+                onDismiss: onDismiss,
+                onTapButton: onTapButton
             )
         )
     }

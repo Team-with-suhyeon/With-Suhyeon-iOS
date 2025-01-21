@@ -305,8 +305,6 @@
 /* Begin XCBuildConfiguration section */
 		8BA72DA92D2E1EFA007654D1 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = 8BA72D892D2E1EF9007654D1 /* WithSuhyeon-iOS */;
-			baseConfigurationReferenceRelativePath = Config/Dev.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -371,8 +369,6 @@
 		};
 		8BA72DAA2D2E1EFA007654D1 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReferenceAnchor = 8BA72D892D2E1EF9007654D1 /* WithSuhyeon-iOS */;
-			baseConfigurationReferenceRelativePath = Config/Release.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;

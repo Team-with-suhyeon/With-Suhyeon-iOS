@@ -19,10 +19,25 @@ struct FindSuhyeonDetailView: View {
             
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
+                    Spacer()
+                        .frame(height: 32)
+                    if(feature.state.matchingState != .notMatching) {
+                        Text(feature.state.matchingState == .matching ? "매칭 완료" : "기간 만료")
+                            .font(.caption01SB)
+                            .foregroundColor(feature.state.matchingState == .matching ? .gray500 : .white)
+                            .padding(.vertical, 4)
+                            .padding(.horizontal, 8)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(feature.state.matchingState == .matching ? Color.gray100 : Color.gray400)
+                            )
+                            .padding(.leading, 16)
+                            .padding(.bottom, 16)
+                    }
+                    
                     Text(feature.state.title)
                         .font(.title01B)
                         .foregroundColor(.gray900)
-                        .padding(.top, 32)
                         .padding(.leading, 16)
                     
                     HStack(spacing: 12) {

@@ -51,8 +51,8 @@ class BlockingAccountManagementFeature: Feature {
         case .tapBlockingAccountButton:
             if validatePhoneNumber() {
                 state.blockingAccountList.insert(state.phoneNumber, at: 0)
-                state.phoneNumber = ""
-                state.errorMessage = ""
+            } else {
+                state = state
             }
         case .updatePhoneNumber(let number):
             updatePhoneNumber(number)
@@ -80,8 +80,13 @@ class BlockingAccountManagementFeature: Feature {
             state.errorMessage = "번호 길이를 초과했습니다."
             state.isValidPhoneNumber = false
             return false
+        } else if state.blockingAccountList.contains(state.phoneNumber){
+            state.errorMessage = "이미 등록된 번호에요"
+            state.isValidPhoneNumber = false
+            return false
         }
         
+        print(state.phoneNumber.count)
         state.errorMessage = ""
         state.isValidPhoneNumber = true
         return true

@@ -74,7 +74,7 @@ class KeyChainManager {
     class func delete(key: String, service: String = Bundle.main.bundleIdentifier ?? "defaultService") throws -> Bool {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: key               
+            kSecAttrAccount as String: key
         ]
         
         let status = SecItemDelete(query as CFDictionary)

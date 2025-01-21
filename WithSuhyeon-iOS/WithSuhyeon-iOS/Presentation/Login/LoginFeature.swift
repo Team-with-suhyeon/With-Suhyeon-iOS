@@ -17,6 +17,7 @@ class LoginFeature: Feature {
         var phoneAuthStep: PhoneAuthStep = .enterPhoneNumber
         var isExistsUser: Bool = false
         var buttonState: WithSuhyeonButtonState = .disabled
+        var loginResponse: LoginResponseDTO? = nil
     }
     
     enum Intent {
@@ -25,6 +26,7 @@ class LoginFeature: Feature {
         case requestAuthCode
         case updateAuthCode(String)
         case validateAuthCode
+        case login
     }
     
     enum SideEffect {
@@ -38,7 +40,7 @@ class LoginFeature: Feature {
         case completed
     }
     
-    
+    @Inject private var authRepository: AuthRepository
     @Published private(set) var state = State()
     private var cancellables = Set<AnyCancellable>()
     private let intentSubject = PassthroughSubject<Intent, Never>()
@@ -68,8 +70,14 @@ class LoginFeature: Feature {
             updateAuthCode(authCode)
         case .validateAuthCode:
             validateAuthCode()
+            if state.isAuthNumberCorrect {
+                login()
+            }
         case .tapBackButton:
             sideEffectSubject.send(.navigateToStartView)
+        case .login:
+            login()
+            
         }
     }
     
@@ -147,5 +155,21 @@ class LoginFeature: Feature {
         
         guard state.buttonState != newButtonState else { return }
         state.buttonState = newButtonState
+    }
+    
+    private func login() {
+        authRepository.login(phoneNumber: state.phoneNumber) { [weak self] result in
+            switch result {
+            case .success(let response):
+                DispatchQueue.main.async {
+                    self?.state.loginResponse = response
+                    self?.sideEffectSubject.send(.navigateToLoginComplete)
+                }
+            case .failure(let error):
+                print("로그인 실패: \(error)")
+                self?.state.isAuthNumberCorrect = false
+                self?.updateButtonState()
+            }
+        }
     }
 }

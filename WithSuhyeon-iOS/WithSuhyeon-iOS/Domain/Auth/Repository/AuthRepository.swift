@@ -11,4 +11,10 @@ import Combine
 
 protocol AuthRepository {
     func signUp(member: Member, completion: @escaping (Result<Void, NetworkError>) -> Void)
+    
+    func login(phoneNumber: String, completion: @escaping (Result<LoginResponseDTO, NetworkError>) -> Void)
+    
+    func loadAccessToken() -> String?
+    func loadRefreshToken() -> String?
+    func clearTokens()
 }

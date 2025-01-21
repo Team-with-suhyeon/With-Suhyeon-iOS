@@ -5,8 +5,6 @@ struct BlockingAccountManagement: View {
     @EnvironmentObject var router: RouterRegistry
     @StateObject var myPageFeature = MyPageFeature()
     
-    
-    
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             WithSuhyeonTopNavigationBar(title: "차단 계정 관리", rightIcon: .icXclose24, onTapRight: {

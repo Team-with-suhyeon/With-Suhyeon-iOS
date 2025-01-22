@@ -204,7 +204,15 @@ final class NetworkClient: NetworkRequestable {
             
         case (404, "USER_001"):
             return .userNotFound
+        case (400, "USER_002"):
+            return .userNotRegistered
+        case (409, "USER_003"):
+            return .userAlreadyRegistered
             
+        case (400, "REDIS_001"):
+            return .invalidCertificationNumber
+        case (400, "REDIS_002"):
+            return .expiredCertificationNumber
         default:
             return .unknownError
         }

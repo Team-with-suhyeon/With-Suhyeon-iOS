@@ -112,6 +112,7 @@ class SignUpFeature: Feature {
     let sideEffectSubject = PassthroughSubject<SideEffect, Never>()
     
     @Inject var nicknameValidateUseCase : NickNameValidateUseCase
+    @Inject var authRepository: AuthRepository
     
     init() {
         bindIntents()
@@ -181,7 +182,7 @@ class SignUpFeature: Feature {
         case .updateLocation(let mainLocationIndex, let subLocationIndex):
             updateLocation(mainLocationIndex, subLocationIndex)
         case .completeSignUp:
-            sideEffectSubject.send(.navigateToSignUpComplete)
+            completeSignUp()
         }
     }
     
@@ -365,5 +366,35 @@ class SignUpFeature: Feature {
             state.subLocationIndex = subIndex
         }
         updateButtonState()
+    }
+    
+    private func completeSignUp() {
+        guard let member = createSignUpMemberInfo() else {
+            return
+        }
+        
+        authRepository.signUp(member: member) { [weak self] result in
+            switch result {
+            case .success:
+                print("✅ 회원가입 성공")
+                self?.sideEffectSubject.send(.navigateToSignUpComplete)
+            case .failure(let error):
+                print("❌ 회원가입 실패: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    private func createSignUpMemberInfo() -> Member? {
+        let profileImage = state.profileImages[state.selectedProfileImageIndex!].defaultImage.rawValue
+        let region = "강남/역삼/삼성"
+        
+        return Member(
+            phoneNumber: state.phoneNumber,
+            nickname: state.nickname,
+            birthYear: state.birthYear,
+            gender: state.gender == "남성",
+            profileImage: profileImage,
+            region: region
+        )
     }
 }

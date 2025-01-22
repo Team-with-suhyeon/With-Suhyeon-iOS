@@ -21,5 +21,7 @@ protocol ChatSocketProtocol {
     
     func receiveChatRooms() -> AnyPublisher<ChatRoomsResponseDTO, NetworkError>
     
+    func receiveChatCreate() -> AnyPublisher<ChatCreateResponseDTO, NetworkError>
+    
     func sendChat(_ value: ChatRequestDTO)
 }

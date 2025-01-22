@@ -20,6 +20,6 @@ struct CommonAPI: CommonApiProtocol {
     func getCategories() -> AnyPublisher<CategoryResponseDTO, NetworkError> {
         let target: CommonTarget = .getCategories
         
-        return client.request/*NoneAuth*/(CategoryResponseDTO.self, target: target)
+        return client.requestNoneAuth(CategoryResponseDTO.self, target: target)
     }
 }

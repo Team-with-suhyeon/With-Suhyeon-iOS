@@ -7,15 +7,17 @@
 
 import SwiftUI
 
+import Kingfisher
+
 struct CategoryItem: View {
-    let category: String
+    let category: Category
     let scrollOffset: CGFloat
     let isSelected: Bool
     
-    init(category: String, scrollOffset: CGFloat, isSelected: Bool) {
+    init(category: Category, scrollOffset: CGFloat, isSelected: Bool) {
         self.category = category
         self.scrollOffset = scrollOffset
-        let nospace = category.replacingOccurrences(of: " ", with: "")
+        let nospace = category.category.replacingOccurrences(of: " ", with: "")
         self._afterTextWidth = State(initialValue: CGFloat(nospace.count * 15))
         self.isSelected = isSelected
     }
@@ -34,21 +36,21 @@ struct CategoryItem: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
-                if(category == "전체"){
-                    Text("ALL")
+                if(category.category == "전체" || category.category == "엠티" || category.category == "기타"){
+                    Text(categoryLabel(for: category.category))
                         .font(.body03B)
                         .foregroundColor(isSelected ? .white : .gray700)
                         .frame(width: max(allTextWidth, 0))
                         .opacity(allTextOpacity)
                 } else {
-                    Image(icon: .icArchive24)
-                        .renderingMode(.template)
+                    KFImage(URL(string: category.imageURL))
                         .resizable()
                         .frame(width: iconSize, height: iconSize)
                         .foregroundColor(.white)
+                        .cornerRadius(12)
                 }
                 
-                Text(category)
+                Text(category.category)
                     .lineLimit(1)
                     .font(.body03SB)
                     .foregroundColor(isSelected ? .white : .gray700)
@@ -63,7 +65,7 @@ struct CategoryItem: View {
             .onChange(of: scrollOffset) { newValue in
                 adjustAppearance(for: newValue)
             }
-            Text(category)
+            Text(category.category)
                 .lineLimit(1)
                 .font(.body03B)
                 .foregroundColor(isSelected ? .primary600 : .gray400)
@@ -85,7 +87,7 @@ struct CategoryItem: View {
         let calculatedTextHeight = 26 - (progress * 26)
         let calculatedCircleWidth: CGFloat
         
-        if category == "전체" {
+        if category.category == "전체" {
             calculatedCircleWidth = 60 + ((afterTextWidth - 31) * progress)
         } else {
             calculatedCircleWidth = 60 + ((afterTextWidth - 18) * progress)
@@ -108,6 +110,15 @@ struct CategoryItem: View {
             self.allTextOpacity = calculatedAllTextOpacity
             self.allTextWidth = calculatedAllTextWidth
             self.textWidth = calculatedTextWidth
+        }
+    }
+    
+    private func categoryLabel(for category: String) -> String {
+        switch category {
+        case "전체": return "ALL"
+        case "엠티": return "MT"
+        case "기타": return "etc"
+        default: return category
         }
     }
 }

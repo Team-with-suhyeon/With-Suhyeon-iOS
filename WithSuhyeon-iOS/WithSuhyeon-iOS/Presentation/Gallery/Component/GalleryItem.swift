@@ -19,21 +19,27 @@ struct GalleryItem: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            KFImage(URL(string: imageUrl))
-                .cancelOnDisappear(true)
-                .placeholder{
-                    Image(systemName: "list.dash")
+            VStack(alignment: .leading, spacing: 8) {
+                GeometryReader { geometry in
+                    KFImage(URL(string: imageUrl))
+                        .cancelOnDisappear(true)
+                        .placeholder{
+                            Image(systemName: "list.dash")
+                                .resizable()
+                                .scaledToFill()
+                        }
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: geometry.size.width, height: geometry.size.height)
+                        .aspectRatio(1, contentMode: .fit)
+                        .cornerRadius(20)
                 }
-                .resizable()
-                .scaledToFill()
                 .aspectRatio(1, contentMode: .fit)
-                .cornerRadius(20)
-            Text(title)
-                .font(.caption01SB)
-                .foregroundColor(.black)
-                .padding(.horizontal, 16)
-        }
+                Text(title)
+                    .font(.caption01SB)
+                    .foregroundColor(.black)
+                    .padding(.horizontal, 16)
+            }
     }
 }
 

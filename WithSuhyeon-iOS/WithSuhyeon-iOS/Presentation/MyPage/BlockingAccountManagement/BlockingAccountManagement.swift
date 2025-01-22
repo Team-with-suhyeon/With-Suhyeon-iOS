@@ -93,7 +93,8 @@ struct BlockingAccountManagement: View {
                     }
                 } else {
                     VStack(alignment: .center) {
-                        Image(image: .imgEmpty)
+                        Image(image: .imgEmptyState)
+                            .renderingMode(.original)
                             .frame(width: 150, height: 150)
                         
                         Text("아직 차단된 번호가 없어요")

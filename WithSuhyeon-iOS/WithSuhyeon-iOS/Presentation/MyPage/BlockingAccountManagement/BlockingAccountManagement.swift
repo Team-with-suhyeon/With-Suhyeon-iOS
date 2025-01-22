@@ -17,7 +17,7 @@ struct BlockingAccountManagement: View {
                     .font(.title02B)
                     .foregroundColor(.black)
                 
-                Text("차단한 사용자는 xx님의 게시글과 xx님이 다운로드한 사진들을\n볼 수 없습니다.")
+                Text("차단한 사용자는 \(blockingAccountManagementFeature.state.nickname)님의 게시글을 볼 수 없어요")
                     .font(.caption01SB)
                     .foregroundColor(.gray400)
             }
@@ -108,7 +108,9 @@ struct BlockingAccountManagement: View {
             
             Spacer()
         }
-        
+        .onAppear {
+            blockingAccountManagementFeature.send(.fetchBlockingAccounts)
+        }
     }
 }
 

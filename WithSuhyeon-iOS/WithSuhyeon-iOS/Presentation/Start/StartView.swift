@@ -44,12 +44,17 @@ struct StartView: View {
             .padding(.top, 18)
         }
         .padding(.horizontal, 16)
+        .onAppear {
+            startFeature.checkAutoLogin()
+        }
         .onReceive(startFeature.sideEffectSubject) { sideEffect in
             switch sideEffect {
             case .navigateToSignUp:
                 router.navigate(to: .signUp)
             case .navigateToLogin:
                 router.navigate(to: .login)
+            case .navigateToMain:
+                router.navigate(to: .main(fromSignUp: false))
             }
         }
     }

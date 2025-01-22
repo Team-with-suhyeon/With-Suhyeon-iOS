@@ -153,9 +153,7 @@ struct MyPageView : View {
                         .padding(.bottom, 8)
                         .frame(height: 50)
                         .contentShape(Rectangle())
-                        .onTapGesture {
-                            feature.send(.tapWithdraw)
-                        }
+                        .onTapGesture { isWithdrawPresented = true }
                     }
                     .background(
                         RoundedRectangle(cornerRadius: 16)

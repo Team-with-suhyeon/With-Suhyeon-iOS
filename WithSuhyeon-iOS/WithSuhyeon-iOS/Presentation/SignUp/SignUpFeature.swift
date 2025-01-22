@@ -58,6 +58,7 @@ class SignUpFeature: Feature {
         var selectedProfileImageIndex: Int? = nil
         var isProfileImageSelected: Bool = false
         
+        var locationOptions: [Region] = []
         var mainLocationIndex: Int = -1
         var subLocationIndex: Int? = nil
         var isLocationSelected: Bool {
@@ -98,6 +99,7 @@ class SignUpFeature: Feature {
         case confirmProfileImage
         case updateLocation(Int, Int)
         case completeSignUp
+        case enterScreen
     }
     
     enum SideEffect {
@@ -113,6 +115,7 @@ class SignUpFeature: Feature {
     
     @Inject var nicknameValidateUseCase : NickNameValidateUseCase
     @Inject var authRepository: AuthRepository
+    @Inject var getRegionsUseCase: GetRegionsUseCase
     
     init() {
         bindIntents()
@@ -183,6 +186,8 @@ class SignUpFeature: Feature {
             updateLocation(mainLocationIndex, subLocationIndex)
         case .completeSignUp:
             completeSignUp()
+        case .enterScreen:
+            getLocationOptions()
         }
     }
     
@@ -386,7 +391,7 @@ class SignUpFeature: Feature {
     
     private func createSignUpMemberInfo() -> Member? {
         let profileImage = state.profileImages[state.selectedProfileImageIndex!].defaultImage.rawValue
-        let region = "강남/역삼/삼성"
+        let region = state.locationOptions[state.mainLocationIndex].subLocation[state.subLocationIndex ?? 0]
         
         return Member(
             phoneNumber: state.phoneNumber,
@@ -396,5 +401,11 @@ class SignUpFeature: Feature {
             profileImage: profileImage,
             region: region
         )
+    }
+    
+    private func getLocationOptions() {
+        getRegionsUseCase.execute { [weak self] result in
+            self?.state.locationOptions = result
+        }
     }
 }

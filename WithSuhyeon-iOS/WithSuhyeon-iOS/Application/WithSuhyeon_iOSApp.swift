@@ -13,13 +13,13 @@ struct WithSuhyeon_iOSApp: App {
     
     init() {
         DIContainer.shared.registerDependencies()
-        //WebSocketClient.shared.connect(target: WebSocketTarget())
+        WebSocketClient.shared.connect(target: WebSocketTarget())
     }
     
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $router.path) {
-                MainTabBar(fromSignup: false)
+                StartView()
                     .navigationDestination(for: Destination.self){ destination in
                         switch destination {
                         case .main(let fromSignUp) : MainTabBar(fromSignup: fromSignUp)

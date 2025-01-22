@@ -12,20 +12,8 @@ class GalleryFeature: Feature {
     struct State {
         var scrollOffset: CGFloat = 0
         var selectedCategoryIndex: Int = 0
-        var categories: [String]  = ["전체", "바다/계곡", "학교", "파티룸", "엠티", "스포츠"]
-        var galleryItems: [Gallery] = [
-            Gallery(id: 0, title: "아아아아아아아아", imageUrl: "https://reqres.in/img/faces/7-image.jpg"),
-            Gallery(id: 1, title: "아아아아아아아아", imageUrl: "https://reqres.in/img/faces/7-image.jpg"),
-            Gallery(id: 2, title: "아아아아아아아아", imageUrl: "https://reqres.in/img/faces/7-image.jpg"),
-            Gallery(id: 3, title: "아아아아아아아아", imageUrl: "https://reqres.in/img/faces/7-image.jpg"),
-            Gallery(id: 4, title: "아아아아아아아아", imageUrl: "https://reqres.in/img/faces/7-image.jpg"),
-            Gallery(id: 5, title: "아아아아아아아아", imageUrl: "https://reqres.in/img/faces/7-image.jpg"),
-            Gallery(id: 6, title: "아아아아아아아아", imageUrl: "https://reqres.in/img/faces/7-image.jpg"),
-            Gallery(id: 7, title: "아아아아아아아아", imageUrl: "https://reqres.in/img/faces/7-image.jpg"),
-            Gallery(id: 8, title: "아아아아아아아아", imageUrl: "https://reqres.in/img/faces/7-image.jpg"),
-            Gallery(id: 9, title: "아아아아아아아아", imageUrl: "https://reqres.in/img/faces/7-image.jpg"),
-            Gallery(id: 10, title: "아아아아아아아아", imageUrl: "https://reqres.in/img/faces/7-image.jpg"),
-        ]
+        var categories: [Category]  = [Category(imageURL: "", category: "전체")]
+        var galleryItems: [GalleryPost] = []
     }
     
     enum Intent {
@@ -33,6 +21,7 @@ class GalleryFeature: Feature {
         case tapCategory(index: Int)
         case tapGalleryItem(id: Int)
         case tapUploadButton
+        case enterScreen
     }
     
     enum SideEffect {
@@ -46,6 +35,9 @@ class GalleryFeature: Feature {
     
     private let intentSubject = PassthroughSubject<Intent, Never>()
     let sideEffectSubject = PassthroughSubject<SideEffect, Never>()
+    
+    @Inject var galleryRepository: GalleryRepository
+    @Inject var getCategoriesUseCase: GetCategoriesUseCase
     
     init() {
         bindIntents()
@@ -67,11 +59,15 @@ class GalleryFeature: Feature {
             changeScrollOffset(offset)
         case .tapCategory(index: let index):
             changeSelectedCategoryIndex(index)
+            getSelectedCategoryGalleries()
             sideEffectSubject.send(.scrollTotop)
         case .tapGalleryItem(id: let id):
             sideEffectSubject.send(.navigateToDetail(id: id))
         case .tapUploadButton:
             sideEffectSubject.send(.navigateToUpload)
+        case .enterScreen:
+            getCategories()
+            getSelectedCategoryGalleries()
         }
     }
     
@@ -81,6 +77,21 @@ class GalleryFeature: Feature {
     
     private func changeScrollOffset(_ offset: CGFloat) {
         state.scrollOffset = offset
+    }
+    
+    private func getCategories() {
+        var categories: [Category] = [Category(imageURL: "", category: "전체")]
+        getCategoriesUseCase.execute { [weak self] result in
+            categories += result
+            self?.state.categories = categories
+        }
+    }
+    
+    private func getSelectedCategoryGalleries() {
+        let category = state.selectedCategoryIndex == 0 ? "all" : state.categories[state.selectedCategoryIndex].category
+        galleryRepository.getGalleries(category: category) { [weak self] result in
+            self?.state.galleryItems = result
+        }
     }
 }
 

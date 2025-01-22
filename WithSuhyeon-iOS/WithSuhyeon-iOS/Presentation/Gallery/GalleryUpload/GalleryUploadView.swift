@@ -154,10 +154,13 @@ struct GalleryUploadView: View {
                 }
             }
             WithSuhyeonButton(title: "완료", buttonState: .enabled) {
-                
+                feature.send(.tapCompleteButton)
             }
             .padding(.horizontal, 16)
             
+        }
+        .onAppear {
+            feature.send(.enterScreen)
         }
         .navigationBarBackButtonHidden(true)
         .withSuhyeonModal(
@@ -185,7 +188,7 @@ struct GalleryUploadView: View {
 }
 
 struct WithSuhyeonCategoryGrid: View {
-    let categories: [(icon: WithSuhyeonIcon, title: String)]
+    let categories: [Category]
     let selectedCategoryIndex: Int?
     let onTapCategory: (Int) -> Void
     
@@ -193,7 +196,7 @@ struct WithSuhyeonCategoryGrid: View {
     var body: some View {
         GeometryReader { geometry in
             let totalWidth = geometry.size.width
-            let chipWidths = categories.map { calculateChipWidth(title: $0.title) }
+            let chipWidths = categories.map { calculateChipWidth(title: $0.category) }
             
             let rowItems = arrangeItems(chipWidths: chipWidths, maxWidth: totalWidth)
             
@@ -202,8 +205,8 @@ struct WithSuhyeonCategoryGrid: View {
                     HStack(spacing: 8) {
                         ForEach(rowItems[rowIndex], id: \.index) { item in
                             WithSuhyeonCategorySelectChip(
-                                icon: categories[item.index].icon,
-                                title: categories[item.index].title,
+                                imageURL: categories[item.index].imageURL,
+                                title: categories[item.index].category,
                                 isSelected: selectedCategoryIndex == item.index
                             )
                             .frame(width: item.width)
@@ -215,7 +218,7 @@ struct WithSuhyeonCategoryGrid: View {
                 }
             }.onAppear {
                 let totalWidth = geometry.size.width
-                let chipWidths = categories.map { calculateChipWidth(title: $0.title) }
+                let chipWidths = categories.map { calculateChipWidth(title: $0.category) }
                 
                 let rowItems = arrangeItems(chipWidths: chipWidths, maxWidth: totalWidth)
                 rowCount = rowItems.count
@@ -253,17 +256,7 @@ struct WithSuhyeonCategoryGrid: View {
 }
 
 #Preview {
-    WithSuhyeonCategoryGrid(categories: [
-        (.icArchive24, "학교"),
-        (.icArchive24, "카페"),
-        (.icArchive24, "회식"),
-        (.icArchive24, "엠티"),
-        (.icArchive24, "자취방"),
-        (.icArchive24, "도서관"),
-        (.icArchive24, "수영장/빠지"),
-        (.icArchive24, "바다/계곡"),
-        (.icArchive24, "스키장"),
-        (.icArchive24, "사회")],
+    WithSuhyeonCategoryGrid(categories: [],
                             selectedCategoryIndex: 0,
                             onTapCategory: {_ in})
 }

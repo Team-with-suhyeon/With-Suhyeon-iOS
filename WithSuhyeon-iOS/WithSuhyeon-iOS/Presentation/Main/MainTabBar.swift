@@ -67,7 +67,7 @@ struct MainTabBar : View {
             title: "차단하실 계정이 있을까요?",
             description: "차단하고자하는 전화번호를 입력해주시면, 앱내에서 숨기기\n처리됩니다. 마이페이지에서 추가할 수 있습니다",
             sheetContent: {
-                Image(image: .imgBlock)
+                Image(image: .imgFuckOff)
             },
             onDismiss: {
                 feature.send(.dismissBlockingAccountSheet)

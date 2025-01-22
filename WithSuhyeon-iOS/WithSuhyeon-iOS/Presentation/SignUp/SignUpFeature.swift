@@ -393,11 +393,10 @@ class SignUpFeature: Feature {
             return
         }
         
-        
         signUpUseCase.execute(member: member) { [weak self] result in
             switch result {
             case .success:
-                print("✅ 회원가입 및 로그인 성공")
+                print("✅ 회원가입, 로그인 성공")
                 self?.sideEffectSubject.send(.navigateToSignUpComplete)
             case .failure(let error):
                 print("❌ 회원가입/로그인 실패: \(error)")

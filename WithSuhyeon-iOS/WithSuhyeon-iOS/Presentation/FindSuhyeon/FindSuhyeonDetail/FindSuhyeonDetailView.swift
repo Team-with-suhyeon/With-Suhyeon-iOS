@@ -11,7 +11,11 @@ import Kingfisher
 
 struct FindSuhyeonDetailView: View {
     @EnvironmentObject var router: RouterRegistry
-    @StateObject var feature = FindSuhyeonDetailFeature()
+    @StateObject var feature: FindSuhyeonDetailFeature
+    
+    init(id: Int) {
+        self._feature = StateObject(wrappedValue: FindSuhyeonDetailFeature(id: id))
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -21,15 +25,15 @@ struct FindSuhyeonDetailView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     Spacer()
                         .frame(height: 32)
-                    if(feature.state.matchingState != .notMatching) {
-                        Text(feature.state.matchingState == .matching ? "매칭 완료" : "기간 만료")
+                    if(feature.state.isExpired) {
+                        Text("기간 만료")
                             .font(.caption01SB)
-                            .foregroundColor(feature.state.matchingState == .matching ? .gray500 : .white)
+                            .foregroundColor(.white)
                             .padding(.vertical, 4)
                             .padding(.horizontal, 8)
                             .background(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .fill(feature.state.matchingState == .matching ? Color.gray100 : Color.gray400)
+                                    .fill(Color.gray400)
                             )
                             .padding(.leading, 16)
                             .padding(.bottom, 16)
@@ -62,6 +66,16 @@ struct FindSuhyeonDetailView: View {
                         .foregroundColor(.gray900)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 32)
+                    
+                    WithSuhyeonFindSuhyeonDetailContainer(
+                        location: feature.state.location,
+                        gender: feature.state.gender == .man ? "남" : "여",
+                        age: feature.state.age,
+                        date: feature.state.promiseDate,
+                        request: feature.state.request,
+                        money: feature.state.money
+                    )
+                    .padding(.horizontal, 16)
                 }
             }.scrollBounceBehavior(.basedOnSize)
             
@@ -90,17 +104,24 @@ struct FindSuhyeonDetailView: View {
             Button("삭제하기", role: .destructive) { feature.send(.tapDeleteButton) }
             Button("닫기", role: .cancel) {}
         }
+        .onAppear {
+            feature.send(.enterScreen)
+        }
         .onReceive(feature.sideEffectSubject) { sideEffect in
             switch sideEffect {
                 
             case .popBack:
                 router.popBack()
-            case .navigateToChat: break
+            case let .navigateToChat(ownerChatRoomID,peerChatRoomID,ownerID,peerID,postID,nickname):
+                router.navigate(to: .chatRoom(ownerRoomId: ownerChatRoomID, peerRoomId: peerChatRoomID, ownerId: ownerID, peerId: peerID, postId: postID, nickname: nickname))
+            case .navigateToChatMain:
+                router.popBack()
+                router.navigateTab(to: .chat)
             }
         }
     }
 }
 
 #Preview {
-    FindSuhyeonDetailView()
+   // FindSuhyeonDetailView()
 }

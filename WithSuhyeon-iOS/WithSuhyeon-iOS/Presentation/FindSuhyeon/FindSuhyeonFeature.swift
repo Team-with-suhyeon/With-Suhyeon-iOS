@@ -25,6 +25,11 @@ enum FindSuhyeonAlertType {
     }
 }
 
+enum FindSuhyeonTask: CaseIterable {
+    case first
+    case second
+}
+
 enum FindShuhyeonViewType {
     case genderSelect
     case ageSelect
@@ -93,11 +98,25 @@ class FindSuhyeonFeature: Feature {
         var request = RequestState()
         var location = LocationState()
         var dateTime = DateTimeState()
+        var dates = FindSuhyeonView.generateDatesForYear()
         
         var isPresent: Bool = false
         var alertType: FindSuhyeonAlertType = .ageSelect
+        var buttonState: WithSuhyeonButtonState = .disabled
+        var isButtonVisible: Bool = false
+        var findSuhyeonTask: FindSuhyeonTask = .first
         
         var progressState: ProgressState = .genderSelection
+        
+        var selectedLocation: String = ""
+        var selectedGender: String = ""
+        var selectedAge: String = ""
+        var selectedDate: String = ""
+        var selectedRequests: [String] = []
+        var selectedMoney: String = ""
+        var inputTitle: String = ""
+        var inputContent: String = ""
+        var completeButtonState: WithSuhyeonButtonState = .disabled
     }
     
     enum Intent {
@@ -119,10 +138,18 @@ class FindSuhyeonFeature: Feature {
         case tapDateTimeDropdown(FindSuhyeonAlertType)
         case tapBottomSheetButton
         case enterScreen
+        case tapBackButton
+        case tapButton
+        case focusOnTextField(Bool)
+        case writeTitle(String)
+        case writeContent(String)
+        case tapCompleteButton
     }
     
     enum SideEffect {
         case navigateToNextStep
+        case popBack
+        case postComplete
     }
     
     enum ProgressState: Int, CaseIterable {
@@ -166,6 +193,7 @@ class FindSuhyeonFeature: Feature {
     let sideEffectSubject = PassthroughSubject<SideEffect, Never>()
     
     @Inject var getRegionsUseCase: GetRegionsUseCase
+    @Inject var findSuhyeonRepository: FindSuhyeonRepository
     
     init() {
         bindIntents()
@@ -202,18 +230,21 @@ class FindSuhyeonFeature: Feature {
             
         case .selectAgeRange(let age):
             state.age.selectedAgeRange = age
+            state.selectedAge = age
             state.age.buttonEnable = true
             
         case .selectRequest(let request):
             if !state.request.selectedRequests.contains(request) {
                 state.request.selectedRequests.append(request)
             }
+            state.selectedRequests = state.request.selectedRequests
             state.request.buttonEnable = true
             
         case .selectLocation(let mainIndex, let subIndex):
             state.location.selectedMainLocationIndex = mainIndex
             state.location.selectedSubLocationIndex = subIndex
             state.location.tempSelectedLocation = state.location.locationOptions[mainIndex].subLocation[subIndex]
+            state.selectedLocation = state.location.tempSelectedLocation
             state.location.buttonEnable = true
             
         case .selectDateTime(let dateIndex, let hour, let minute, let amPm):
@@ -221,6 +252,8 @@ class FindSuhyeonFeature: Feature {
             state.dateTime.tempHour = hour
             state.dateTime.tempMinute = minute
             state.dateTime.tempAmPm = amPm
+            let selectedTime = "\(amPm) \(String(format: "%02d", hour)):\(String(format: "%02d", minute))"
+            state.selectedDate = "\(state.dates[dateIndex])" + " \(selectedTime)"
             state.dateTime.buttonEnable = true
             
         case .confirmDateTimeSelection:
@@ -236,6 +269,8 @@ class FindSuhyeonFeature: Feature {
             
         case .onTapGenderChip(let gender):
             state.gender.selectedGender = gender
+            state.selectedGender = gender
+            print(gender)
             withAnimation {
                 if !state.gender.isGenderSelected { send(.progressToNext) }
             }
@@ -264,6 +299,25 @@ class FindSuhyeonFeature: Feature {
             state.isPresent = false
         case .enterScreen:
             getLocationOptions()
+        case .tapBackButton:
+            if(state.findSuhyeonTask == .first){
+                sideEffectSubject.send(.popBack)
+            } else {
+                state.findSuhyeonTask = .first
+            }
+        case .tapButton:
+            state.findSuhyeonTask = .second
+        case .focusOnTextField(let isFocused):
+            state.isButtonVisible = isFocused
+        case .writeTitle(let title):
+            state.inputTitle = title
+            if(!title.isEmpty) {
+                state.completeButtonState = .enabled
+            }
+        case .writeContent(let title):
+            state.inputContent = title
+        case .tapCompleteButton:
+            postFindSuhyeon()
         }
     }
     
@@ -272,4 +326,64 @@ class FindSuhyeonFeature: Feature {
             self?.state.location.locationOptions = result
         }
     }
+    
+    func updateTask(findSuhyeonTask: FindSuhyeonTask) {
+        state.findSuhyeonTask = findSuhyeonTask
+    }
+    
+    func updateSelectedMoney(text: String) {
+        state.selectedMoney = text
+        guard Int(text) != nil else {
+            state.buttonState = .disabled
+            return
+        }
+        state.buttonState = .enabled
+    }
+    
+    private func postFindSuhyeon() {
+        let fommatedDate = convertToISOFormat(from: state.selectedDate)
+        let request = FindSuhyeonPostRequest(
+            gender: state.selectedGender == "남자" ? .man : .woman,
+            age: state.selectedAge,
+            requests: state.selectedRequests,
+            region: state.selectedLocation,
+            date: fommatedDate ?? "",
+            price: Int(state.selectedMoney) ?? 0,
+            title: state.inputTitle,
+            content: state.inputContent
+        )
+        
+        findSuhyeonRepository.postFindSuhyeon(findSuhyeonPost: request){ [weak self] value in
+            if(value) {
+                self?.sideEffectSubject.send(.postComplete)
+            }
+        }
+    }
+
+    func convertToISOFormat(from dateString: String) -> String? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "ko_KR")
+        dateFormatter.dateFormat = "M월 d일 E a h:mm"
+        
+        guard let date = dateFormatter.date(from: dateString) else {
+            return nil
+        }
+        
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "Asia/Seoul")!
+        var components = calendar.dateComponents([.month, .day, .hour, .minute], from: date)
+        components.year = 2025
+        
+        guard let fixedDate = calendar.date(from: components) else {
+            return nil
+        }
+        
+        let isoFormatter = DateFormatter()
+        isoFormatter.locale = Locale(identifier: "en_US_POSIX")
+        isoFormatter.timeZone = TimeZone(identifier: "Asia/Seoul")
+        isoFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm"
+        
+        return isoFormatter.string(from: fixedDate)
+    }
+
 }

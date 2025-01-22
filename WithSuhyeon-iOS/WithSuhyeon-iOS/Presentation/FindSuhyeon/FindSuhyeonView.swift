@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct FindSuhyeonView: View {
+    @EnvironmentObject private var router: RouterRegistry
     @StateObject private var feature = FindSuhyeonFeature()
     private let dates: [String] = generateDatesForYear()
     private let hours = Array(1...12)
@@ -15,30 +16,95 @@ struct FindSuhyeonView: View {
     private let amPm = ["오전", "오후"]
     
     var body: some View {
-        ZStack {
+        ZStack(alignment: .bottom) {
             VStack {
-                WithSuhyeonTopNavigationBar(title: "", rightIcon: .icXclose24, onTapRight: {})
+                WithSuhyeonTopNavigationBar(title: "", rightIcon: .icXclose24, onTapRight: {feature.send(.tapBackButton)})
                 
                 WithSuhyeonProgressBar(progress: progressPercentage)
                 
-                
-                ScrollView {
-                    VStack(spacing: 16) {
-                        ForEach(FindSuhyeonFeature.ProgressState.allCases.reversed(), id: \.self) { state in
-                            if state.rawValue <= feature.state.progressState.rawValue {
-                                viewForState(state)
-                                //                                    .onTapGesture {
-                                //                                        feature.send(.progressToNext)
-                                //                                        feature.send(.setAgeDropdownState(.defaultState))
-                                //                                    }
-                                //                                    .transition(.move(edge: .top).combined(with: .opacity))
+                TabView(selection: Binding(get: {feature.state.findSuhyeonTask}, set: { value in feature.updateTask(findSuhyeonTask: value) })) {
+                    ZStack {
+                        ScrollView {
+                            VStack(spacing: 16) {
+                                ForEach(FindSuhyeonFeature.ProgressState.allCases.reversed(), id: \.self) { state in
+                                    if state.rawValue <= feature.state.progressState.rawValue {
+                                        viewForState(state)
+                                    }
+                                }
+                                .animation(.easeInOut, value: feature.state.progressState)
                             }
                         }
-                        .animation(.easeInOut, value: feature.state.progressState)
                     }
+                    .tag(FindSuhyeonTask.first)
+                    
+                    ZStack {
+                        ScrollView {
+                            VStack(alignment:.leading, spacing: 0) {
+                                WithSuhyeonFindSuhyeonDetailContainer(
+                                    location: feature.state.selectedLocation,
+                                    gender: feature.state.selectedGender,
+                                    age: feature.state.selectedAge,
+                                    date: feature.state.selectedDate,
+                                    request: feature.state.selectedRequests,
+                                    money: feature.state.selectedMoney
+                                )
+                                .padding(.horizontal, 16)
+                                
+                                Text("제목")
+                                    .font(.body03SB)
+                                    .foregroundColor(.gray600)
+                                    .padding(.top, 36)
+                                    .padding(.leading, 16)
+                                
+                                WithSuhyeonTextField(
+                                    placeholder: "텍스트를 입력해주세요",
+                                    state: .editing,
+                                    keyboardType: .default,
+                                    maxLength: 30,
+                                    countable: true,
+                                    hasButton: false,
+                                    buttonText: "",
+                                    buttonState: .disabled,
+                                    errorText: "",
+                                    onTapButton: {},
+                                    onChangeText: { value in
+                                        feature.send(.writeTitle(value))
+                                    },
+                                    onFocusChanged: { isFocus in
+                                    }
+                                )
+                                .padding(.horizontal, 16)
+                                .padding(.top, 8)
+                                
+                                Text("설명 (선택)")
+                                    .font(.body03SB)
+                                    .foregroundColor(.gray600)
+                                    .padding(.top, 36)
+                                    .padding(.leading, 16)
+                                
+                                WithSuhyeonLongTextField(
+                                    placeholder: "텍스트를 입력해주세요",
+                                    state: .editing,
+                                    keyboardType: .default,
+                                    maxLength: 200,
+                                    countable: true,
+                                    errorText: "",
+                                    onChangeText: { value in
+                                        feature.send(.writeContent(value))
+                                    },
+                                    onFocusChanged: { isFocus in
+                                    }
+                                )
+                                .padding(.horizontal, 16)
+                                .padding(.top, 8)
+                                .id("comment")
+                            }
+                        }
+                    }
+                    .tag(FindSuhyeonTask.second)
                 }
             }
-            .edgesIgnoringSafeArea(.all)
+            .padding(.horizontal, 8)
             .withSuhyeonModal(
                 isPresented: feature.state.isPresent,
                 isButtonEnabled: {
@@ -105,10 +171,34 @@ struct FindSuhyeonView: View {
                     }
                 }
             )
-            .padding()
+            
+            if(feature.state.isButtonVisible && !feature.state.isPresent) {
+                WithSuhyeonButton(title: "입력 완료", buttonState: feature.state.buttonState) {
+                    feature.send(.tapButton)
+                }
+                .padding(.horizontal, 16)
+            }
+            
+            if(feature.state.findSuhyeonTask == .second) {
+                WithSuhyeonButton(title: "작성 완료", buttonState: feature.state.buttonState) {
+                    feature.send(.tapCompleteButton)
+                }
+                .padding(.horizontal, 16)
+            }
         }
         .onAppear {
             feature.send(.enterScreen)
+        }
+        .onReceive(feature.sideEffectSubject) { sideEffect in
+            switch sideEffect {
+                
+            case .navigateToNextStep: break
+                
+            case .popBack:
+                router.popBack()
+            case .postComplete:
+                router.popBack()
+            }
         }
     }
     
@@ -145,7 +235,7 @@ struct FindSuhyeonView: View {
     private func titleTopPadding(for state: FindSuhyeonFeature.ProgressState) -> CGFloat {
         return state == feature.state.progressState ? 0 : 24
     }
-
+    
     private var genderSelectionView: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(FindShuhyeonViewType.genderSelect.title)
@@ -155,13 +245,13 @@ struct FindSuhyeonView: View {
                 .padding(.horizontal, 16)
                 .padding(.top, titleTopPadding(for: .genderSelection))
                 .padding(.bottom, titleBottomPadding(for: .genderSelection))
-
+            
             FindSuhyeonGenderSelectCell(selectedGender: feature.state.gender.selectedGender) { value in
                 feature.send(.onTapGenderChip(value))
             }
         }
     }
-
+    
     private var ageSelectionView: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(FindShuhyeonViewType.ageSelect.title)
@@ -181,10 +271,12 @@ struct FindSuhyeonView: View {
                 }
             ) {
                 Text(feature.state.age.selectedAgeRange)
+                    .font(.body03SB)
+                    .foregroundColor(.gray950)
             }
         }
     }
-
+    
     private var requestsSelectionView: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(FindShuhyeonViewType.requestSelect.title)
@@ -209,7 +301,7 @@ struct FindSuhyeonView: View {
             }
         }
     }
-
+    
     private var locationSelectionView: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(FindShuhyeonViewType.locationSelect.title)
@@ -229,10 +321,12 @@ struct FindSuhyeonView: View {
                 }
             ) {
                 Text(feature.state.location.tempSelectedLocation)
+                    .font(.body03SB)
+                    .foregroundColor(.gray950)
             }
         }
     }
-
+    
     private var dateTimeSelectionView: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(FindShuhyeonViewType.dateSelect.title)
@@ -254,6 +348,8 @@ struct FindSuhyeonView: View {
                 let selectedDate = dates[feature.state.dateTime.selectedDateIndex]
                 let selectedTime = "\(feature.state.dateTime.selectedAmPm) \(String(format: "%02d", feature.state.dateTime.selectedHour)):\(String(format: "%02d", feature.state.dateTime.selectedMinute))"
                 Text("\(selectedDate) \(selectedTime)")
+                    .font(.body03SB)
+                    .foregroundColor(.gray950)
             }
         }
     }
@@ -276,9 +372,14 @@ struct FindSuhyeonView: View {
                     buttonText: "",
                     buttonState: .disabled,
                     errorText: "최대 00자까지 입력할 수 있어",
-                    onTapButton: {},
-                    onChangeText: { text in },
-                    onFocusChanged: { _ in }
+                    onTapButton: {
+                    },
+                    onChangeText: { text in
+                        feature.updateSelectedMoney(text: text)
+                    },
+                    onFocusChanged: { focus in
+                        feature.send(.focusOnTextField(focus))
+                    }
                 )
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
@@ -308,7 +409,6 @@ struct FindSuhyeonView: View {
                 }
             }
         }
-        .padding()
     }
     
     private func requestsModalView() -> some View {
@@ -337,8 +437,8 @@ struct FindSuhyeonView: View {
                     feature.send(.selectLocation(main: mainIndex, sub: subIndex))
                 }
             )
+            .frame(maxHeight: 400)
         }
-        .padding()
     }
     
     private func dateTimeModalView() -> some View {

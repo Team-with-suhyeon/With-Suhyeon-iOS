@@ -12,23 +12,23 @@ class StartFeature: Feature {
     struct State {
         var currentImage: Int = 0
         var isLastImage: Bool = false
-        let startImages: [WithSuhyeonImage] = [
-            .imgBoySuma,
-            .imgGirlSuma
-        ]
+        let startImages: [String] = [ "onboarding1", "onboarding2", "onboarding3"]
     }
     
     enum Intent {
         case tapSignUpButton
         case tapLoginButton
         case updateCurrentImage(Int)
+        case checkAutoLogin
     }
     
     enum SideEffect {
         case navigateToSignUp
         case navigateToLogin
+        case navigateToMain
     }
     
+    @Inject private var authRepository: AuthRepository
     @Published private(set) var state = State()
     private var cancellables = Set<AnyCancellable>()
     private let intentSubject = PassthroughSubject<Intent, Never>()
@@ -36,6 +36,7 @@ class StartFeature: Feature {
     
     init() {
         bindIntents()
+        checkAutoLogin()
     }
     
     private func bindIntents() {
@@ -56,6 +57,8 @@ class StartFeature: Feature {
             sideEffectSubject.send(.navigateToLogin)
         case .updateCurrentImage(let image):
             updateCurrentImage(image)
+        case .checkAutoLogin:
+            checkAutoLogin()
         }
     }
     
@@ -64,5 +67,14 @@ class StartFeature: Feature {
             currentImage: image,
             isLastImage: image == (state.startImages.count - 1)
         )
+    }
+    
+    func checkAutoLogin() {
+        if let accessToken = authRepository.loadAccessToken() {
+            print("✅ AccessToken: \(accessToken)")
+            sideEffectSubject.send(.navigateToMain)
+        } else {
+            print("❌ 자동로그인 실패: 토큰 없음")
+        }
     }
 }

@@ -19,4 +19,7 @@ protocol AuthRepository {
     func loadAccessToken() -> String?
     func loadRefreshToken() -> String?
     func clearTokens()
+    
+    func sendAuthCode(flow: String, phoneNumber: String, completion: @escaping (Result<Void, NetworkError>) -> Void)
+    func validateAuthCode(flow: String, authCode: String, phoneNumber: String, completion: @escaping (Result<Void, NetworkError>) -> Void)
 }

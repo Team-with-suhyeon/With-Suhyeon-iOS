@@ -236,12 +236,17 @@ class SignUpFeature: Feature {
     }
     
     private func validateAuthCode() {
-        if state.authCode == "123456" {
-            state.isAuthNumberCorrect = true
-            state.phoneAuthStep = .completed
-            moveToNextStep()
-        } else {
-            state.isAuthNumberCorrect = false
+        authRepository.validateAuthCode(flow: "signup", authCode: state.authCode, phoneNumber: state.phoneNumber) { [weak self] result in
+            switch result {
+            case .success:
+                self?.state.isAuthNumberCorrect = true
+                self?.state.phoneAuthStep = .completed
+                self?.moveToNextStep()
+                print("✅ 회원가입 인증번호 검증 성공")
+            case .failure(let error):
+                print("인증번호 검증 실패 ㅜㅜ : \(error.localizedDescription)")
+                self?.state.isAuthNumberCorrect = false
+            }
         }
         updateButtonState()
     }

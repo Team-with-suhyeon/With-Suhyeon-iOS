@@ -23,7 +23,6 @@ struct ProfileImageView: View {
                     .frame(width: 180, height: 180)
             }
             
-            
             HStack(spacing: 8){
                 ForEach(0..<signUpFeature.state.profileImages.count, id: \.self) { index in
                     Button(action: {
@@ -50,7 +49,7 @@ struct ProfileImageView: View {
                                     Circle()
                                         .fill(Color.gray.opacity(0.2))
                                 )
-
+                            
                         case .confirmed:
                             Image(image: signUpFeature.state.profileImages[index].defaultImage)
                                 .resizable()
@@ -61,8 +60,6 @@ struct ProfileImageView: View {
                                         .fill(Color.gray.opacity(0.2))
                                 )
                         }
-                        
-                        
                     }
                 }
             }

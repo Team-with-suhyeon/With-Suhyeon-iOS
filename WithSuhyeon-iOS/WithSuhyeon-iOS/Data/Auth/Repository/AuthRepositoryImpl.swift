@@ -101,4 +101,35 @@ class AuthRepositoryImpl: AuthRepository {
             print("토큰 삭제 실패: \(error)")
         }
     }
+    
+    func sendAuthCode(flow: String, phoneNumber: String, completion: @escaping (Result<Void, NetworkError>) -> Void) {
+        authAPI.sendAuthCode(flow: flow, phoneNumber: phoneNumber)
+            .sink { completionStatus in
+                switch completionStatus {
+                case .finished:
+                    break
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            } receiveValue: { _ in
+                completion(.success(()))
+            }
+            .store(in: &subscriptions)
+    }
+    
+    func validateAuthCode(flow: String, authCode: String, phoneNumber: String, completion: @escaping (Result<Void, NetworkError>) -> Void) {
+        authAPI.validateAuthCode(flow: flow, authCode: authCode, phoneNumber: phoneNumber)
+            .sink { completionStatus in
+                switch completionStatus {
+                case .finished:
+                    break
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            } receiveValue: { _ in
+                completion(.success(()))
+            }
+            .store(in: &subscriptions)
+    }
+    
 }

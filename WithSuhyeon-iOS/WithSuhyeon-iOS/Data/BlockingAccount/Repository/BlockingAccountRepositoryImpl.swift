@@ -10,10 +10,9 @@ import Foundation
 import Combine
 
 class BlockingAccountRepositoryImpl: BlockingRepository {
-    @Inject var blockingAccountAPI: BlockingAccountAPI!
+    @Inject var blockingAccountAPI: BlockingAccountAPIProtocol
     var subscriptions = Set<AnyCancellable>()
     
-
     func fetchBlockingAccounts(completion: @escaping (String, [String]) -> Void) {
         blockingAccountAPI.fetchBlokcingAccounts()
             .map {
@@ -31,4 +30,17 @@ class BlockingAccountRepositoryImpl: BlockingRepository {
             }.store(in: &subscriptions)
     }
     
+    func registerBlockingAccount(phoneNumber: String, completion: @escaping (Result<Void, NetworkError>) -> Void) {
+        blockingAccountAPI.registerBlockingAccount(requestDTO: BlockingAccountRequestDTO(phoneNumber: phoneNumber))
+            .sink { completionStatus in
+                switch completionStatus {
+                case .finished:
+                    break
+                case .failure(let error):
+                    completion(.failure(error))
+                    print(error)
+                }
+            } receiveValue: { _ in }
+            .store(in: &subscriptions)
+    }
 }

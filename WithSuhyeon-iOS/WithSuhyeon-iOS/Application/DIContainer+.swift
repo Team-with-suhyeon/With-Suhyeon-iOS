@@ -29,7 +29,7 @@ extension DIContainer {
             AuthRepositoryImpl()
         }
         
-        DIContainer.shared.register(type:  AuthAPIProtocol.self) {
+        DIContainer.shared.register(type: AuthAPIProtocol.self) {
             AuthAPI()
         }
         
@@ -40,6 +40,7 @@ extension DIContainer {
         DIContainer.shared.register(type: BlockingAccountAPIProtocol.self){
             BlockingAccountAPI()
         }
+        
         DIContainer.shared.register(type: CommonApiProtocol.self) {
             CommonAPI()
         }

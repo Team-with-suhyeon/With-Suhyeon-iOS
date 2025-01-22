@@ -14,6 +14,13 @@ struct BlockingAccountAPI: BlockingAccountAPIProtocol {
     
     func fetchBlokcingAccounts() -> AnyPublisher<BlockingAccountResponseDTO, NetworkError> {
         let target: BlockingAccountTarget = .fetchBlockingAccounts
+        
         return client.request(BlockingAccountResponseDTO.self, target: target)
+    }
+    
+    func registerBlockingAccount(requestDTO: BlockingAccountRequestDTO) -> AnyPublisher<Bool, NetworkError> {
+        let target: BlockingAccountTarget = .registerBlockingAccount(requestDTO: requestDTO)
+        
+        return client.request(target: target)
     }
 }

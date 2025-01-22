@@ -6,7 +6,9 @@
 //
 
 import Foundation
+
 import Combine
+import SwiftUI
 
 class BlockingAccountManagementFeature: Feature {
     struct State {
@@ -53,9 +55,7 @@ class BlockingAccountManagementFeature: Feature {
     func handleIntent(_ intent: Intent) {
         switch intent {
         case .tapBlockingAccountButton:
-            if validatePhoneNumber() {
-                addPhoneNumberToBlockingList(state.phoneNumber)
-            }
+            addPhoneNumberToBlockingList()
         case .updatePhoneNumber(let phoneNumber):
             updatePhoneNumber(phoneNumber)
         case .deleteBlockedNumber(let phoneNumber):
@@ -65,12 +65,44 @@ class BlockingAccountManagementFeature: Feature {
         }
     }
     
-    private func addPhoneNumberToBlockingList(_ phoneNumber: String) {
-        if state.blockingAccountList.contains(where: { $0.contains(phoneNumber) }) {
-            state.errorMessage = "이미 등록된 번호에요"
-            return
+    private func addPhoneNumberToBlockingList() {
+        withAnimation {
+            state.blockingAccountList.insert(state.phoneNumber, at: 0)
         }
-        state.blockingAccountList.append(phoneNumber)
+        
+        blockingAccountRepository.registerBlockingAccount(phoneNumber: state.phoneNumber) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    print("✅ 차단 계정 등록 성공")
+                    self?.state.blockingAccountList.insert(self?.state.phoneNumber ?? "", at: 0)
+                    self?.state.phoneNumber = ""
+                    self?.state.errorMessage = ""
+                case .failure(let error):
+                    print("❌ 차단 계정 등록 실패: \(error.localizedDescription)")
+                    
+                    if let networkError = error as? NetworkError {
+                        switch networkError {
+                        case .blockSelfCallBadRequest:
+                            self?.state.errorMessage = "본인 번호는 차단할 수 없어요"
+                        case .blockFormatBadRequest:
+                            self?.state.errorMessage = "전화번호 형식이 맞지 않아요"
+                        case .blockAlreadyExistsBadRequest:
+                            self?.state.errorMessage = "이미 차단된 번호에요"
+                        default:
+                            self?.state.errorMessage = ""
+                        }
+                    } else {
+                        self?.state.errorMessage = ""
+                    }
+                    self?.state.isValidPhoneNumber = false
+                    
+                    withAnimation {
+                        self?.state.blockingAccountList.removeAll { $0 == self?.state.phoneNumber }
+                    }
+                }
+            }
+        }
     }
     
     private func deletePhoneNumberFromBlockingList(_ phoneNumber: String) {
@@ -81,46 +113,10 @@ class BlockingAccountManagementFeature: Feature {
         state.phoneNumber = phoneNumber
     }
     
-    private func validatePhoneNumber() -> Bool {
-        let myPhoneNumber = "01012341234"
-        
-        if state.phoneNumber == myPhoneNumber {
-            state.errorMessage = "자신의 번호는 차단할 수 없습니다."
-            state.isValidPhoneNumber = false
-            return false
-        } else if state.phoneNumber.count < 11 {
-            state.errorMessage = "전화번호 전체를 입력해주세요."
-            state.isValidPhoneNumber = false
-            return false
-        } else if state.phoneNumber.count > 11 {
-            state.errorMessage = "번호 길이를 초과했습니다."
-            state.isValidPhoneNumber = false
-            return false
-        }
-        
-        state.errorMessage = ""
-        state.isValidPhoneNumber = true
-        return true
-    }
-    
     private func fetchBlockingAccounts() {
         blockingAccountRepository.fetchBlockingAccounts(){ [weak self] nickname, phoneNumbers in
             self?.state.nickname = nickname
             self?.state.blockingAccountList = phoneNumbers
         }
-            /*.receive(on: DispatchQueue.main)
-            .sink { [weak self] completion in
-                switch completion {
-                case .finished:
-                    print("✅ 차단 목록 불러오기 성공")
-                case .failure(let error):
-                    print("❌ 차단 목록 불러오기 실패: \(error)")
-                }
-            } receiveValue: { [weak self] blockingMembers in
-                self?.state.blockingAccountList = blockingMembers.phoneNumbers
-                
-//                self?.state.blockingAccountList = blockingMembers.flatMap { $0.phoneNumbers }
-            }
-            .store(in: &cancellables)*/
     }
 }

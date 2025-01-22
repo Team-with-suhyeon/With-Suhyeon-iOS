@@ -12,10 +12,12 @@ import Alamofire
 
 enum BlockingAccountTarget {
     case fetchBlockingAccounts
+    case registerBlockingAccount(requestDTO: BlockingAccountRequestDTO)
 }
 
 protocol BlockingAccountAPIProtocol {
     func fetchBlokcingAccounts() -> AnyPublisher<BlockingAccountResponseDTO, NetworkError>
+    func registerBlockingAccount(requestDTO: BlockingAccountRequestDTO) -> AnyPublisher<Bool, NetworkError>
 }
 
 extension BlockingAccountTarget: TargetType {
@@ -27,6 +29,8 @@ extension BlockingAccountTarget: TargetType {
         switch self {
         case .fetchBlockingAccounts :
                 .get
+        case .registerBlockingAccount:
+                .post
         }
     }
     
@@ -34,13 +38,17 @@ extension BlockingAccountTarget: TargetType {
         switch self {
         case .fetchBlockingAccounts :
             return "/api/v1/mypage/blocks"
+        case .registerBlockingAccount:
+            return "/api/v1/mypage/blocks"
         }
     }
     
     var parameters: RequestParameters {
         switch self {
         case .fetchBlockingAccounts:
-                .none
+            return .none
+        case .registerBlockingAccount(let requestDTO):
+            return .body(requestDTO)
         }
     }
     

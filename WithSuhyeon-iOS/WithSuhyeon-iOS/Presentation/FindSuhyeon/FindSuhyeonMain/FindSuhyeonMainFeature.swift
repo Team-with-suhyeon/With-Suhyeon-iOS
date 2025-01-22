@@ -46,6 +46,7 @@ class FindSuhyeonMainFeature: Feature {
         var posts: [Post] = []
         var selectedDate: Date?
         var isFetching: Bool = false
+        var regions: [Region] = []
         var location = LocationState()
         var isLocationSelectPresented: Bool = false
         var alertType: FindSuhyeonMainAlertType = .locationSelect
@@ -61,6 +62,7 @@ class FindSuhyeonMainFeature: Feature {
         case tapLocationDropdown(FindSuhyeonMainAlertType)
         case tapBottomSheetButton
         case dismissBottomSheet
+        case enterScreen
     }
     
     enum SideEffect {
@@ -73,6 +75,8 @@ class FindSuhyeonMainFeature: Feature {
     
     private var cancellables = Set<AnyCancellable>()
     private let intentSubject = PassthroughSubject<Intent, Never>()
+    
+    @Inject private var getRegionsUseCase: GetRegionsUseCase
     
     init() {
         bindIntents()
@@ -107,7 +111,7 @@ class FindSuhyeonMainFeature: Feature {
         case .selectLocation(let mainIndex, let subIndex):
             state.location.selectedMainLocationIndex = mainIndex
             state.location.selectedSubLocationIndex = subIndex
-            state.location.tempSelectedLocation = WithSuhyeonLocation.location[mainIndex].subLocation[subIndex]
+            state.location.tempSelectedLocation = state.regions[mainIndex].subLocation[subIndex]
             state.location.buttonEnable = true
         case .tapLocationDropdown(let type):
             state.alertType = type
@@ -119,13 +123,15 @@ class FindSuhyeonMainFeature: Feature {
             state.isLocationSelectPresented = false
         case .dismissBottomSheet:
             state.isLocationSelectPresented = false
+        case .enterScreen:
+            getRegions()
         }
     }
     
     private func fetchPosts(for date: Date? = nil) {
         state.isFetching = true
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            self.state.posts = [
+            /*self.state.posts = [
                 Post(id: 1, title: "서울역 수현이 구해요ㅠㅠ", money: "5,000", gender: .woman, age: "20~24세", timeStamp: "1월 25일 (토) 오후 2:30", badgeState: .completed),
                 Post(id: 2, title: "서울역 수현이 구해요ㅠㅠ", money: "5,000", gender: .woman, age: "20~24세", timeStamp: "1월 25일 (토) 오후 2:30", badgeState: .expired),
                 Post(id: 3, title: "서울역 수현이 구해요ㅠㅠ", money: "5,000", gender: .woman, age: "20~24세", timeStamp: "1월 25일 (토) 오후 2:30", badgeState: nil),
@@ -133,13 +139,19 @@ class FindSuhyeonMainFeature: Feature {
                 Post(id: 5, title: "서울역 수현이 구해요ㅠㅠ", money: "5,000", gender: .woman, age: "20~24세", timeStamp: "1월 25일 (토) 오후 2:30", badgeState: nil),
                 Post(id: 6, title: "서울역 수현이 구해요ㅠㅠ", money: "5,000", gender: .woman, age: "20~24세", timeStamp: "1월 25일 (토) 오후 2:30", badgeState: nil),
                 Post(id: 7, title: "서울역 수현이 구해요ㅠㅠ", money: "5,000", gender: .woman, age: "20~24세", timeStamp: "1월 25일 (토) 오후 2:30", badgeState: nil)
-            ]
+            ]*/
             self.state.isFetching = false
+        }
+    }
+    
+    private func getRegions() {
+        getRegionsUseCase.execute { [weak self] result in
+            self?.state.regions = result
         }
     }
 }
 
-struct Post: Identifiable {
+/*struct Post: Identifiable {
     let id: Int
     let title: String
     let money: String
@@ -147,7 +159,7 @@ struct Post: Identifiable {
     let age: String
     let timeStamp: String
     let badgeState: BadgeState?
-}
+}*/
 
 enum BadgeState {
     case completed

@@ -17,6 +17,7 @@ class MainTabBarFeature: Feature {
         case openBlockingAccountSheet
         case tapNavigateToBlockingAccountButton
         case dismissBlockingAccountSheet
+        case enterScreen
     }
     
     enum SideEffect {
@@ -28,6 +29,8 @@ class MainTabBarFeature: Feature {
     
     private let intentSubject = PassthroughSubject<Intent, Never>()
     let sideEffectSubject = PassthroughSubject<SideEffect, Never>()
+    
+    @Inject var authRepository: AuthRepository
     
     init() {
         bindIntents()
@@ -51,6 +54,14 @@ class MainTabBarFeature: Feature {
             sideEffectSubject.send(.navigateToBlockingAccountManagement)
         case .dismissBlockingAccountSheet:
             state.blockingAccountSheetIsPresent = false
+        case .enterScreen:
+            connect()
+        }
+    }
+    
+    private func connect() {
+        authRepository.registerUserId { result in
+            print(result)
         }
     }
 }

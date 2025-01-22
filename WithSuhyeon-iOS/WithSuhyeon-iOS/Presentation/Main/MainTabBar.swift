@@ -68,7 +68,7 @@ struct MainTabBar : View {
         }
         .withSuhyeonSheet(
             isPresented: feature.state.blockingAccountSheetIsPresent,
-            title: "차단하실 계정이 있을까요?",
+            title: "차단하고 싶은 번호가 있나요?",
             description: "차단한 사용자는 \(signUpFeature.state.nickname)님의 게시글을 볼 수 없어요",
             sheetContent: {
                 Image(image: .imgFuckOff).renderingMode(.original)

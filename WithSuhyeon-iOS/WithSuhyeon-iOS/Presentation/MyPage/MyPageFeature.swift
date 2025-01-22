@@ -29,6 +29,7 @@ class MyPageFeature: Feature {
         case navigateToInitialScreen
     }
     
+    @Inject private var authRepository: AuthRepository
     @Published private(set) var state = State()
     private var cancellables = Set<AnyCancellable>()
     
@@ -58,9 +59,19 @@ class MyPageFeature: Feature {
         case .tapSetInterest:
             sideEffectSubject.send(.navigateToSetInterest)
         case .tapLogout:
-            sideEffectSubject.send(.navigateToInitialScreen)
+            logout()
         case .tapWithdraw:
-            sideEffectSubject.send(.navigateToInitialScreen)
+            withdraw()
         }
+    }
+    
+    private func logout() {
+        authRepository.clearTokens()
+        sideEffectSubject.send(.navigateToInitialScreen)
+    }
+    
+    private func withdraw() {
+        authRepository.clearTokens()
+        sideEffectSubject.send(.navigateToInitialScreen)
     }
 }

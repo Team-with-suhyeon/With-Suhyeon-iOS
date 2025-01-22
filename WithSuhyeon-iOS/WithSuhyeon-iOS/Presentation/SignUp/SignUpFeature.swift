@@ -20,6 +20,7 @@ class SignUpFeature: Feature {
         var isAuthNumberCorrect: Bool = false
         var phoneAuthStep: PhoneAuthStep = .enterPhoneNumber
         var isExistsUser: Bool = false
+        var errorMessage: String = ""
         
         var nickname: String = ""
         var isNicknameValid: Bool = false
@@ -242,14 +243,34 @@ class SignUpFeature: Feature {
             case .success:
                 self?.state.isAuthNumberCorrect = true
                 self?.state.phoneAuthStep = .completed
+                self?.state.errorMessage = ""
+
                 self?.moveToNextStep()
                 print("✅ 회원가입 인증번호 검증 성공")
             case .failure(let error):
-                print("인증번호 검증 실패 ㅜㅜ : \(error.localizedDescription)")
+                print("실패실패실패")
                 self?.state.isAuthNumberCorrect = false
+                
+                if let networkError = error as? NetworkError {
+                    switch networkError {
+                    case .userNotRegistered:
+                        self?.state.errorMessage = "등록된 회원이 아니에요"
+                    case .userAlreadyRegistered:
+                        self?.state.errorMessage = "이미 가입된 번호에요"
+                    case .invalidCertificationNumber:
+                        self?.state.errorMessage = "인증번호를 다시 확인해주세요"
+                    case .expiredCertificationNumber:
+                        self?.state.errorMessage = "인증번호가 만료되었어요"
+                    default:
+                        self?.state.errorMessage = ""
+                    }
+                } else {
+                    self?.state.errorMessage = "서버와 통신 중 문제가 발생했습니다."
+                }
+                self?.state.isExistsUser = false
             }
+            self?.updateButtonState()
         }
-        updateButtonState()
     }
     
     private func updateAuthCode(_ authCode: String) {

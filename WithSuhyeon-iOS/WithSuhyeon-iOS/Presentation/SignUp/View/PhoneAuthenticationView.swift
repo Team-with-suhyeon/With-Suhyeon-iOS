@@ -18,14 +18,14 @@ struct PhoneAuthenticationView: View {
             
             WithSuhyeonTextField(
                 placeholder: "- 를 제외한 휴대폰 번호를 입력해주세요",
-                state: signUpFeature.state.isExistsUser ? .error : .editing,
+                state: .editing,
                 keyboardType: .numberPad,
                 maxLength: 11,
                 countable: false,
                 hasButton: true,
                 buttonText: signUpFeature.state.phoneAuthStep == .enterPhoneNumber ? "인증 요청" : "전송 완료",
                 buttonState: signUpFeature.state.isAuthButtonEnabled ? .enabled : .disabled,
-                errorText: signUpFeature.state.isExistsUser ? "이미 가입된 번호입니다" : "",
+                errorText: "",
                 onTapButton: {
                     withAnimation {
                         signUpFeature.send(.requestAuthCode)
@@ -51,7 +51,7 @@ struct PhoneAuthenticationView: View {
                         countable: false,
                         hasButton: false,
                         buttonState: .alert,
-                        errorText: signUpFeature.state.isAuthNumberCorrect ? "" : "인증번호를 다시 확인해주세요",
+                        errorText: signUpFeature.state.errorMessage,
                         onChangeText: { text in
                             signUpFeature.send(.updateAuthCode(text))
                         },

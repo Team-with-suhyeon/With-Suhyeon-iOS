@@ -29,14 +29,14 @@ struct LoginView: View {
                 
                 WithSuhyeonTextField(
                     placeholder: "- 를 제외한 휴대폰 번호를 입력해주세요",
-                    state: loginFeature.state.isExistsUser ? .error : .editing,
+                    state: .editing,
                     keyboardType: .numberPad,
                     maxLength: 11,
                     countable: false,
                     hasButton: true,
                     buttonText: loginFeature.state.phoneAuthStep == .enterPhoneNumber ? "인증 요청" : "전송 완료",
                     buttonState: loginFeature.state.isAuthButtonEnabled ? .enabled : .disabled,
-                    errorText: loginFeature.state.isExistsUser ? "등록된 회원이 아니에요" : "",
+                    errorText: "",
                     onTapButton: {
                         withAnimation {
                             loginFeature.send(.requestAuthCode)
@@ -66,7 +66,7 @@ struct LoginView: View {
                         countable: false,
                         hasButton: false,
                         buttonState: .alert,
-                        errorText: loginFeature.state.isAuthNumberCorrect ? "" : "인증번호를 확인해주세요",
+                        errorText: loginFeature.state.errorMessage,
                         onChangeText: { text in
                             loginFeature.send(.updateAuthCode(text))
                         },

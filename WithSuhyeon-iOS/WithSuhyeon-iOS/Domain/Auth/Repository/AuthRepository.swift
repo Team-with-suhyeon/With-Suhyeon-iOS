@@ -14,6 +14,8 @@ protocol AuthRepository {
     
     func login(phoneNumber: String, completion: @escaping (Result<Void, NetworkError>) -> Void)
     
+    func registerUserId(completion: @escaping (Bool) -> Void)
+    
     func loadAccessToken() -> String?
     func loadRefreshToken() -> String?
     func clearTokens()

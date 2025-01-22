@@ -17,6 +17,7 @@ class LoginFeature: Feature {
         var phoneAuthStep: PhoneAuthStep = .enterPhoneNumber
         var isExistsUser: Bool = false
         var buttonState: WithSuhyeonButtonState = .disabled
+        var errorMessage: String = ""
     }
     
     enum Intent {
@@ -69,9 +70,6 @@ class LoginFeature: Feature {
             updateAuthCode(authCode)
         case .validateAuthCode:
             validateAuthCode()
-            if state.isAuthNumberCorrect {
-                login()
-            }
         case .tapBackButton:
             sideEffectSubject.send(.navigateToStartView)
         case .login:
@@ -91,7 +89,6 @@ class LoginFeature: Feature {
     
     private func updatePhoneNumber(_ phoneNumber: String) {
         state.phoneNumber = phoneNumber
-        state.isExistsUser = false
         updateAuthButtonState()
     }
     
@@ -116,14 +113,34 @@ class LoginFeature: Feature {
             case .success:
                 self?.state.isAuthNumberCorrect = true
                 self?.state.phoneAuthStep = .completed
-                self?.sideEffectSubject.send(.navigateToLoginComplete)
+                self?.state.errorMessage = ""
+                
+                self?.login()
                 print("✅ 로그인 인증번호 검증 성공")
             case .failure(let error):
                 print("인증번호 검증 실패 ㅜㅜ : \(error.localizedDescription)")
                 self?.state.isAuthNumberCorrect = false
+                
+                if let networkError = error as? NetworkError {
+                    switch networkError {
+                    case .userNotRegistered:
+                        self?.state.errorMessage = "등록된 회원이 아니에요"
+                    case .userAlreadyRegistered:
+                        self?.state.errorMessage = "이미 가입된 번호에요"
+                    case .invalidCertificationNumber:
+                        self?.state.errorMessage = "인증번호를 확인해주세요"
+                    case .expiredCertificationNumber:
+                        self?.state.errorMessage = "인증번호가 만료되었어요"
+                    default:
+                        self?.state.errorMessage = ""
+                    }
+                } else {
+                    self?.state.errorMessage = ""
+                }
+                self?.state.isExistsUser = false
             }
+            self?.updateButtonState()
         }
-        updateButtonState()
     }
     
     private func updateAuthCode(_ authCode: String) {

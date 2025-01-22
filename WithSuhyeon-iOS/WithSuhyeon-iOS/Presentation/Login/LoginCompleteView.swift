@@ -21,8 +21,8 @@ struct LoginCompleteView: View {
             
             LottieView(animation: .named("logincomplete"))
                 .configure { lottieView in
-                    lottieView.animationSpeed = 1.0
-                    lottieView.loopMode = .playOnce
+                    lottieView.animationSpeed = 0.8
+                    lottieView.loopMode = .loop
                 }
                 .playing()
                 .resizable()
@@ -34,7 +34,7 @@ struct LoginCompleteView: View {
             WithSuhyeonButton(title: "시작하기", buttonState: .enabled, onTapButton: {
                 router.navigate(to: .main(fromSignUp: false))
             })
-            .padding(.horizontal, 8)
+            .padding(.horizontal, 16)
         }
         .padding(.top, 168)
 

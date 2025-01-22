@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "img_boy_suma.png",
+      "filename" : "img_boy_default.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Rectangle 34626760@2x.png",
+      "filename" : "Property 1=img_boy_default@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Rectangle 34626760@3x.png",
+      "filename" : "Property 1=img_boy_default3.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

@@ -30,5 +30,5 @@ public enum WithSuhyeonImage: String {
     case imgBoySelected = "img_boy_selected"
     case imgGirlDefault = "img_girl_default"
     case imgGirlSelected = "img_girl_selected"
-    case imgFuckOff = "img_fuck_off"
+    case imgFuckOff = "img_fuckoff"
 }

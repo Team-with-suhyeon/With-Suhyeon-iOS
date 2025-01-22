@@ -10,6 +10,7 @@ import SwiftUI
 struct MainTabBar : View {
     @EnvironmentObject var router: RouterRegistry
     @StateObject var feature = MainTabBarFeature()
+    @StateObject var signUpFeature = SignUpFeature()
     
     @State var fromSignup: Bool = false
     init(fromSignup: Bool) {
@@ -56,6 +57,9 @@ struct MainTabBar : View {
             .background(Color.white)
             .padding(.top, 10)
         }
+        .onChange(of: router.selectedTab ){ value in
+            print(value)
+        }
         .onAppear {
             if fromSignup {
                 feature.send(.openBlockingAccountSheet)
@@ -65,9 +69,9 @@ struct MainTabBar : View {
         .withSuhyeonSheet(
             isPresented: feature.state.blockingAccountSheetIsPresent,
             title: "차단하실 계정이 있을까요?",
-            description: "차단하고자하는 전화번호를 입력해주시면, 앱내에서 숨기기\n처리됩니다. 마이페이지에서 추가할 수 있습니다",
+            description: "차단한 사용자는 \(signUpFeature.state.nickname)님의 게시글을 볼 수 없어요",
             sheetContent: {
-                Image(image: .imgFuckOff)
+                Image(image: .imgFuckOff).renderingMode(.original)
             },
             onDismiss: {
                 feature.send(.dismissBlockingAccountSheet)

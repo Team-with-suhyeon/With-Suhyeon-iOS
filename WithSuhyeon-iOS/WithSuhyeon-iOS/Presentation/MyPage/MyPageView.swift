@@ -208,6 +208,7 @@ struct MyPageView : View {
                 router.navigate(to: .setInterest)
             case .navigateToInitialScreen:
                 router.clear()
+                router.navigateTab(to: .home)
             }
         }
     }

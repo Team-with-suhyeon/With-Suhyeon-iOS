@@ -64,5 +64,21 @@ extension DIContainer {
         DIContainer.shared.register(type: GalleryRepository.self) {
             DefaultGalleryRepository()
         }
+        
+        DIContainer.shared.register(type: HomeApiProtocol.self) {
+            HomeAPI()
+        }
+        
+        DIContainer.shared.register(type: HomeRepository.self) {
+            DefaultHomeRepository()
+        }
+        
+        DIContainer.shared.register(type: MyPageApiProtocol.self) {
+            MyPageAPI()
+        }
+        
+        DIContainer.shared.register(type: MyPageRepository.self) {
+            DefaultMyPageRepository()
+        }
     }
 }

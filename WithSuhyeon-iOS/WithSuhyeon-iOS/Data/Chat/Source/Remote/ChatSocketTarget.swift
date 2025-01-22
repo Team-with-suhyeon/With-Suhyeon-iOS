@@ -15,6 +15,8 @@ struct ChatSocketTarget: WebSocketTargetType {
 }
 
 protocol ChatSocketProtocol {
+    func connect(userId: Int)
+    
     func receiveChat() -> AnyPublisher<ChatResponseDTO, NetworkError>
     
     func receiveChatRooms() -> AnyPublisher<ChatRoomsResponseDTO, NetworkError>

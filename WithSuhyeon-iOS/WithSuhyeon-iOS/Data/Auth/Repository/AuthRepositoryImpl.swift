@@ -11,6 +11,7 @@ import Combine
 
 class AuthRepositoryImpl: AuthRepository {
     @Inject var authAPI: AuthAPIProtocol
+    @Inject var chatSocket: ChatSocketProtocol
     var subscriptions = Set<AnyCancellable>()
     
     func signUp(member: Member, completion: @escaping (Result<Void, NetworkError>) -> Void) {
@@ -48,6 +49,26 @@ class AuthRepositoryImpl: AuthRepository {
                     print("토큰 저장 실패: \(error)")
                     completion(.failure(.unknownError))
                 }
+            }
+            .store(in: &subscriptions)
+    }
+    
+    func registerUserId(completion: @escaping (Bool) -> Void) {
+        authAPI.getUserId()
+            .map {
+                $0.userId
+            }
+            .sink { completion in
+                switch completion {
+                case .finished:
+                    break
+                case .failure(let error):
+                    print(error)
+                }
+            } receiveValue: { [weak self] userId in
+                self?.chatSocket.connect(userId: userId)
+                
+                return completion(true)
             }
             .store(in: &subscriptions)
     }

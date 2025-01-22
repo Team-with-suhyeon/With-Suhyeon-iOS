@@ -10,8 +10,8 @@ import Combine
 
 class MyPageFeature: Feature {
     struct State {
-        var profileImageURL: String = "https://reqres.in/img/faces/7-image.jpg"
-        var nickname: String = "작심이"
+        var profileImageURL: String = ""
+        var nickname: String = ""
     }
     
     enum Intent {
@@ -20,6 +20,7 @@ class MyPageFeature: Feature {
         case tapSetInterest
         case tapLogout
         case tapWithdraw
+        case enterScreen
     }
     
     enum SideEffect {
@@ -30,6 +31,7 @@ class MyPageFeature: Feature {
     }
     
     @Inject private var authRepository: AuthRepository
+    @Inject private var myPageRepository: MyPageRepository
     @Published private(set) var state = State()
     private var cancellables = Set<AnyCancellable>()
     
@@ -62,6 +64,8 @@ class MyPageFeature: Feature {
             logout()
         case .tapWithdraw:
             withdraw()
+        case .enterScreen:
+            getMyPage()
         }
     }
     
@@ -73,5 +77,12 @@ class MyPageFeature: Feature {
     private func withdraw() {
         authRepository.clearTokens()
         sideEffectSubject.send(.navigateToInitialScreen)
+    }
+    
+    private func getMyPage() {
+        myPageRepository.getUser { [weak self] user in
+            self?.state.nickname = user.nickname
+            self?.state.profileImageURL = user.profileImageURL
+        }
     }
 }

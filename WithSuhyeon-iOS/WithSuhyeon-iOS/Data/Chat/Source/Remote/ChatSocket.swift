@@ -12,6 +12,11 @@ class ChatSocket: ChatSocketProtocol {
     
     private let client = WebSocketClient.shared
     
+    func connect(userId: Int) {
+        let target = WebSocketTarget(userId: userId)
+        client.connect(target: target)
+    }
+    
     func receiveChat() -> AnyPublisher<ChatResponseDTO, NetworkError> {
         
         client.messagePublisher()

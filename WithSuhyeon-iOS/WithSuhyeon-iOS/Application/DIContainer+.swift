@@ -33,5 +33,12 @@ extension DIContainer {
             AuthAPI()
         }
         
+        DIContainer.shared.register(type: BlockingRepository.self) {
+            BlockingAccountRepositoryImpl()
+        }
+        
+        DIContainer.shared.register(type: BlockingAccountAPIProtocol.self){
+            BlockingAccountAPI()
+        }
     }
 }

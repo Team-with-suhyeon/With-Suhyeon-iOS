@@ -108,7 +108,9 @@ struct BlockingAccountManagement: View {
             
             Spacer()
         }
-        
+        .onAppear {
+            blockingAccountManagementFeature.send(.fetchBlockingAccounts)
+        }
     }
 }
 

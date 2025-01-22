@@ -13,6 +13,7 @@ class BlockingAccountManagementFeature: Feature {
         var phoneNumber: String = ""
         var isValidPhoneNumber: Bool = true
         var errorMessage: String = ""
+        var nickname: String = ""
         var blockingAccountList: [String] = []
     }
     
@@ -20,12 +21,14 @@ class BlockingAccountManagementFeature: Feature {
         case tapBlockingAccountButton
         case updatePhoneNumber(String)
         case deleteBlockedNumber(String)
+        case fetchBlockingAccounts
     }
     
     enum SideEffect {
         
     }
     
+    @Inject private var blockingAccountRepository: BlockingRepository
     @Published private(set) var state = State()
     private var cancellables = Set<AnyCancellable>()
     
@@ -34,6 +37,7 @@ class BlockingAccountManagementFeature: Feature {
     
     init() {
         bindIntents()
+        send(.fetchBlockingAccounts)
     }
     
     private func bindIntents() {
@@ -50,15 +54,27 @@ class BlockingAccountManagementFeature: Feature {
         switch intent {
         case .tapBlockingAccountButton:
             if validatePhoneNumber() {
-                state.blockingAccountList.insert(state.phoneNumber, at: 0)
-            } else {
-                state = state
+                addPhoneNumberToBlockingList(state.phoneNumber)
             }
-        case .updatePhoneNumber(let number):
-            updatePhoneNumber(number)
-        case .deleteBlockedNumber(let number):
-            state.blockingAccountList.removeAll { $0 == number }
+        case .updatePhoneNumber(let phoneNumber):
+            updatePhoneNumber(phoneNumber)
+        case .deleteBlockedNumber(let phoneNumber):
+            deletePhoneNumberFromBlockingList(phoneNumber)
+        case .fetchBlockingAccounts:
+            fetchBlockingAccounts()
         }
+    }
+    
+    private func addPhoneNumberToBlockingList(_ phoneNumber: String) {
+        if state.blockingAccountList.contains(where: { $0.contains(phoneNumber) }) {
+            state.errorMessage = "이미 등록된 번호에요"
+            return
+        }
+        state.blockingAccountList.append(phoneNumber)
+    }
+    
+    private func deletePhoneNumberFromBlockingList(_ phoneNumber: String) {
+        
     }
     
     private func updatePhoneNumber(_ phoneNumber: String) {
@@ -80,15 +96,31 @@ class BlockingAccountManagementFeature: Feature {
             state.errorMessage = "번호 길이를 초과했습니다."
             state.isValidPhoneNumber = false
             return false
-        } else if state.blockingAccountList.contains(state.phoneNumber){
-            state.errorMessage = "이미 등록된 번호에요"
-            state.isValidPhoneNumber = false
-            return false
         }
         
-        print(state.phoneNumber.count)
         state.errorMessage = ""
         state.isValidPhoneNumber = true
         return true
+    }
+    
+    private func fetchBlockingAccounts() {
+        blockingAccountRepository.fetchBlockingAccounts(){ [weak self] nickname, phoneNumbers in
+            self?.state.nickname = nickname
+            self?.state.blockingAccountList = phoneNumbers
+        }
+            /*.receive(on: DispatchQueue.main)
+            .sink { [weak self] completion in
+                switch completion {
+                case .finished:
+                    print("✅ 차단 목록 불러오기 성공")
+                case .failure(let error):
+                    print("❌ 차단 목록 불러오기 실패: \(error)")
+                }
+            } receiveValue: { [weak self] blockingMembers in
+                self?.state.blockingAccountList = blockingMembers.phoneNumbers
+                
+//                self?.state.blockingAccountList = blockingMembers.flatMap { $0.phoneNumbers }
+            }
+            .store(in: &cancellables)*/
     }
 }

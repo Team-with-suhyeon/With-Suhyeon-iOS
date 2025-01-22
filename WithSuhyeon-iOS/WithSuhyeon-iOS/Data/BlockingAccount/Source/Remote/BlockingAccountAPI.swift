@@ -1,0 +1,19 @@
+//
+//  BlockingAccountAPI.swift
+//  WithSuhyeon-iOS
+//
+//  Created by 김예지 on 1/22/25.
+//
+
+import Foundation
+
+import Combine
+
+struct BlockingAccountAPI: BlockingAccountAPIProtocol {
+    private let client = NetworkClient.shared
+    
+    func fetchBlokcingAccounts() -> AnyPublisher<BlockingAccountResponseDTO, NetworkError> {
+        let target: BlockingAccountTarget = .fetchBlockingAccounts
+        return client.request(BlockingAccountResponseDTO.self, target: target)
+    }
+}

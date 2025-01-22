@@ -13,12 +13,13 @@ import Alamofire
 enum AuthTarget {
     case signUp(requestDTO: SignUpRequestDTO)
     case login(requestDTO: LoginRequestDTO)
+    case getUserId
 }
 
 protocol AuthAPIProtocol {
     func signUp(requestDTO: SignUpRequestDTO) -> AnyPublisher<Bool, NetworkError>
     func login(requestDTO: LoginRequestDTO) -> AnyPublisher<LoginResponseDTO, NetworkError>
-    
+    func getUserId() -> AnyPublisher<UserIDResponseDTO, NetworkError>
 }
 
 extension AuthTarget: TargetType {
@@ -32,6 +33,8 @@ extension AuthTarget: TargetType {
                 .post
         case .login:
                 .post
+        case .getUserId:
+                .get
         }
     }
     
@@ -41,6 +44,8 @@ extension AuthTarget: TargetType {
             return "/api/v1/auth/signup"
         case .login:
             return "/api/v1/auth/signin"
+        case .getUserId:
+            return "/api/v1/user-id"
         }
     }
     
@@ -50,6 +55,8 @@ extension AuthTarget: TargetType {
             return .body(requestDTO)
         case .login(let requestDTO):
             return .body(requestDTO)
+        case .getUserId:
+            return .none
         }
     }
     

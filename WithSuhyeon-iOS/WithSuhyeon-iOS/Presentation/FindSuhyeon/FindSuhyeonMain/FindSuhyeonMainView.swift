@@ -24,52 +24,52 @@ struct FindSuhyeonMainView: View {
     }
     
     var body: some View {
-        NavigationView {
-            VStack {
-                headerView
-                scrollDateView
-                postListView
-                    .background(Color.gray100)
-                writeButton
-            }
-            .onReceive(feature.sideEffectSubject) { sideEffect in
-                switch sideEffect {
-                case .navigateToDetail(let postId):
-                    print("Navigating to post \(postId)")
-                case .navigateToWrite:
-                    print("Navigating to write screen")
-                }
-            }
-            .withSuhyeonModal(
-                isPresented: feature.state.isLocationSelectPresented,
-                isButtonEnabled: feature.state.location.buttonEnable,
-                title: feature.state.alertType.title,
-                modalContent: {
-                    WithSuhyeonLocationSelect(
-                        withSuhyeonLocation: WithSuhyeonLocation.location,
-                        selectedMainLocationIndex: feature.state.location.selectedMainLocationIndex,
-                        selectedSubLocationIndex: feature.state.location.selectedSubLocationIndex
-                    ) { mainIndex, subIndex in
-                        feature.send(.selectLocation(main: mainIndex, sub: subIndex))
-                    }
-                },
-                onDismiss: {
-                    feature.send(.dismissBottomSheet)
-                },
-                onTapButton: {
-                    switch feature.state.alertType {
-                    case .locationSelect:
-                        if feature.state.location.dropdownState.toWithSuhyeonDropdownState() == .defaultState {
-                            feature.send(.tapBottomSheetButton)
-                            feature.send(.setLocationDropdownState(.isSelected))
-                        }
-                    default:
-                        break
-                    }
-                }
-            )
-            .padding()
+        VStack {
+            headerView
+            scrollDateView
+            postListView
+                .background(Color.gray100)
+            writeButton
         }
+        .onAppear {
+            feature.send(.enterScreen)
+        }
+        .onReceive(feature.sideEffectSubject) { sideEffect in
+            switch sideEffect {
+            case .navigateToDetail(let postId):
+                print("Navigating to post \(postId)")
+            case .navigateToWrite:
+                print("Navigating to write screen")
+            }
+        }
+        .withSuhyeonModal(
+            isPresented: feature.state.isLocationSelectPresented,
+            isButtonEnabled: feature.state.location.buttonEnable,
+            title: feature.state.alertType.title,
+            modalContent: {
+                WithSuhyeonLocationSelect(
+                    withSuhyeonLocation: feature.state.regions,
+                    selectedMainLocationIndex: feature.state.location.selectedMainLocationIndex,
+                    selectedSubLocationIndex: feature.state.location.selectedSubLocationIndex
+                ) { mainIndex, subIndex in
+                    feature.send(.selectLocation(main: mainIndex, sub: subIndex))
+                }
+            },
+            onDismiss: {
+                feature.send(.dismissBottomSheet)
+            },
+            onTapButton: {
+                switch feature.state.alertType {
+                case .locationSelect:
+                    if feature.state.location.dropdownState.toWithSuhyeonDropdownState() == .defaultState {
+                        feature.send(.tapBottomSheetButton)
+                        feature.send(.setLocationDropdownState(.isSelected))
+                    }
+                default:
+                    break
+                }
+            }
+        )
     }
     
     private var headerView: some View {
@@ -128,15 +128,15 @@ struct FindSuhyeonMainView: View {
     private var postListView: some View {
         ScrollView {
             LazyVStack {
-                ForEach(feature.state.posts) { post in
+                ForEach(feature.state.posts, id: \.id) { post in
                     FindSuhyeonMainPostContainer(
                         title: post.title,
                         moneyView: {
                             HStack(spacing: 8) {
-                                if let badgeState = post.badgeState {
+                                /*if let badgeState = post.badgeState {
                                     postBadgeView(for: badgeState)
-                                }
-                                Text(post.money)
+                                }*/
+                                Text(post.price.formattedWithComma)
                                     .font(.body01B)
                                     .foregroundColor(.gray900)
                                 Text("원")
@@ -146,7 +146,7 @@ struct FindSuhyeonMainView: View {
                         },
                         gender: post.gender,
                         age: post.age,
-                        timeStamp: post.timeStamp
+                        timeStamp: post.date
                     )
                     .cornerRadius(24)
                     .onTapGesture {
@@ -187,7 +187,7 @@ struct FindSuhyeonMainView: View {
     private func locationModalView() -> some View {
         VStack {
             WithSuhyeonLocationSelect(
-                withSuhyeonLocation: WithSuhyeonLocation.location,
+                withSuhyeonLocation: feature.state.regions,
                 selectedMainLocationIndex: feature.state.location.selectedMainLocationIndex,
                 selectedSubLocationIndex: feature.state.location.selectedSubLocationIndex,
                 onTabSelected: { mainIndex, subIndex in
@@ -195,7 +195,6 @@ struct FindSuhyeonMainView: View {
                 }
             )
         }
-        .padding()
     }
 }
 

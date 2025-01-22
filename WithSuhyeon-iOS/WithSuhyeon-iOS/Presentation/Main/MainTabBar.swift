@@ -23,7 +23,7 @@ struct MainTabBar : View {
             TabView(selection: $router.selectedTab) {
                 HomeView()
                     .tag(MainTab.home)
-                FindSuhyeonView()
+                FindSuhyeonMainView()
                     .tag(MainTab.findSuhyeon)
                 GalleryView()
                     .tag(MainTab.gallery)

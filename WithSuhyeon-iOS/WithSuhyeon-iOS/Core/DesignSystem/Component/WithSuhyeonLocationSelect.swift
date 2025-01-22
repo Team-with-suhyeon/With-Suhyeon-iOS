@@ -44,7 +44,6 @@ struct WithSuhyeonLocationSelect: View {
             Divider()
                 .foregroundColor(.gray100)
             if selectedMainLocationIndex == -1 { Spacer() } else {
-                
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: 0) {
                         ForEach(withSuhyeonLocation[selectedMainLocationIndex].subLocation.indices, id:\.self) { index in
@@ -64,6 +63,7 @@ struct WithSuhyeonLocationSelect: View {
                                 .frame(width: .infinity)
                                 .contentShape(Rectangle())
                                 .onTapGesture {
+                                    print("\(index)")
                                     onTabSelected(selectedMainLocationIndex, index)
                                 }
                             }
@@ -83,10 +83,10 @@ struct locationPreview: View {
     
     var body: some View {
         VStack {
-            WithSuhyeonLocationSelect(withSuhyeonLocation: [], selectedMainLocationIndex: selectedMainLocationIndex, selectedSubLocationIndex: selectedSubLocationIndex, onTabSelected: { num1, num2 in
+            /*WithSuhyeonLocationSelect(withSuhyeonLocation: WithSuhyeonLocation.location, selectedMainLocationIndex: selectedMainLocationIndex, selectedSubLocationIndex: selectedSubLocationIndex, onTabSelected: { num1, num2 in
                 selectedMainLocationIndex = num1
                 selectedSubLocationIndex = num2
-            })
+            })*/
         }.frame(height: 400)
     }
 }

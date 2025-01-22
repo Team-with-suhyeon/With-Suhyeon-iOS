@@ -93,7 +93,7 @@ final class WebSocketClient {
                 self.handleConnectionFailure()
             }
             
-            //self.receiveMessage()
+            self.receiveMessage()
         }
     }
     

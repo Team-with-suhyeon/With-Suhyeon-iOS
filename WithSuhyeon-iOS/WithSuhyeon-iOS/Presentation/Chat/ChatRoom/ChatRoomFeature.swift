@@ -50,6 +50,7 @@ class ChatRoomFeature: Feature {
     
     @Published private(set) var state = State()
     private var cancellables = Set<AnyCancellable>()
+    private var createChatCancellable: AnyCancellable?
     
     private let intentSubject = PassthroughSubject<Intent, Never>()
     let sideEffectSubject = PassthroughSubject<SideEffect, Never>()
@@ -104,14 +105,23 @@ class ChatRoomFeature: Feature {
     }
     
     func joinChatRoom() {
+        if(state.ownerChatRoomID == "NO"){
+            createChatPublishing()
+            return
+        }
         chatRepository.patchJoinChatRooms(id: state.ownerChatRoomID){ [weak self] result in
             if result {
                 print("성공")
             }
         }
+        getMessages()
+        chatRoomPublishing()
     }
     
     func exitChatRoom() {
+        if(state.ownerChatRoomID == "NO"){
+            return
+        }
         chatRepository.patchExitChatRooms(id: state.ownerChatRoomID){ [weak self] result in
             if result {
                 print("성공")
@@ -136,7 +146,7 @@ class ChatRoomFeature: Feature {
             receiverID: state.peerID,
             postID: state.postID,
             content: state.inputText,
-            type: "MESSAGE"
+            type: state.ownerChatRoomID == "NO" ? "CREATE" : "MESSAGE"
         )
         
         chatRepository.sendChat(message: chatRequest)
@@ -159,8 +169,33 @@ class ChatRoomFeature: Feature {
         return formatter.string(from: Date())
     }
     
+    func createChatPublishing() {
+        createChatCancellable = chatRepository.receiveCreateInfo()
+            .receive(on: DispatchQueue.main)
+            .sink { completion in
+                switch completion {
+                case .finished:
+                    print("finish")
+                case .failure(let error):
+                    print(error)
+                }
+            } receiveValue: { [weak self] create in
+                guard let self = self else { return }
+                self.state.ownerChatRoomID = create.ownerChatRoomId
+                self.state.peerChatRoomID = create.peerChatRoomId
+                self.joinChatRoom()
+            }
+    }
+    
+    func cancelChatPublishing() {
+        createChatCancellable?.cancel()
+        createChatCancellable = nil
+    }
+    
+    
     func chatRoomPublishing() {
-        chatRepository.receivcChat()
+        chatRepository.receiveChat()
+            .receive(on: DispatchQueue.main)
             .sink { completion in
                 switch completion {
                 case .finished:

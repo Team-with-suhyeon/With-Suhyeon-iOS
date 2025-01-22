@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct FindSuhyeonMainView: View {
+    @EnvironmentObject var router: RouterRegistry
     @StateObject private var feature = FindSuhyeonMainFeature()
     
     private let today = Date()
@@ -24,12 +25,19 @@ struct FindSuhyeonMainView: View {
     }
     
     var body: some View {
-        VStack {
-            headerView
-            scrollDateView
-            postListView
-                .background(Color.gray100)
-            writeButton
+        ZStack(alignment: .bottomTrailing) {
+            VStack(spacing: 0) {
+                headerView
+                scrollDateView
+                postListView
+                    .background(Color.gray100)
+            }
+            WithSuhyeonFloatingButton(scrollOffset: feature.state.scrollOffset, title: "글쓰기")
+                .padding(.trailing, 16)
+                .padding(.bottom, 16)
+                .onTapGesture {
+                    feature.send(.tapWriteButton)
+                }
         }
         .onAppear {
             feature.send(.enterScreen)
@@ -37,9 +45,18 @@ struct FindSuhyeonMainView: View {
         .onReceive(feature.sideEffectSubject) { sideEffect in
             switch sideEffect {
             case .navigateToDetail(let postId):
-                print("Navigating to post \(postId)")
+                router.navigate(to: .findSuhyeonDetail(id: postId))
             case .navigateToWrite:
-                print("Navigating to write screen")
+                router.navigate(to: .findSuhyeon)
+            }
+        }
+        .onChange(of: feature.state.isLocationSelectPresented) { value in
+            switch value {
+                
+            case true:
+                router.shouldShowBottomBar = false
+            case false:
+                router.shouldShowBottomBar = true
             }
         }
         .withSuhyeonModal(
@@ -54,6 +71,7 @@ struct FindSuhyeonMainView: View {
                 ) { mainIndex, subIndex in
                     feature.send(.selectLocation(main: mainIndex, sub: subIndex))
                 }
+                .frame(maxHeight: 400)
             },
             onDismiss: {
                 feature.send(.dismissBottomSheet)
@@ -83,37 +101,28 @@ struct FindSuhyeonMainView: View {
             .padding(.bottom, 15)
             .padding(.leading, 16)
             WithSuhyeonDropdown(
-                dropdownState: feature.state.location.dropdownState.toWithSuhyeonDropdownState(),
-                placeholder: feature.state.location.tempSelectedLocation.isEmpty ? "거창/함양/합천/산청/의령/창녕/함안" : feature.state.location.tempSelectedLocation,
+                dropdownState: .isSelected,
+                placeholder: feature.state.myRegion,
                 onTapDropdown: {
                     feature.send(.tapLocationDropdown(.locationSelect))
                 },
                 errorMessage: ""
             ) {
-                Text(feature.state.location.tempSelectedLocation.isEmpty ? "거창/함양/합천/산청/의령/창녕/함안" : feature.state.location.tempSelectedLocation)
-                    .font(.body)
-                    .foregroundColor(.gray900)
+                Text(feature.state.myRegion)
+                    .font(.body03SB)
+                    .foregroundColor(.gray950)
             }
         }
     }
     
     private var scrollDateView: some View {
-            ScrollView(.horizontal, showsIndicators: false) {
+        ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
-                    let totalDate = Date.distantPast
-                    Button(action: {
-                        feature.send(.selectDate(totalDate))
-                    }) {
-                        Text("전체")
-                            .font(.body03B)
-                            .foregroundColor(feature.state.selectedDate == totalDate ? .gray900 : .gray400)
-                            .padding(.horizontal, 10)
-                    }
-                    ForEach(dates, id: \.self) { date in
+                    ForEach(feature.state.dates, id: \.self) { date in
                         Button(action: {
                             feature.send(.selectDate(date))
                         }) {
-                            Text(dateFormatter.string(from: date))
+                            Text(date)
                                 .font(.body03B)
                                 .foregroundColor(date == feature.state.selectedDate ? .gray900 : .gray400)
                         }
@@ -126,16 +135,20 @@ struct FindSuhyeonMainView: View {
         }
     
     private var postListView: some View {
-        ScrollView {
+        ObservableScrollView(
+            onPreferenceChange: { value in
+                feature.send(.scrollChange(offset: value))
+            }
+        ) {
             LazyVStack {
-                ForEach(feature.state.posts, id: \.id) { post in
+                ForEach(feature.state.posts, id: \.postId) { post in
                     FindSuhyeonMainPostContainer(
                         title: post.title,
                         moneyView: {
                             HStack(spacing: 8) {
-                                /*if let badgeState = post.badgeState {
-                                    postBadgeView(for: badgeState)
-                                }*/
+                                if post.isExpired {
+                                    postBadgeView()
+                                }
                                 Text(post.price.formattedWithComma)
                                     .font(.body01B)
                                     .foregroundColor(.gray900)
@@ -150,36 +163,23 @@ struct FindSuhyeonMainView: View {
                     )
                     .cornerRadius(24)
                     .onTapGesture {
-                        feature.send(.tapPost(post.id))
+                        feature.send(.tapPost(post.postId))
                     }
                 }
             }
             .padding(.horizontal, 16)
         }
-        .padding(.vertical, 16)
     }
     
-    
-    private var writeButton: some View {
-        Button(action: {
-            feature.send(.tapWriteButton)
-        }) {
-            Image(systemName: "plus")
-                .foregroundColor(.white)
-                .padding()
-                .background(Circle().fill(Color.blue))
-        }
-    }
-    
-    private func postBadgeView(for state: BadgeState) -> some View {
-        Text(state.label)
+    private func postBadgeView() -> some View {
+        Text("기간 만료")
             .font(.caption02B)
-            .foregroundColor(state == .expired ? Color.white : Color.gray500)
+            .foregroundColor(Color.white)
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
             .background(
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(state == .expired ? Color.gray400 : Color.gray100)
+                    .fill(Color.gray400)
                     .frame(height: 20)
             )
     }
@@ -194,6 +194,7 @@ struct FindSuhyeonMainView: View {
                     feature.send(.selectLocation(main: mainIndex, sub: subIndex))
                 }
             )
+            .frame(maxHeight: 400)
         }
     }
 }

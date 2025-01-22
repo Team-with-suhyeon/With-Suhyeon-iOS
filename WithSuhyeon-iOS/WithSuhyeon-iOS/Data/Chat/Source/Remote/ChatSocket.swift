@@ -27,7 +27,9 @@ class ChatSocket: ChatSocketProtocol {
                 return try JSONDecoder().decode(ChatResponseDTO.self, from: jsonData)
             }
             .mapError { error in
-                error as? NetworkError ?? NetworkError.unknownError
+                
+                print(error)
+                return error as? NetworkError ?? NetworkError.unknownError
             }
             .eraseToAnyPublisher()
     }
@@ -44,7 +46,26 @@ class ChatSocket: ChatSocketProtocol {
                 JSONDecoder().decode(ChatRoomsResponseDTO.self, from: jsonData)
             }
             .mapError { error in
-                error as? NetworkError ??
+                
+                print(error)
+                return error as? NetworkError ??
+                NetworkError.unknownError
+            }
+            .eraseToAnyPublisher()
+    }
+    
+    func receiveChatCreate() -> AnyPublisher<ChatCreateResponseDTO, NetworkError> {
+        client.messagePublisher() 
+            .tryMap { jsonString in
+                guard let jsonData = jsonString.data(using:.utf8) else {
+                    throw NetworkError.decodingError
+                }
+                return try
+                JSONDecoder().decode(ChatCreateResponseDTO.self, from: jsonData)
+            }
+            .mapError { error in
+                print(error)
+                return error as? NetworkError ??
                 NetworkError.unknownError
             }
             .eraseToAnyPublisher()

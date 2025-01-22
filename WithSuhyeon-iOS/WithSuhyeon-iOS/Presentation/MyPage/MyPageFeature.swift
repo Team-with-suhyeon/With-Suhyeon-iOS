@@ -61,11 +61,16 @@ class MyPageFeature: Feature {
         case .tapLogout:
             logout()
         case .tapWithdraw:
-            sideEffectSubject.send(.navigateToInitialScreen)
+            withdraw()
         }
     }
     
     private func logout() {
+        authRepository.clearTokens()
+        sideEffectSubject.send(.navigateToInitialScreen)
+    }
+    
+    private func withdraw() {
         authRepository.clearTokens()
         sideEffectSubject.send(.navigateToInitialScreen)
     }

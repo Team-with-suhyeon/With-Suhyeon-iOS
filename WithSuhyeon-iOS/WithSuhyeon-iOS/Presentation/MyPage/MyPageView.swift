@@ -12,7 +12,8 @@ import Kingfisher
 struct MyPageView : View {
     @EnvironmentObject var router: RouterRegistry
     @StateObject var feature = MyPageFeature()
-    @State var isPresented: Bool = false
+    @State var isLogoutPresented: Bool = false
+    @State var isWithdrawPresented: Bool = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0){
@@ -137,7 +138,7 @@ struct MyPageView : View {
                         .padding(.top, 8)
                         .frame(height: 50)
                         .contentShape(Rectangle())
-                        .onTapGesture { isPresented = true } 
+                        .onTapGesture { isLogoutPresented = true }
                         HStack {
                             Text("탈퇴하기")
                                 .font(.body03SB)
@@ -164,7 +165,7 @@ struct MyPageView : View {
                 }
                 
             }
-            .withSuhyeonAlert(isPresented: isPresented, onTapBackground: {isPresented.toggle()}){
+            .withSuhyeonAlert(isPresented: isLogoutPresented, onTapBackground: { isLogoutPresented.toggle() }){
                 WithSuhyeonAlert(
                     title: "정말 로그아웃하시겠습니까?",
                     subTitle: "",
@@ -172,9 +173,25 @@ struct MyPageView : View {
                     secondaryButtonText: "취소하기",
                     primaryButtonAction: {
                         feature.send(.tapLogout)
-                        isPresented.toggle()
+                        isLogoutPresented.toggle()
                     },
-                    secondaryButtonAction: {isPresented.toggle()}
+                    secondaryButtonAction: { isLogoutPresented.toggle() }
+                )
+            }
+            .withSuhyeonAlert(
+                isPresented: isWithdrawPresented,
+                onTapBackground: { isWithdrawPresented.toggle() }
+            ) {
+                WithSuhyeonAlert(
+                    title: "정말 탈퇴하시겠습니까?",
+                    subTitle: "탈퇴 후 계정 복구가 불가능합니다.",
+                    primaryButtonText: "탈퇴하기",
+                    secondaryButtonText: "취소하기",
+                    primaryButtonAction: {
+                        feature.send(.tapWithdraw)
+                        isWithdrawPresented.toggle()
+                    },
+                    secondaryButtonAction: { isWithdrawPresented.toggle() }
                 )
             }
             .background(Color.gray100)

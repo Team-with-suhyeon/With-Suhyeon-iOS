@@ -7,20 +7,21 @@
 
 import SwiftUI
 
+import Kingfisher
+
 struct WithSuhyeonCategorySelectChip: View {
-    let icon: WithSuhyeonIcon
+    let imageURL: String
     let title: String
     let isSelected: Bool
     
-    init(icon: WithSuhyeonIcon, title: String, isSelected: Bool) {
-        self.icon = icon
+    init(imageURL: String, title: String, isSelected: Bool) {
+        self.imageURL = imageURL
         self.title = title
         self.isSelected = isSelected
     }
     var body : some View {
         HStack(spacing: 0){
-            Image(icon: .icArchive24)
-                .renderingMode(.template)
+            KFImage(URL(string: imageURL))
                 .resizable()
                 .frame(width: 18, height: 18)
                 .aspectRatio(contentMode: .fit)
@@ -45,5 +46,5 @@ struct WithSuhyeonCategorySelectChip: View {
 }
 
 #Preview {
-    WithSuhyeonCategorySelectChip(icon: .icArchive24, title: "카테고리", isSelected: true)
+    //WithSuhyeonCategorySelectChip(icon: .icArchive24, title: "카테고리", isSelected: true)
 }

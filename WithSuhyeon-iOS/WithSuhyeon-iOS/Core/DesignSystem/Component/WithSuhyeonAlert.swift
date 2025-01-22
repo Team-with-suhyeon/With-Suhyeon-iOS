@@ -19,16 +19,6 @@ struct WithSuhyeonAlert: View {
     @State private var scaleEffect: CGFloat = 0.5
     @State private var opacity: Double = 0
     
-//    init(title: String, subTitle: String, withSuhyeonIcon: WithSuhyeonIcon, primaryButtonText: String, secondaryButtonText: String, primaryButtonAction: @escaping () -> Void, secondaryButtonAction: @escaping () -> Void) {
-//        self.title = title
-//        self.subTitle = subTitle
-//        self.withSuhyeonIcon = withSuhyeonIcon
-//        self.primaryButtonText = primaryButtonText
-//        self.secondaryButtonText = secondaryButtonText
-//        self.primaryButtonAction = primaryButtonAction
-//        self.secondaryButtonAction = secondaryButtonAction
-//    }
-    
     init(title: String,
          subTitle: String,
          withSuhyeonIcon: WithSuhyeonIcon? = nil,
@@ -66,11 +56,7 @@ struct WithSuhyeonAlert: View {
                     .padding(.top, 6)
                     .padding(.horizontal, 24)
             }
-//            Text(subTitle)
-//                .font(.body03SB)
-//                .foregroundColor(.gray500)
-//                .padding(.top, 6)
-//                .padding(.horizontal, 24)
+            
             HStack {
                 WithSuhyeonButton(title: secondaryButtonText, buttonState: .disabled, onTapButton: secondaryButtonAction)
                 

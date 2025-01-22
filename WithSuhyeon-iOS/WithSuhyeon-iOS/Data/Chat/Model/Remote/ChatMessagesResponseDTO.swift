@@ -8,17 +8,17 @@
 import Foundation
 
 public struct ChatMessagesResponseDTO: Codable {
-    let chatMessages: [ChatMessage]
+    let chatMessages: [ChatMessageDTO]
 }
 
-public struct ChatMessage: Codable {
+public struct ChatMessageDTO: Codable {
     let type: String
     let content: String
     let timestamp: String
     let isRead: Bool
 }
 
-extension ChatMessage {
+extension ChatMessageDTO {
     var entity: Message {
         Message(
             message: content,

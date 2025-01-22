@@ -12,10 +12,7 @@ class StartFeature: Feature {
     struct State {
         var currentImage: Int = 0
         var isLastImage: Bool = false
-        let startImages: [WithSuhyeonImage] = [
-            .imgBoySuma,
-            .imgGirlSuma
-        ]
+        let startImages: [String] = [ "onboarding1", "onboarding2", "onboarding3"]
     }
     
     enum Intent {

@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+import Lottie
+
 struct SignUpCompleteView: View {
     @EnvironmentObject private var router: RouterRegistry
     @State private var showBottomSheet: Bool = false
@@ -17,9 +19,15 @@ struct SignUpCompleteView: View {
                 .font(.title02B)
                 .multilineTextAlignment(.center)
             
-            Rectangle()
-                .frame(width: 202, height: 202)
-                .foregroundStyle(Color.gray100)
+            LottieView(animation: .named("signup"))
+                .configure { lottieView in
+                    lottieView.animationSpeed = 1.0
+                    lottieView.loopMode = .playOnce
+                }
+                .playing()
+                .resizable()
+                .scaledToFit()
+                .frame(width: 328, height: 328)
             
             Spacer()
             

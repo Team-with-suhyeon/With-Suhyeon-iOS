@@ -8,12 +8,47 @@
 import Foundation
 import Combine
 
+enum FindSuhyeonMainAlertType {
+    case locationSelect
+    
+    var title: String {
+        switch self {
+        case .locationSelect: "만날 위치 선택"
+        }
+    }
+}
+
+enum DropdownState {
+    case defaultState
+    case isSelected
+    
+    func toWithSuhyeonDropdownState() -> WithSuhyeonDropdownState {
+        switch self {
+        case .defaultState:
+            return .defaultState
+        case .isSelected:
+            return .isSelected
+        }
+    }
+}
+
 class FindSuhyeonMainFeature: Feature {
+    struct LocationState {
+        var selectedMainLocationIndex: Int = 0
+        var selectedSubLocationIndex: Int = 0
+        var tempSelectedLocation: String = ""
+        var selectedDate: String = ""
+        var buttonEnable: Bool = false
+        var dropdownState: DropdownState = .defaultState
+    }
+    
     struct State {
         var posts: [Post] = []
         var selectedDate: Date?
         var isFetching: Bool = false
-        var dropdownState: WithSuhyeonDropdownState = .defaultState
+        var location = LocationState()
+        var isLocationSelectPresented: Bool = false
+        var alertType: FindSuhyeonMainAlertType = .locationSelect
     }
     
     enum Intent {
@@ -21,7 +56,11 @@ class FindSuhyeonMainFeature: Feature {
         case selectDate(Date)
         case tapWriteButton
         case tapPost(Int)
-        case tapDropdown
+        case setLocationDropdownState(DropdownState)
+        case selectLocation(main: Int, sub: Int)
+        case tapLocationDropdown(FindSuhyeonMainAlertType)
+        case tapBottomSheetButton
+        case dismissBottomSheet
     }
     
     enum SideEffect {
@@ -63,8 +102,23 @@ class FindSuhyeonMainFeature: Feature {
             sideEffectSubject.send(.navigateToWrite)
         case .tapPost(let postId):
             sideEffectSubject.send(.navigateToDetail(postId: postId))
-        case .tapDropdown:
-                    state.dropdownState = .isSelected
+        case .setLocationDropdownState(let newState):
+            state.location.dropdownState = state.location.tempSelectedLocation.isEmpty ? .defaultState : newState
+        case .selectLocation(let mainIndex, let subIndex):
+            state.location.selectedMainLocationIndex = mainIndex
+            state.location.selectedSubLocationIndex = subIndex
+            state.location.tempSelectedLocation = WithSuhyeonLocation.location[mainIndex].subLocation[subIndex]
+            state.location.buttonEnable = true
+        case .tapLocationDropdown(let type):
+            state.alertType = type
+            state.isLocationSelectPresented = true
+        case .tapBottomSheetButton:
+            switch state.alertType {
+            case .locationSelect: break
+            }
+            state.isLocationSelectPresented = false
+        case .dismissBottomSheet:
+            state.isLocationSelectPresented = false
         }
     }
     

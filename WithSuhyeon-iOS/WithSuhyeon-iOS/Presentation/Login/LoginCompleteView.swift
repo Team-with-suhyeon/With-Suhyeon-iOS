@@ -19,7 +19,7 @@ struct LoginCompleteView: View {
                 .font(.title02B)
                 .multilineTextAlignment(.center)
             
-            LottieView(animation: .named("signup"))
+            LottieView(animation: .named("logincomplete"))
                 .configure { lottieView in
                     lottieView.animationSpeed = 1.0
                     lottieView.loopMode = .playOnce

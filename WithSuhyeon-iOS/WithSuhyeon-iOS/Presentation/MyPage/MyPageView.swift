@@ -27,7 +27,7 @@ struct MyPageView : View {
                 VStack(spacing: 0) {
                     VStack(alignment: .leading, spacing: 0) {
                         HStack(alignment: .center, spacing: 0) {
-                            KFImage(URL(string: feature.state.profileImageURL))
+                            Image(feature.state.profileImageURL)
                                 .resizable()
                                 .clipShape(Circle())
                                 .frame(width: 48, height: 48)
@@ -193,6 +193,9 @@ struct MyPageView : View {
                 )
             }
             .background(Color.gray100)
+        }
+        .onAppear {
+            feature.send(.enterScreen)
         }
         .onReceive(feature.sideEffectSubject) { sideEffect in
             switch sideEffect {

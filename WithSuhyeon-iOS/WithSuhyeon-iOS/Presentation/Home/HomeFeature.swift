@@ -11,33 +11,9 @@ import Combine
 class HomeFeature: Feature {
     struct State {
         var count: Int = 0
-        var countTarget: Int = 4732
-        var findSuhyeons: [FindSuhyeon] = [
-            FindSuhyeon(
-                id: 1,
-                title: "서울역 수현이 구해요ㅠㅠ",
-                money: "5,000",
-                gender: .woman,
-                age: "20~24세",
-                timeStamp: "1월 25일 (토) 오후 2:30"
-            ),
-            FindSuhyeon(
-                id: 2,
-                title: "서울역 수현이 구해요ㅠㅠ",
-                money: "5,000",
-                gender: .woman,
-                age: "20~24세",
-                timeStamp: "1월 25일 (토) 오후 2:30"
-            ),FindSuhyeon(
-                id: 3,
-                title: "서울역 수현이 구해요ㅠㅠ",
-                money: "5,000",
-                gender: .woman,
-                age: "20~24세",
-                timeStamp: "1월 25일 (토) 오후 2:30"
-            )
-        ]
-        var location: String = "강남/역삼/삼성"
+        var countTarget: Int = 0
+        var findSuhyeons: [Post] = []
+        var location: String = ""
         var boundary: CGFloat = 0.9
     }
     
@@ -48,6 +24,7 @@ class HomeFeature: Feature {
         case tapWithSuhyeonContainer(Int)
         case tapSeeAllButton
         case scrollChange(CGFloat)
+        case enterScreen
     }
     
     enum SideEffect {
@@ -60,6 +37,8 @@ class HomeFeature: Feature {
     
     private let intentSubject = PassthroughSubject<Intent, Never>()
     let sideEffectSubject = PassthroughSubject<SideEffect, Never>()
+    
+    @Inject var homeRepository: HomeRepository
     
     init() {
         bindIntents()
@@ -95,6 +74,8 @@ class HomeFeature: Feature {
             } else {
                 state.boundary = 0.9
             }
+        case .enterScreen:
+            getHome()
         }
     }
     
@@ -111,6 +92,16 @@ class HomeFeature: Feature {
                     }
                 }
             }
+        }
+    }
+    
+    private func getHome() {
+        homeRepository.getHome { [weak self] result in
+            self?.state.countTarget = result.count
+            self?.state.location = result.region
+            self?.state.findSuhyeons = result.posts
+            
+            self?.updateCount()
         }
     }
 }

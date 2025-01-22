@@ -60,6 +60,7 @@ struct MainTabBar : View {
             if fromSignup {
                 feature.send(.openBlockingAccountSheet)
             }
+            feature.send(.enterScreen)
         }
         .withSuhyeonSheet(
             isPresented: feature.state.blockingAccountSheetIsPresent,

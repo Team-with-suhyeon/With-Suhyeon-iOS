@@ -33,11 +33,11 @@ extension ChatTarget: TargetType {
         switch self {
         case .getChatRooms:
                 .get
-        case .getChatMessages(id: let id):
+        case .getChatMessages:
                 .get
-        case .patchJoinChatRoom(id: let id):
+        case .patchJoinChatRoom:
                 .patch
-        case .patchExitChatRoom(id: let id):
+        case .patchExitChatRoom:
                 .patch
         }
     }
@@ -54,9 +54,9 @@ extension ChatTarget: TargetType {
     var parameters: RequestParameters {
         switch self {
         case .getChatRooms: .none
-        case .getChatMessages(let id): .none
-        case .patchJoinChatRoom(let id): .none
-        case .patchExitChatRoom(let id): .none
+        case .getChatMessages: .none
+        case .patchJoinChatRoom: .none
+        case .patchExitChatRoom: .none
         }
     }
     

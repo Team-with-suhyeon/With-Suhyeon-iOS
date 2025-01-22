@@ -132,17 +132,16 @@ final class NetworkClient: NetworkRequestable {
             .eraseToAnyPublisher()
     }
     
-    func upload<T: Decodable>(
-        _ model: T.Type,
+    func upload(
         target: TargetType,
         formData: @escaping (MultipartFormData) -> Void
-    ) -> AnyPublisher<T, NetworkError> {
+    ) -> AnyPublisher<Bool, NetworkError> {
         return NetworkManager
             .shared
             .session
             .upload(multipartFormData: formData, with: target)
             .validate()
-            .publishDecodable(type: T.self)
+            .publishData()
             .tryMap { response in
                 guard let statusCode = response.response?.statusCode,
                       let data = response.data else {
@@ -151,11 +150,7 @@ final class NetworkClient: NetworkRequestable {
                 
                 switch statusCode {
                 case 200...299:
-                    if let decodedData = response.value {
-                        return decodedData
-                    } else {
-                        throw NetworkError.parsingError
-                    }
+                    return true
                 default:
                     let error = self.handleStatusCode(statusCode, data: data)
                     throw error

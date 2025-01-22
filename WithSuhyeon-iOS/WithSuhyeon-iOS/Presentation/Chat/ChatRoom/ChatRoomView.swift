@@ -112,7 +112,6 @@ struct ChatRoomView: View {
                             }
                         }
                     case .scrollToLast:
-                        print("\(feature.state.groupedMessages.count - 1),\(feature.state.groupedMessages[feature.state.groupedMessages.count - 1].1.count - 1)")
                         print("scrollToLast")
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
                             withAnimation {
@@ -173,8 +172,6 @@ struct ChatRoomView: View {
         }
         .onAppear {
             feature.joinChatRoom()
-            feature.getMessages()
-            feature.chatRoomPublishing()
         }
     }
 }

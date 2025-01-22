@@ -34,28 +34,33 @@ struct MainTabBar : View {
             }
             .tabViewStyle(DefaultTabViewStyle())
             
-            Divider()
-                .frame(height: 1)
-                .background(Color.gray200)
-            
-            HStack {
-                ForEach(MainTab.allCases, id: \.self) { tab in
-                    VStack{
-                        TabItem(
-                            title: tab.title,
-                            icon: tab.icon,
-                            titleColor: tab == router.selectedTab ? Color.primary700 : Color.gray800,
-                            iconColor: tab == router.selectedTab ? Color.primary500 : Color.black)
+            if(router.shouldShowBottomBar) {
+                Divider()
+                    .frame(height: 1)
+                    .background(Color.gray200)
+                
+                HStack {
+                    ForEach(MainTab.allCases, id: \.self) { tab in
+                        VStack{
+                            TabItem(
+                                title: tab.title,
+                                icon: tab.icon,
+                                titleColor: tab == router.selectedTab ? Color.primary700 : Color.gray800,
+                                iconColor: tab == router.selectedTab ? Color.primary500 : Color.black)
+                        }
+                        .onTapGesture {
+                            router.navigateTab(to: tab)
+                        }
+                        .frame(maxWidth: .infinity)
                     }
-                    .onTapGesture {
-                        router.navigateTab(to: tab)
-                    }
-                    .frame(maxWidth: .infinity)
                 }
+                .background(Color.white)
+                .padding(.top, 10)
             }
-            .background(Color.white)
-            .padding(.top, 10)
         }
+        .background(
+            Color.white
+        )
         .onAppear {
             if fromSignup {
                 feature.send(.openBlockingAccountSheet)

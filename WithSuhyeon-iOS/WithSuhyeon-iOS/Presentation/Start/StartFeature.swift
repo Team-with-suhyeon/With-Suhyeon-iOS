@@ -16,6 +16,8 @@ class StartFeature: Feature {
             .imgBoySuma,
             .imgGirlSuma
         ]
+        
+        
     }
     
     enum Intent {

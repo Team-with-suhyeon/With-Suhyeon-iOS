@@ -12,6 +12,7 @@ import Kingfisher
 struct MyPageView : View {
     @EnvironmentObject var router: RouterRegistry
     @StateObject var feature = MyPageFeature()
+    @State var isPresented: Bool = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0){
@@ -136,9 +137,7 @@ struct MyPageView : View {
                         .padding(.top, 8)
                         .frame(height: 50)
                         .contentShape(Rectangle())
-                        .onTapGesture {
-                            feature.send(.tapLogout)
-                        }
+                        .onTapGesture { isPresented = true } 
                         HStack {
                             Text("탈퇴하기")
                                 .font(.body03SB)
@@ -164,6 +163,19 @@ struct MyPageView : View {
                     .padding(16)
                 }
                 
+            }
+            .withSuhyeonAlert(isPresented: isPresented, onTapBackground: {isPresented.toggle()}){
+                WithSuhyeonAlert(
+                    title: "정말 로그아웃하시겠습니까?",
+                    subTitle: "",
+                    primaryButtonText: "로그아웃",
+                    secondaryButtonText: "취소하기",
+                    primaryButtonAction: {
+                        feature.send(.tapLogout)
+                        isPresented.toggle()
+                    },
+                    secondaryButtonAction: {isPresented.toggle()}
+                )
             }
             .background(Color.gray100)
         }

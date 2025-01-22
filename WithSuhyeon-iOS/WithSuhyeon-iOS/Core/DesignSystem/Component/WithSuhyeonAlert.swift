@@ -10,7 +10,7 @@ import SwiftUI
 struct WithSuhyeonAlert: View {
     let title: String
     let subTitle: String
-    let withSuhyeonIcon: WithSuhyeonIcon
+    let withSuhyeonIcon: WithSuhyeonIcon?
     let primaryButtonText: String
     let secondaryButtonText: String
     let primaryButtonAction: () -> Void
@@ -19,7 +19,23 @@ struct WithSuhyeonAlert: View {
     @State private var scaleEffect: CGFloat = 0.5
     @State private var opacity: Double = 0
     
-    init(title: String, subTitle: String, withSuhyeonIcon: WithSuhyeonIcon, primaryButtonText: String, secondaryButtonText: String, primaryButtonAction: @escaping () -> Void, secondaryButtonAction: @escaping () -> Void) {
+//    init(title: String, subTitle: String, withSuhyeonIcon: WithSuhyeonIcon, primaryButtonText: String, secondaryButtonText: String, primaryButtonAction: @escaping () -> Void, secondaryButtonAction: @escaping () -> Void) {
+//        self.title = title
+//        self.subTitle = subTitle
+//        self.withSuhyeonIcon = withSuhyeonIcon
+//        self.primaryButtonText = primaryButtonText
+//        self.secondaryButtonText = secondaryButtonText
+//        self.primaryButtonAction = primaryButtonAction
+//        self.secondaryButtonAction = secondaryButtonAction
+//    }
+    
+    init(title: String,
+         subTitle: String,
+         withSuhyeonIcon: WithSuhyeonIcon? = nil,
+         primaryButtonText: String,
+         secondaryButtonText: String,
+         primaryButtonAction: @escaping () -> Void,
+         secondaryButtonAction: @escaping () -> Void) {
         self.title = title
         self.subTitle = subTitle
         self.withSuhyeonIcon = withSuhyeonIcon
@@ -31,17 +47,30 @@ struct WithSuhyeonAlert: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Image(icon: withSuhyeonIcon)
-                .padding(24)
+            if let icon = withSuhyeonIcon {
+                Image(icon: icon)
+                    .padding(24)
+            } else {
+                Spacer()
+                    .frame(height: 20)
+            }
+            
             Text(title)
                 .font(.title02B)
                 .foregroundColor(.black)
                 .padding(.horizontal, 24)
-            Text(subTitle)
-                .font(.body03SB)
-                .foregroundColor(.gray500)
-                .padding(.top, 6)
-                .padding(.horizontal, 24)
+            if !subTitle.isEmpty {
+                Text(subTitle)
+                    .font(.body03SB)
+                    .foregroundColor(.gray500)
+                    .padding(.top, 6)
+                    .padding(.horizontal, 24)
+            }
+//            Text(subTitle)
+//                .font(.body03SB)
+//                .foregroundColor(.gray500)
+//                .padding(.top, 6)
+//                .padding(.horizontal, 24)
             HStack {
                 WithSuhyeonButton(title: secondaryButtonText, buttonState: .disabled, onTapButton: secondaryButtonAction)
                 

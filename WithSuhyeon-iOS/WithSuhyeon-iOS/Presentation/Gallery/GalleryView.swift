@@ -35,8 +35,10 @@ struct GalleryView: View {
                         }
                         .id("top")
                     }
+                    .scrollBounceBehavior(.basedOnSize)
                     .onAppear {
                         proxy.scrollTo(0, anchor: .top)
+                        galleryFeature.send(.enterScreen)
                     }
                     .onReceive(galleryFeature.sideEffectSubject) { sideEffect in
                         switch sideEffect {
@@ -69,7 +71,7 @@ struct GalleryView: View {
 struct GalleryCategoryHeader: View {
     let scrollOffset: CGFloat
     let selectedIndex: Int
-    let categories: [String]
+    let categories: [Category]
     let onTapItem: (Int) -> Void
     
     @State private var spacing: CGFloat = 16
@@ -120,14 +122,14 @@ struct GalleryCategoryHeader: View {
 }
 
 struct ContentViewList: View {
-    let items: [Gallery]
+    let items: [GalleryPost]
     let columns = [
         GridItem(.flexible(), spacing: 7),
         GridItem(.flexible()),
     ]
     let onTapItem: (Int) -> Void
     
-    init(items: [Gallery], onTapItem: @escaping (Int) -> Void) {
+    init(items: [GalleryPost], onTapItem: @escaping (Int) -> Void) {
         self.items = items
         self.onTapItem = onTapItem
     }
@@ -136,8 +138,8 @@ struct ContentViewList: View {
         LazyVStack(spacing: 0) {
             Color.gray50.frame(height: 16)
             LazyVGrid(columns: columns, alignment: .leading, spacing: 12) {
-                ForEach(items, id: \.self) { item in
-                    GalleryItem(imageUrl: item.imageUrl, title: item.title)
+                ForEach(items, id: \.id) { item in
+                    GalleryItem(imageUrl: item.imageURL, title: item.title)
                         .onTapGesture {
                             onTapItem(item.id)
                         }

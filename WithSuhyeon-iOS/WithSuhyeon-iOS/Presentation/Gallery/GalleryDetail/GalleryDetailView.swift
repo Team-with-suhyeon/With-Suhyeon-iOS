@@ -22,14 +22,19 @@ struct GalleryDetailView : View {
             WithSuhyeonTopNavigationBar(title: "", leftIcon: .icArrowLeft24, onTapLeft: { galleryDetailFeature.send(.tapBackButton) })
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    KFImage(URL(string: galleryDetailFeature.state.imageURL))
-                        .cancelOnDisappear(true)
-                        .placeholder{
-                            Image(systemName: "list.dash")
-                        }
-                        .resizable()
-                        .scaledToFill()
-                        .aspectRatio(1, contentMode: .fit)
+                    GeometryReader { geometry in
+                        KFImage(URL(string: galleryDetailFeature.state.imageURL))
+                            .cancelOnDisappear(true)
+                            .placeholder{
+                                Image(systemName: "list.dash")
+                            }
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: geometry.size.width, height: geometry.size.width)
+                            .aspectRatio(1, contentMode: .fill)
+                            .clipped()
+                    }
+                    .aspectRatio(1, contentMode: .fit)
                     
                     HStack(spacing: 8) {
                         ForEach(galleryDetailFeature.state.category, id: \.self) { category in
@@ -48,8 +53,7 @@ struct GalleryDetailView : View {
                     WithSuhyeonPostContainer(
                         imageUrl: galleryDetailFeature.state.userImageURL,
                         nickname: galleryDetailFeature.state.nickname,
-                        date: galleryDetailFeature.state.date,
-                        count: galleryDetailFeature.state.count
+                        date: galleryDetailFeature.state.date
                     )
                     .padding(.top, 12)
                     
@@ -62,13 +66,18 @@ struct GalleryDetailView : View {
                         .padding(.horizontal, 16)
                 }
             }
+            .scrollBounceBehavior(.basedOnSize)
             if (!galleryDetailFeature.state.isMine) {
                 ZStack {
                     WithSuhyeonButton(title: "다운로드", buttonState: .enabled, icon: .icDownload24) { galleryDetailFeature.send(.tapDownloadButton)}
                         .padding(.horizontal, 16)
                 }
             }
-        }.onReceive(galleryDetailFeature.sideEffectSubject){ sideEffect in
+        }
+        .onAppear {
+            galleryDetailFeature.send(.enterScreen)
+        }
+        .onReceive(galleryDetailFeature.sideEffectSubject){ sideEffect in
             switch sideEffect {
             case .popBack:
                 router.popBack()

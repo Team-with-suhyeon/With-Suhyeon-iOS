@@ -43,16 +43,20 @@ struct SignUpView: View {
                 }
             )
             .padding(.horizontal, 16)
-        }.environmentObject(signUpFeature)
-            .onReceive(signUpFeature.sideEffectSubject) { sideEffect in
-                switch sideEffect {
-                case .navigateToSignUpComplete:
-                    router.navigate(to: .signUpComplete)
-                case .navigateToStartView:
-                    router.navigate(to: .startView)
-                }
-                
+        }
+        .environmentObject(signUpFeature)
+        .onAppear {
+            signUpFeature.send(.enterScreen)
+        }
+        .onReceive(signUpFeature.sideEffectSubject) { sideEffect in
+            switch sideEffect {
+            case .navigateToSignUpComplete:
+                router.navigate(to: .signUpComplete)
+            case .navigateToStartView:
+                router.navigate(to: .startView)
             }
+            
+        }
     }
 }
 

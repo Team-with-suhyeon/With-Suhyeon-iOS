@@ -22,17 +22,7 @@ class GalleryUploadFeature: Feature {
         var commentTextFieldState: WithSuhyeonTextFieldState = .editing
         var title: String = ""
         var comment: String = ""
-        var categories: [(icon: WithSuhyeonIcon, title: String)] = [
-            (.icArchive24, "학교"),
-            (.icArchive24, "카페"),
-            (.icArchive24, "회식"),
-            (.icArchive24, "엠티"),
-            (.icArchive24, "자취방"),
-            (.icArchive24, "도서관"),
-            (.icArchive24, "수영장/빠지"),
-            (.icArchive24, "바다/계곡"),
-            (.icArchive24, "스키장"),
-            (.icArchive24, "사회")]
+        var categories: [Category] = []
         var selectedCategoryIndex: Int? = nil
         var focusedTextField: String? = nil
     }
@@ -50,6 +40,7 @@ class GalleryUploadFeature: Feature {
         case dismissSheet
         case keyboardAppeared
         case keyboardDisappeared
+        case enterScreen
     }
     
     enum SideEffect {
@@ -63,6 +54,10 @@ class GalleryUploadFeature: Feature {
     
     private let intentSubject = PassthroughSubject<Intent, Never>()
     let sideEffectSubject = PassthroughSubject<SideEffect, Never>()
+    
+    @Inject var galleryApi: GalleryApiProtocol
+    @Inject var galleryRepository: GalleryRepository
+    @Inject var getCategoriesUseCase: GetCategoriesUseCase
     
     init() {
         bindIntents()
@@ -94,13 +89,13 @@ class GalleryUploadFeature: Feature {
                 state.selectedCategoryIndex = index
                 state.dropdownState = .isSelected
             }
-            state.selectedCategory = index.map { [state.categories[$0].title] } ?? []
+            state.selectedCategory = index.map { [state.categories[$0].category] } ?? []
         case .focusOnTitleTextField:
             state.focusedTextField = "title"
         case .focusOnCommentTextField:
             state.focusedTextField = "comment"
         case .tapCompleteButton:
-            do {}
+            upload()
         case .writeTitle(let title):
             updateTitle(title)
         case .writeComment(let comment):
@@ -112,6 +107,8 @@ class GalleryUploadFeature: Feature {
             sideEffectSubject.send(.scrollTo(tag: focusedTextField))
         case .keyboardDisappeared:
             state.focusedTextField = nil
+        case .enterScreen:
+            getCategories()
         }
     }
     
@@ -137,5 +134,53 @@ class GalleryUploadFeature: Feature {
     
     private func updateComment(_ comment: String) {
         state.comment = comment
+    }
+    
+    private func upload() {
+        guard let data = state.selectedImage?.jpegData(compressionQuality: 0.8) else { return }
+        let compressedData = dataCompress(imageData: data)
+        guard let selectedIndex = state.selectedCategoryIndex else { return }
+        galleryRepository.upload(
+            galleryInfo: GalleryUpload(
+                image: compressedData,
+                category: state.categories[selectedIndex].category,
+                title: state.title,
+                content: state.comment
+            )
+        ) { [weak self] completion in
+            if(completion) {
+                self?.sideEffectSubject.send(.popBack)
+            }
+        }
+    }
+    
+    private func dataCompress(imageData: Data) -> Data {
+        guard let image = UIImage(data: imageData) else { return imageData }
+        
+        var compressionQuality: CGFloat = 1.0
+        let minQuality: CGFloat = 0.1
+        let maxSize: Int = 1_048_576
+        
+        var compressedData = imageData
+        
+        while compressedData.count > maxSize && compressionQuality > minQuality {
+            compressionQuality -= 0.1
+            if let newData = image.jpegData(compressionQuality: compressionQuality) {
+                compressedData = newData
+            } else {
+                break
+            }
+        }
+        
+        print("✅ 최종 압축 크기: \(compressedData.count / 1024) KB")
+        return compressedData
+    }
+    
+    private func getCategories() {
+        var categories: [Category] = [Category(imageURL: "", category: "전체")]
+        getCategoriesUseCase.execute { [weak self] result in
+            categories += result
+            self?.state.categories = categories
+        }
     }
 }

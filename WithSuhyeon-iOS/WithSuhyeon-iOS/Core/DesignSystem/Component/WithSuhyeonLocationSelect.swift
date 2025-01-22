@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct WithSuhyeonLocationSelect: View {
-    let withSuhyeonLocation: [WithSuhyeonLocation]
+    let withSuhyeonLocation: [Region]
     let selectedMainLocationIndex: Int
     let selectedSubLocationIndex: Int?
     let onTabSelected: (Int, Int) -> Void
@@ -83,7 +83,7 @@ struct locationPreview: View {
     
     var body: some View {
         VStack {
-            WithSuhyeonLocationSelect(withSuhyeonLocation: WithSuhyeonLocation.location, selectedMainLocationIndex: selectedMainLocationIndex, selectedSubLocationIndex: selectedSubLocationIndex, onTabSelected: { num1, num2 in
+            WithSuhyeonLocationSelect(withSuhyeonLocation: [], selectedMainLocationIndex: selectedMainLocationIndex, selectedSubLocationIndex: selectedSubLocationIndex, onTabSelected: { num1, num2 in
                 selectedMainLocationIndex = num1
                 selectedSubLocationIndex = num2
             })

@@ -8,10 +8,10 @@
 import Foundation
 
 public struct ChatRoomsResponseDTO: Codable {
-    let chatRooms: [ChatRoom]
+    let chatRooms: [ChatRoomDTO]
 }
 
-public struct ChatRoom: Codable {
+public struct ChatRoomDTO: Codable {
     let ownerChatRoomId: String
     let peerChatRoomId: String
     let postId: Int
@@ -23,7 +23,7 @@ public struct ChatRoom: Codable {
     let unReadCount: Int
 }
 
-extension ChatRoom {
+extension ChatRoomDTO {
     var entity: Chat {
         Chat(
             ownerChatRoomID: ownerChatRoomId,

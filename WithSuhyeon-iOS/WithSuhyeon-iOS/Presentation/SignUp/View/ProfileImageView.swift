@@ -77,7 +77,7 @@ struct ProfileImage: View {
     let selectedImage: WithSuhyeonImage
     let beforeImage: WithSuhyeonImage
     let defaultImage: WithSuhyeonImage
-    let state: SignUpFeature.ProfileImageState
+    let state: SignUpFeature.ImageState
     
     var body: some View {
         ZStack {

@@ -11,28 +11,24 @@ struct SelectGenderView: View {
     @EnvironmentObject var signUpFeature: SignUpFeature
     
     var body: some View {
-        VStack(spacing: 0 ){
-            HStack(spacing: 15) {
-                GenderButton(
-                    gender: "남자",
-                    image: .imgBoySuma,
-                    isSelected: signUpFeature.state.gender == "남자",
-                    onTap: {
-                        withAnimation(.easeInOut) {
-                            signUpFeature.send(.selectedGender("남자"))
+        VStack(spacing: 0) {
+            HStack(spacing: 0) {
+                ForEach(0..<signUpFeature.state.genderImages.count, id: \.self) { index in
+                    let genderImage = signUpFeature.state.genderImages[index]
+                    let genderText = index == 0 ? "남자" : "여자"
+                    
+                    GenderButton(
+                        gender: genderText,
+                        defaultImage: genderImage.defaultImage,
+                        selectedImage: genderImage.selectedImage,
+                        isSelected: signUpFeature.state.gender == genderText,
+                        onTap: {
+                            withAnimation(.easeInOut) {
+                                signUpFeature.send(.selectedGender(genderText))
+                            }
                         }
-                    }
-                )
-                GenderButton(
-                    gender: "여자",
-                    image: .imgGirlSuma,
-                    isSelected: signUpFeature.state.gender == "여자",
-                    onTap: {
-                        withAnimation(.easeInOut) {
-                            signUpFeature.send(.selectedGender("여자"))
-                        }
-                    }
-                )
+                    )
+                }
             }
             Spacer()
         }

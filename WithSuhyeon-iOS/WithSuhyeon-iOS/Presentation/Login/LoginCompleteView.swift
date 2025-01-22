@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+import Lottie
+
 struct LoginCompleteView: View {
     @EnvironmentObject private var router: RouterRegistry
     @State private var showBottomSheet: Bool = false
@@ -17,16 +19,22 @@ struct LoginCompleteView: View {
                 .font(.title02B)
                 .multilineTextAlignment(.center)
             
-            Rectangle()
-                .frame(width: 202, height: 202)
-                .foregroundStyle(Color.gray100)
+            LottieView(animation: .named("logincomplete"))
+                .configure { lottieView in
+                    lottieView.animationSpeed = 0.8
+                    lottieView.loopMode = .loop
+                }
+                .playing()
+                .resizable()
+                .scaledToFit()
+                .frame(width: 328, height: 328)
             
             Spacer()
             
             WithSuhyeonButton(title: "시작하기", buttonState: .enabled, onTapButton: {
                 router.navigate(to: .main(fromSignUp: false))
             })
-            .padding(.horizontal, 8)
+            .padding(.horizontal, 16)
         }
         .padding(.top, 168)
 

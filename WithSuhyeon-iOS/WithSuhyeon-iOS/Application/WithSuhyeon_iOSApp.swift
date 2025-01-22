@@ -49,6 +49,7 @@ struct WithSuhyeon_iOSApp: App {
                         case .loginComplete: LoginCompleteView()
                                 .navigationBarBackButtonHidden(true)
                         case .startView: StartView()
+                                .navigationBarBackButtonHidden(true)
                         }
                     }
             }

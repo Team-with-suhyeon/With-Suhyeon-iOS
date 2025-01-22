@@ -11,5 +11,6 @@ public enum RequestParameters {
     case none
     case query(_ parameters: Encodable?)
     case body(_ parameters: Encodable?)
+    case bodyAndQuery(body: Encodable?, query: Encodable?)
 }
 

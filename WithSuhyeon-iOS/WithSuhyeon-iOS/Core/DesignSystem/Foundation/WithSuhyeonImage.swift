@@ -7,8 +7,6 @@
 
 public enum WithSuhyeonImage: String {
     case imgLogo = "img_logo"
-    case imgBoySuma = "img_boy_suma"
-    case imgGirlSuma = "img_girl_suma"
     case imgBlock = "img_block"
     case imgBlueSuma = "img_blue_suma"
     case imgBlueSumaBefore = "img_blue_suma_before"
@@ -28,4 +26,10 @@ public enum WithSuhyeonImage: String {
     case imgSeekAndHide = "img_seek_and_hide"
     case imgStudyCafe = "img_study_cafe"
     case imgMegaphone = "img_megaphone"
+    case imgBoyDefault = "img_boy_default"
+    case imgBoySelected = "img_boy_selected"
+    case imgGirlDefault = "img_girl_default"
+    case imgGirlSelected = "img_girl_selected"
+    case imgFuckOff = "img_fuckoff"
+    case imgEmptyState = "img_emptystate"
 }

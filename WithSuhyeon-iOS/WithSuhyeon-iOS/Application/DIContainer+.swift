@@ -88,5 +88,9 @@ extension DIContainer {
         DIContainer.shared.register(type: FindSuhyeonRepository.self) {
             DefaultFindSuhyeonRepository()
         }
+      
+        DIContainer.shared.register(type: SignUpUseCase.self) {
+            SignUpUseCaseImpl()
+        }
     }
 }

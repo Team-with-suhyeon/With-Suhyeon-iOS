@@ -41,6 +41,11 @@ public enum NetworkError: Error {
     case postNotFound
     
     case userNotFound
+    case userNotRegistered
+    case userAlreadyRegistered
+    
+    case invalidCertificationNumber
+    case expiredCertificationNumber
     
     
     var errorMessage: String {
@@ -104,7 +109,17 @@ public enum NetworkError: Error {
             
         case .userNotFound:
             return "해당 ID에 해당하는 유저를 찾을 수 없습니다."
+        case .userNotRegistered:
+            return "해당 휴대폰 번호로 회원가입한 유저가 없습니다."
+        case .userAlreadyRegistered:
+            return "이미 회원가입한 휴대폰 번호입니다."
+            
+        case .invalidCertificationNumber:
+            return "유효하지 않은 인증번호입니다."
+        case .expiredCertificationNumber:
+            return "인증번호가 만료되었습니다."
         }
+
     }
 }
 

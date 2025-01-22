@@ -20,7 +20,7 @@ protocol BlockingAccountAPIProtocol {
     func fetchBlokcingAccounts() -> AnyPublisher<BlockingAccountResponseDTO, NetworkError>
     func registerBlockingAccount(requestDTO: BlockingAccountRequestDTO) -> AnyPublisher<Bool, NetworkError>
     func deleteBlockingAccount(requestDTO: BlockingAccountRequestDTO) -> AnyPublisher<Bool, NetworkError>
-
+}
 
 extension BlockingAccountTarget: TargetType {
     var baseURL: String {

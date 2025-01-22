@@ -96,32 +96,32 @@ class LoginFeature: Feature {
     }
     
     private func requestAuthCode() {
-        let exists = validateExistsUser()
-        
-        if exists {
-            state.isExistsUser = true
-            state.isAuthButtonEnabled = false
-        } else {
-            state.isExistsUser = false
-            state.phoneAuthStep = .enterAuthCode
-            state.authCode = ""
-            state.isAuthButtonEnabled = false
+        authRepository.sendAuthCode(flow: "signin", phoneNumber: state.phoneNumber) { [weak self] result in
+            switch result {
+            case .success:
+                self?.state.phoneAuthStep = .enterAuthCode
+                self?.state.authCode = ""
+                print("✅ 인증번호 요청 성공")
+            case .failure(let error):
+                print("인증번호 요청 실패: \(error.localizedDescription)")
+            }
         }
         
         updateAuthButtonState()
     }
     
-    private func validateExistsUser() -> Bool {
-        return state.phoneNumber == "01012345678"
-    }
-    
     private func validateAuthCode() {
-        if state.authCode == "123456" {
-            state.isAuthNumberCorrect = true
-            state.phoneAuthStep = .completed
-            sideEffectSubject.send(.navigateToLoginComplete)
-        } else {
-            state.isAuthNumberCorrect = false
+        authRepository.validateAuthCode(flow: "signin", authCode: state.authCode, phoneNumber: state.phoneNumber) { [weak self] result in
+            switch result {
+            case .success:
+                self?.state.isAuthNumberCorrect = true
+                self?.state.phoneAuthStep = .completed
+                self?.sideEffectSubject.send(.navigateToLoginComplete)
+                print("✅ 로그인 인증번호 검증 성공")
+            case .failure(let error):
+                print("인증번호 검증 실패 ㅜㅜ : \(error.localizedDescription)")
+                self?.state.isAuthNumberCorrect = false
+            }
         }
         updateButtonState()
     }

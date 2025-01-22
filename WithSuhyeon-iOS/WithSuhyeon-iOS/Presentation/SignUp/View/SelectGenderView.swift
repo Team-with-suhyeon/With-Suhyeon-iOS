@@ -12,7 +12,7 @@ struct SelectGenderView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            HStack(spacing: 0) {
+            HStack(spacing: 15) {
                 ForEach(0..<signUpFeature.state.genderImages.count, id: \.self) { index in
                     let genderImage = signUpFeature.state.genderImages[index]
                     let genderText = index == 0 ? "남자" : "여자"

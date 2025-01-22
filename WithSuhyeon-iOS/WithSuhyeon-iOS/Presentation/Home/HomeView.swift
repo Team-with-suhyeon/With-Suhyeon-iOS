@@ -198,10 +198,10 @@ struct HomeView : View {
                                 ForEach(feature.state.findSuhyeons.indices, id: \.self) { index in
                                     HomeFindSuhyeonContainer(
                                         title: feature.state.findSuhyeons[index].title,
-                                        money: feature.state.findSuhyeons[index].money,
+                                        money: feature.state.findSuhyeons[index].price.formattedWithComma,
                                         gender: feature.state.findSuhyeons[index].gender,
                                         age: feature.state.findSuhyeons[index].age,
-                                        timeStamp: feature.state.findSuhyeons[index].timeStamp
+                                        timeStamp: feature.state.findSuhyeons[index].date
                                     )
                                     .padding(.horizontal, 16)
                                     .onTapGesture {
@@ -214,13 +214,14 @@ struct HomeView : View {
                         .background(Color.white)
                     }
                 }
+                .scrollBounceBehavior(.basedOnSize)
             }
             
         }
         .frame(maxHeight: .infinity)
         .onAppear {
             UIScrollView.appearance().bounces = true
-            feature.updateCount()
+            feature.send(.enterScreen)
         }
         .onReceive(feature.sideEffectSubject) { sideEffect in
             switch sideEffect {

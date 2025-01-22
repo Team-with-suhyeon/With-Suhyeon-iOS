@@ -30,6 +30,10 @@ class SignUpFeature: Feature {
         
         var gender: String = ""
         var isGenderSelected: Bool = false
+        var genderImages: [GenderImage] = [
+            GenderImage(defaultImage: .imgBoyDefault, selectedImage: .imgBoySelected),
+            GenderImage(defaultImage: .imgGirlDefault, selectedImage: .imgGirlSelected)
+        ]
         
         var profileImages: [ProfileImage] = [
             ProfileImage(
@@ -54,7 +58,7 @@ class SignUpFeature: Feature {
             )
         ]
         
-        var profileImageStates: [ProfileImageState] = [.unselected, .unselected, .unselected, .unselected]
+        var profileImageStates: [ImageState] = [.unselected, .unselected, .unselected, .unselected]
         var selectedProfileImageIndex: Int? = nil
         var isProfileImageSelected: Bool = false
         
@@ -72,13 +76,18 @@ class SignUpFeature: Feature {
         let selectedImage: WithSuhyeonImage
     }
     
+    struct GenderImage {
+        let defaultImage: WithSuhyeonImage
+        let selectedImage: WithSuhyeonImage
+    }
+    
     enum PhoneAuthStep {
         case enterPhoneNumber
         case enterAuthCode
         case completed
     }
     
-    enum ProfileImageState {
+    enum ImageState {
         case unselected
         case selected
         case confirmed
@@ -207,23 +216,23 @@ class SignUpFeature: Feature {
     }
     
     private func requestAuthCode() {
-        let exists = validateExistsUser()
-        
-        if exists {
-            state.isExistsUser = true
-            state.isAuthButtonEnabled = false
-        } else {
-            state.isExistsUser = false
-            state.phoneAuthStep = .enterAuthCode
-            state.authCode = ""
-            state.isAuthButtonEnabled = false
+        authRepository.sendAuthCode(flow: "signup", phoneNumber: state.phoneNumber) { [weak self] result in
+            switch result {
+            case .success:
+                self?.state.phoneAuthStep = .enterAuthCode
+                self?.state.authCode = ""
+                self?.state.isExistsUser = false
+                self?.state.authCode = ""
+                self?.state.isAuthButtonEnabled = false
+                print("✅ 회원가입 인증번호 요청 성공")
+            case .failure(let error):
+                print("인증번호 요청 실패: \(error.localizedDescription)")
+                self?.state.isExistsUser = true
+                self?.state.isAuthButtonEnabled = false
+            }
         }
         
         updateAuthButtonState()
-    }
-    
-    private func validateExistsUser() -> Bool {
-        return state.phoneNumber == "01012345678"
     }
     
     private func validateAuthCode() {

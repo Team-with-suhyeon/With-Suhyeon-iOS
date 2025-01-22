@@ -45,7 +45,6 @@ struct WithSuhyeonMultiSelectCheckBigChip: View {
             .frame(maxWidth: .infinity, maxHeight: 64, alignment: .leading)
             .padding(.leading, showIcon ? 8 : 24)
             .padding(.trailing, 16)
-            .padding(.vertical, 8)
             .background(
                 RoundedRectangle(cornerRadius: 20)
                     .fill(isDisabled ? Color.gray100 : (isSelected ? Color.primary50 : Color.gray25))

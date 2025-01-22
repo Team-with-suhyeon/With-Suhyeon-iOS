@@ -13,11 +13,10 @@ struct WithSuhyeonPostContainer: View {
     let imageUrl: String
     let nickname: String
     let date: String
-    let count: Int
     
     var body: some View {
         HStack {
-            KFImage(URL(string: imageUrl))
+            Image(imageUrl)
                 .resizable()
                 .clipShape(Circle())
                 .frame(width: 38, height: 38)
@@ -28,7 +27,7 @@ struct WithSuhyeonPostContainer: View {
                 Text(nickname)
                     .font(.body03SB)
                     .foregroundColor(.gray700)
-                Text(date + " ・ " + "조회수 \(count)")
+                Text(date)
                     .font(.caption01R)
                     .foregroundColor(.gray500)
             }
@@ -44,6 +43,6 @@ struct WithSuhyeonPostContainer: View {
     WithSuhyeonPostContainer(
         imageUrl: "https://reqres.in/img/faces/7-image.jpg",
         nickname: "작심이",
-        date: "1월 25일",
-        count: 10)
+        date: "1월 25일"
+    )
 }

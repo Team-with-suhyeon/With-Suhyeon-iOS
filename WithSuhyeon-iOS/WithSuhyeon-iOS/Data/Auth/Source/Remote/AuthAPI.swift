@@ -9,6 +9,7 @@ import Foundation
 import Combine
 
 struct AuthAPI: AuthAPIProtocol {
+    
     private let client = NetworkClient.shared
     
     func signUp(requestDTO: SignUpRequestDTO) -> AnyPublisher<Bool, NetworkError> {
@@ -21,5 +22,11 @@ struct AuthAPI: AuthAPIProtocol {
         let target: AuthTarget = .login(requestDTO: requestDTO)
         
         return client.request(LoginResponseDTO.self, target: target)
+    }
+
+    func getUserId() -> AnyPublisher<UserIDResponseDTO, NetworkError> {
+        let target: AuthTarget = .getUserId
+        
+        return client.request(UserIDResponseDTO.self, target: target)
     }
 }

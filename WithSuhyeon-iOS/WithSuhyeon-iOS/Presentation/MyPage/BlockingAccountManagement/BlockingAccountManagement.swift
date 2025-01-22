@@ -21,9 +21,8 @@ struct BlockingAccountManagement: View {
                     .font(.caption01SB)
                     .foregroundColor(.gray400)
             }
-            .padding(.leading, 16)
-            .padding(.bottom, 24)
-            .padding(.top, 20)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 20)
             
             Rectangle()
                 .frame(height: 4)

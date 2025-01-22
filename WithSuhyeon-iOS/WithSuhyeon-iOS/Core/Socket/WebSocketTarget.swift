@@ -10,5 +10,9 @@ import Foundation
 struct WebSocketTarget: WebSocketTargetType {
     var baseURL: String = Configuration.socketURL
     
-    var path: String = "/chat?userId=17"
+    var path: String {
+        return "/chat?userId=\(userId)"
+    }
+    
+    var userId: Int
 }

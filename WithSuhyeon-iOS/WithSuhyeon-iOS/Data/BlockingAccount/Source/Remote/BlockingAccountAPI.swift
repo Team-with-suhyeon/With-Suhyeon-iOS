@@ -23,4 +23,11 @@ struct BlockingAccountAPI: BlockingAccountAPIProtocol {
         
         return client.request(target: target)
     }
+    
+    func deleteBlockingAccount(requestDTO: BlockingAccountRequestDTO) -> AnyPublisher<Bool, NetworkError> {
+        let target: BlockingAccountTarget = .deleteBlockingAccount(requestDTO: requestDTO)
+        
+        return client.request(target: target)
+    }
+    
 }

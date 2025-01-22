@@ -43,4 +43,21 @@ class BlockingAccountRepositoryImpl: BlockingRepository {
             } receiveValue: { _ in }
             .store(in: &subscriptions)
     }
+    
+    func deleteBlockingAccount(phoneNumber: String, completion: @escaping (Result<Void, NetworkError>) -> Void) {
+        blockingAccountAPI.deleteBlockingAccount(requestDTO: BlockingAccountRequestDTO(phoneNumber: phoneNumber))
+            .sink { completionStatus in
+                switch completionStatus {
+                case .finished:
+                    break
+                case .failure(let error):
+                    completion(.failure(error))
+                    print("❌ 삭제 실패: \(error.localizedDescription)")
+                }
+            } receiveValue: { _ in
+                completion(.success(()))
+            }
+            .store(in: &subscriptions)
+    }
+    
 }

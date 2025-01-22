@@ -106,9 +106,21 @@ class BlockingAccountManagementFeature: Feature {
     }
     
     private func deletePhoneNumberFromBlockingList(_ phoneNumber: String) {
-        
+        blockingAccountRepository.deleteBlockingAccount(phoneNumber: phoneNumber) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    print("✅ 차단 계정 삭제 성공")
+                    withAnimation {
+                        self?.state.blockingAccountList.removeAll { $0 == phoneNumber }
+                    }
+                    self?.state.errorMessage = ""
+                case .failure(let error):
+                    print("❌ 차단 계정 삭제 실패: \(error.localizedDescription)")
+                }
+            }
+        }
     }
-    
     private func updatePhoneNumber(_ phoneNumber: String) {
         state.phoneNumber = phoneNumber
     }

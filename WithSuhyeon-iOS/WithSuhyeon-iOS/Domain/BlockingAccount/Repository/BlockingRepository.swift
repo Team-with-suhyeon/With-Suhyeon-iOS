@@ -12,4 +12,5 @@ import Combine
 protocol BlockingRepository {
     func fetchBlockingAccounts(completion: @escaping (String, [String]) -> Void)
     func registerBlockingAccount(phoneNumber: String, completion: @escaping(Result<Void, NetworkError>) -> Void)
+    func deleteBlockingAccount(phoneNumber: String, completion: @escaping(Result<Void, NetworkError>) -> Void)
 }

@@ -13,7 +13,7 @@ struct ActiveAreaView: View {
     var body: some View {
         VStack(spacing: 0) {
             WithSuhyeonLocationSelect(
-                withSuhyeonLocation: WithSuhyeonLocation.location,
+                withSuhyeonLocation: signUpFeature.state.locationOptions,
                 selectedMainLocationIndex: signUpFeature.state.mainLocationIndex,
                 selectedSubLocationIndex: signUpFeature.state.subLocationIndex,
                 onTabSelected: { mainIndex, subIndex in

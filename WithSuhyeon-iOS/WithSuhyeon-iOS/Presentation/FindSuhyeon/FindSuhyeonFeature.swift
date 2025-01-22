@@ -62,6 +62,7 @@ class FindSuhyeonFeature: Feature {
     }
     
     struct LocationState {
+        var locationOptions: [Region] = []
         var selectedMainLocationIndex: Int = 0
         var selectedSubLocationIndex: Int = 0
         var tempSelectedLocation: String = ""
@@ -117,6 +118,7 @@ class FindSuhyeonFeature: Feature {
         case tapLocationDropdown(FindSuhyeonAlertType)
         case tapDateTimeDropdown(FindSuhyeonAlertType)
         case tapBottomSheetButton
+        case enterScreen
     }
     
     enum SideEffect {
@@ -162,6 +164,8 @@ class FindSuhyeonFeature: Feature {
     
     private let intentSubject = PassthroughSubject<Intent, Never>()
     let sideEffectSubject = PassthroughSubject<SideEffect, Never>()
+    
+    @Inject var getRegionsUseCase: GetRegionsUseCase
     
     init() {
         bindIntents()
@@ -209,7 +213,7 @@ class FindSuhyeonFeature: Feature {
         case .selectLocation(let mainIndex, let subIndex):
             state.location.selectedMainLocationIndex = mainIndex
             state.location.selectedSubLocationIndex = subIndex
-            state.location.tempSelectedLocation = WithSuhyeonLocation.location[mainIndex].subLocation[subIndex]
+            state.location.tempSelectedLocation = state.location.locationOptions[mainIndex].subLocation[subIndex]
             state.location.buttonEnable = true
             
         case .selectDateTime(let dateIndex, let hour, let minute, let amPm):
@@ -258,6 +262,14 @@ class FindSuhyeonFeature: Feature {
             case .dateSelect: break
             }
             state.isPresent = false
+        case .enterScreen:
+            getLocationOptions()
+        }
+    }
+    
+    private func getLocationOptions() {
+        getRegionsUseCase.execute { [weak self] result in
+            self?.state.location.locationOptions = result
         }
     }
 }

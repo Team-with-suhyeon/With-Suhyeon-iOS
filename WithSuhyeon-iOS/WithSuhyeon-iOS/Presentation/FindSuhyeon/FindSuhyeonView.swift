@@ -107,6 +107,9 @@ struct FindSuhyeonView: View {
             )
             .padding()
         }
+        .onAppear {
+            feature.send(.enterScreen)
+        }
     }
     
     @ViewBuilder
@@ -327,7 +330,7 @@ struct FindSuhyeonView: View {
     private func locationModalView() -> some View {
         VStack {
             WithSuhyeonLocationSelect(
-                withSuhyeonLocation: WithSuhyeonLocation.location,
+                withSuhyeonLocation: feature.state.location.locationOptions,
                 selectedMainLocationIndex: feature.state.location.selectedMainLocationIndex,
                 selectedSubLocationIndex: feature.state.location.selectedSubLocationIndex,
                 onTabSelected: { mainIndex, subIndex in

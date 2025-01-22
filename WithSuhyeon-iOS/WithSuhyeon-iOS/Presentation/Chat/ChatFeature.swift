@@ -69,6 +69,7 @@ class ChatFeature: Feature {
     
     func chatRoomPublishing() {
         chatRepository.receiveChatRooms()
+            .receive(on: DispatchQueue.main)
             .sink { completion in
                 switch completion {
                 case .finished:

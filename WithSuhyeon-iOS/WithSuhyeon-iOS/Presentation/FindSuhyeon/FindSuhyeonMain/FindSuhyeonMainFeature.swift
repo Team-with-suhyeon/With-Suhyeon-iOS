@@ -11,8 +11,9 @@ import Combine
 class FindSuhyeonMainFeature: Feature {
     struct State {
         var posts: [Post] = []
-        var selectedDate: Date = Date()
+        var selectedDate: Date?
         var isFetching: Bool = false
+        var dropdownState: WithSuhyeonDropdownState = .defaultState
     }
     
     enum Intent {
@@ -20,6 +21,7 @@ class FindSuhyeonMainFeature: Feature {
         case selectDate(Date)
         case tapWriteButton
         case tapPost(Int)
+        case tapDropdown
     }
     
     enum SideEffect {
@@ -61,6 +63,8 @@ class FindSuhyeonMainFeature: Feature {
             sideEffectSubject.send(.navigateToWrite)
         case .tapPost(let postId):
             sideEffectSubject.send(.navigateToDetail(postId: postId))
+        case .tapDropdown:
+                    state.dropdownState = .isSelected
         }
     }
     
@@ -70,7 +74,11 @@ class FindSuhyeonMainFeature: Feature {
             self.state.posts = [
                 Post(id: 1, title: "서울역 수현이 구해요ㅠㅠ", money: "5,000", gender: .woman, age: "20~24세", timeStamp: "1월 25일 (토) 오후 2:30", badgeState: .completed),
                 Post(id: 2, title: "서울역 수현이 구해요ㅠㅠ", money: "5,000", gender: .woman, age: "20~24세", timeStamp: "1월 25일 (토) 오후 2:30", badgeState: .expired),
-                Post(id: 3, title: "서울역 수현이 구해요ㅠㅠ", money: "5,000", gender: .woman, age: "20~24세", timeStamp: "1월 25일 (토) 오후 2:30", badgeState: .matching)
+                Post(id: 3, title: "서울역 수현이 구해요ㅠㅠ", money: "5,000", gender: .woman, age: "20~24세", timeStamp: "1월 25일 (토) 오후 2:30", badgeState: nil),
+                Post(id: 4, title: "서울역 수현이 구해요ㅠㅠ", money: "5,000", gender: .woman, age: "20~24세", timeStamp: "1월 25일 (토) 오후 2:30", badgeState: nil),
+                Post(id: 5, title: "서울역 수현이 구해요ㅠㅠ", money: "5,000", gender: .woman, age: "20~24세", timeStamp: "1월 25일 (토) 오후 2:30", badgeState: nil),
+                Post(id: 6, title: "서울역 수현이 구해요ㅠㅠ", money: "5,000", gender: .woman, age: "20~24세", timeStamp: "1월 25일 (토) 오후 2:30", badgeState: nil),
+                Post(id: 7, title: "서울역 수현이 구해요ㅠㅠ", money: "5,000", gender: .woman, age: "20~24세", timeStamp: "1월 25일 (토) 오후 2:30", badgeState: nil)
             ]
             self.state.isFetching = false
         }
@@ -81,26 +89,26 @@ struct Post: Identifiable {
     let id: Int
     let title: String
     let money: String
-    let gender: SuHyeonGender
+    let gender: Gender
     let age: String
     let timeStamp: String
-    let badgeState: BadgeState
+    let badgeState: BadgeState?
 }
 
 enum BadgeState {
-    case matching
     case completed
     case expired
     
     var label: String {
         switch self {
-        case .matching: return "매칭 중"
         case .completed: return "매칭 완료"
         case .expired: return "기간 만료"
         }
     }
 }
 
-enum SuHyeonGender {
-    case man, woman
+enum WithSuhyeonMainDropdownState {
+    case defaultState
+    case isSelected
+    case isError
 }

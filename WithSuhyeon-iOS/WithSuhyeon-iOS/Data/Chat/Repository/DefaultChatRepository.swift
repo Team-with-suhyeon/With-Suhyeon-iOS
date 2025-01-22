@@ -77,7 +77,7 @@ class DefaultChatRepository: ChatRepository {
     }
     
     
-    func receivcChat() -> AnyPublisher<Message, NetworkError> {
+    func receiveChat() -> AnyPublisher<Message, NetworkError> {
         return chatSocket.receiveChat().map {
             $0.entity
         }
@@ -87,6 +87,13 @@ class DefaultChatRepository: ChatRepository {
     func receiveChatRooms() -> AnyPublisher<[Chat], NetworkError> {
         return chatSocket.receiveChatRooms().map {
             $0.chatRooms.map { $0.entity }
+        }
+        .eraseToAnyPublisher()
+    }
+    
+    func receiveCreateInfo() -> AnyPublisher<Create, NetworkError> {
+        return chatSocket.receiveChatCreate().map {
+            $0.entity
         }
         .eraseToAnyPublisher()
     }

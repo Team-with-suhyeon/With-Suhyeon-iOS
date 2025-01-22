@@ -43,18 +43,20 @@ class FindSuhyeonMainFeature: Feature {
     }
     
     struct State {
-        var posts: [Post] = []
-        var selectedDate: Date?
-        var isFetching: Bool = false
+        var posts: [FindSuhyeonPost] = []
+        var selectedDate: String = "전체"
         var regions: [Region] = []
         var location = LocationState()
         var isLocationSelectPresented: Bool = false
         var alertType: FindSuhyeonMainAlertType = .locationSelect
+        var dates: [String] = []
+        var myRegion: String = ""
+        var scrollOffset: CGFloat = 0
     }
     
     enum Intent {
         case fetchPosts
-        case selectDate(Date)
+        case selectDate(String)
         case tapWriteButton
         case tapPost(Int)
         case setLocationDropdownState(DropdownState)
@@ -63,6 +65,7 @@ class FindSuhyeonMainFeature: Feature {
         case tapBottomSheetButton
         case dismissBottomSheet
         case enterScreen
+        case scrollChange(offset: CGFloat)
     }
     
     enum SideEffect {
@@ -77,6 +80,7 @@ class FindSuhyeonMainFeature: Feature {
     private let intentSubject = PassthroughSubject<Intent, Never>()
     
     @Inject private var getRegionsUseCase: GetRegionsUseCase
+    @Inject private var findSuhyeonRepository: FindSuhyeonRepository
     
     init() {
         bindIntents()
@@ -98,10 +102,10 @@ class FindSuhyeonMainFeature: Feature {
     func handleIntent(_ intent: Intent) {
         switch intent {
         case .fetchPosts:
-            fetchPosts()
+            getMain()
         case .selectDate(let date):
             state.selectedDate = date
-            fetchPosts(for: date)
+            getMain()
         case .tapWriteButton:
             sideEffectSubject.send(.navigateToWrite)
         case .tapPost(let postId):
@@ -112,7 +116,9 @@ class FindSuhyeonMainFeature: Feature {
             state.location.selectedMainLocationIndex = mainIndex
             state.location.selectedSubLocationIndex = subIndex
             state.location.tempSelectedLocation = state.regions[mainIndex].subLocation[subIndex]
+            state.myRegion = state.regions[mainIndex].subLocation[subIndex]
             state.location.buttonEnable = true
+            getMain()
         case .tapLocationDropdown(let type):
             state.alertType = type
             state.isLocationSelectPresented = true
@@ -125,10 +131,13 @@ class FindSuhyeonMainFeature: Feature {
             state.isLocationSelectPresented = false
         case .enterScreen:
             getRegions()
+            getMain()
+        case .scrollChange(offset: let offset):
+            state.scrollOffset = offset
         }
     }
     
-    private func fetchPosts(for date: Date? = nil) {
+    /*private func fetchPosts(for date: Date? = nil) {
         state.isFetching = true
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             /*self.state.posts = [
@@ -142,11 +151,19 @@ class FindSuhyeonMainFeature: Feature {
             ]*/
             self.state.isFetching = false
         }
-    }
+    }*/
     
     private func getRegions() {
         getRegionsUseCase.execute { [weak self] result in
             self?.state.regions = result
+        }
+    }
+    
+    private func getMain() {
+        findSuhyeonRepository.getFindSuhyeonMain(region: state.myRegion, date: state.selectedDate) { [weak self] value in
+            self?.state.myRegion = value.region
+            self?.state.dates = value.days
+            self?.state.posts = value.posts
         }
     }
 }

@@ -10,6 +10,7 @@ import Combine
 public class RouterRegistry: Router, ObservableObject {
     @Published public var path: [Destination] = []
     @Published public var selectedTab: MainTab = .home
+    @Published public var shouldShowBottomBar: Bool = true
     
     public init() {}
     

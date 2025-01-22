@@ -13,7 +13,8 @@ protocol ChatRepository {
     func getChatMessages(id: String, completion: @escaping ([Message]) -> Void)
     func patchJoinChatRooms(id: String, completion: @escaping (Bool) -> Void)
     func patchExitChatRooms(id: String, completion: @escaping (Bool) -> Void)
-    func receivcChat() -> AnyPublisher<Message, NetworkError>
+    func receiveChat() -> AnyPublisher<Message, NetworkError>
     func receiveChatRooms() -> AnyPublisher<[Chat], NetworkError>
+    func receiveCreateInfo() -> AnyPublisher<Create, NetworkError>
     func sendChat(message: Send)
 }

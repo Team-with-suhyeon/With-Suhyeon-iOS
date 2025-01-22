@@ -80,5 +80,13 @@ extension DIContainer {
         DIContainer.shared.register(type: MyPageRepository.self) {
             DefaultMyPageRepository()
         }
+        
+        DIContainer.shared.register(type: FindSuhyeonApiProtocol.self) {
+            FindSuhyeonAPI()
+        }
+        
+        DIContainer.shared.register(type: FindSuhyeonRepository.self) {
+            DefaultFindSuhyeonRepository()
+        }
     }
 }

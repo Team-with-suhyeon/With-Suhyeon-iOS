@@ -16,12 +16,21 @@ final class WebSocketClient {
     private let urlSession: URLSession
     private var cancellables = Set<AnyCancellable>()
     private let subject = PassthroughSubject<String, Never>()
+    private var isConnecting = false
+    private var retryCount = 0
+    private let maxRetryCount = 5
+    private let initialRetryInterval: TimeInterval = 2.0
+    private var targetType: WebSocketTargetType? = nil
     
     private init() {
         self.urlSession = URLSession(configuration: .default)
     }
     
     func connect(target: WebSocketTargetType) {
+        targetType = target
+        guard !isConnecting else { return }
+        isConnecting = true
+            
         guard let url = URL(string: target.baseURL + target.path) else {
             print("❌ Invalid WebSocket URL")
             return
@@ -81,9 +90,28 @@ final class WebSocketClient {
                 
             case .failure(let error):
                 print("❌ WebSocket 메시지 수신 실패: \(error.localizedDescription)")
+                self.handleConnectionFailure()
             }
             
-            self.receiveMessage()
+            //self.receiveMessage()
+        }
+    }
+    
+    private func handleConnectionFailure() {
+        self.isConnecting = false
+        self.retryCount += 1
+        
+        if retryCount <= maxRetryCount {
+            let delay = initialRetryInterval * pow(2.0, Double(retryCount - 1))
+            print(" WebSocket 재연결 시도 (횟수: \(retryCount), \(delay)초 후)")
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+                guard let self = self else { return }
+                guard let target = self.targetType else { return }
+                self.connect(target: target)
+            }
+        } else {
+            print("❌ WebSocket 연결 실패: 최대 재연결 횟수 초과")
         }
     }
     

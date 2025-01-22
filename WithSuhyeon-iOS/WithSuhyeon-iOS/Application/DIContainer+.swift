@@ -33,5 +33,28 @@ extension DIContainer {
             AuthAPI()
         }
         
+        DIContainer.shared.register(type: CommonApiProtocol.self) {
+            CommonAPI()
+        }
+        
+        DIContainer.shared.register(type: GalleryApiProtocol.self) {
+            GalleryAPI()
+        }
+        
+        DIContainer.shared.register(type: CommonRepository.self) {
+            DefaultCommonRepository()
+        }
+        
+        DIContainer.shared.register(type: GetCategoriesUseCase.self) {
+            DefaultGetCategoriesUseCase()
+        }
+        
+        DIContainer.shared.register(type: GetRegionsUseCase.self) {
+            DefaultGetRegionsUseCase()
+        }
+        
+        DIContainer.shared.register(type: GalleryRepository.self) {
+            DefaultGalleryRepository()
+        }
     }
 }

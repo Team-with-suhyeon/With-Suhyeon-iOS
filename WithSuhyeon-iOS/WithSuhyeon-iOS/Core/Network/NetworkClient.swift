@@ -165,18 +165,46 @@ final class NetworkClient: NetworkRequestable {
     private func handleStatusCode(_ statusCode: Int, data: Data) -> NetworkError {
         let errorCode = decodeError(data: data)
         switch (statusCode, errorCode) {
-        case (400, "00"):
-            return .invalidRequest
-        case (400, "01"):
-            return .expressionError
-        case (400, "02"):
-            return .invalidLoginError
-        case (404, ""):
-            return .invalidURL
-        case (409, "00"):
-            return .duplicateError
-        case (500, ""):
-            return .serverError
+        case (400, "BLOCK_001"):
+            return .blockNotFound
+        case (400, "BLOCK_002"):
+            return .blockSelfCallBadRequest
+        case (400, "BLOCK_003"):
+            return .blockFormatBadRequest
+        case (400, "BLOCK_004"):
+            return .blockAlreadyExistsBadRequest
+            
+        case (404, "CHAT_ROOM_001"):
+            return .chatRoomNotFound
+        case (404, "CHAT_ROOM_INFO_001"):
+            return .chatRoomInfoNotFound
+            
+        case (400, "CATEGORY_001"):
+            return .notFoundCategory
+        case (400, "CATEGORY_002"):
+            return .notFoundProfileImage
+            
+        case (400, "FILE_001"):
+            return .fileConvertError
+        case (400, "FILE_002"):
+            return .s3Error
+            
+        case (400, "GALLERY_001"):
+            return .galleryTitleInvalid
+        case (400, "GALLERY_002"):
+            return .galleryContentInvalid
+        case (400, "GALLERY_003"):
+            return .galleryImageRequired
+        case (400, "GALLERY_004"):
+            return .galleryCategoryInvalid
+        case (404, "GALLERY_005"):
+            return .galleryNotFound
+        case (403, "GALLERY_006"):
+            return .galleryUserForbidden
+            
+        case (404, "USER_001"):
+            return .userNotFound
+            
         default:
             return .unknownError
         }
@@ -184,6 +212,6 @@ final class NetworkClient: NetworkRequestable {
     
     private func decodeError(data: Data) -> String {
         guard let errorResponse = try? JSONDecoder().decode(ErrorResponse.self, from: data) else { return "" }
-        return errorResponse.code
+        return errorResponse.errorCode
     }
 }

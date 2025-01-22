@@ -50,6 +50,14 @@ extension TargetType {
             if let dictionary = request?.toDictionary() {
                 urlRequest = try JSONEncoding.default.encode(urlRequest, with: dictionary)
             }
+        case .bodyAndQuery(body: let body, query: let query):
+            if let queryDictionary = query?.toDictionary() {
+                urlRequest = try URLEncoding.queryString.encode(urlRequest, with: queryDictionary)
+            }
+            
+            if let bodyDictionary = body?.toDictionary() {
+                urlRequest = try JSONEncoding.default.encode(urlRequest, with: bodyDictionary)
+            }
         }
         
         return urlRequest

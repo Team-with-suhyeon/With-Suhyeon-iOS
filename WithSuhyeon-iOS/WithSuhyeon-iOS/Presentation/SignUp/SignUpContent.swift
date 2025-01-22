@@ -31,7 +31,7 @@ struct SignUpContent: View {
             ActiveAreaView()
                 .tag(SignUpContentCase.activeAreaView)
         }
-        .tabViewStyle(PageTabViewStyle())
+        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
         .onAppear {
             UIScrollView.appearance().isScrollEnabled = false
         }

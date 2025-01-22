@@ -125,6 +125,7 @@ class SignUpFeature: Feature {
     @Inject var nicknameValidateUseCase : NickNameValidateUseCase
     @Inject var authRepository: AuthRepository
     @Inject var getRegionsUseCase: GetRegionsUseCase
+    @Inject private var signUpUseCase: SignUpUseCase
     
     init() {
         bindIntents()
@@ -392,13 +393,14 @@ class SignUpFeature: Feature {
             return
         }
         
-        authRepository.signUp(member: member) { [weak self] result in
+        
+        signUpUseCase.execute(member: member) { [weak self] result in
             switch result {
             case .success:
-                print("✅ 회원가입 성공")
+                print("✅ 회원가입 및 로그인 성공")
                 self?.sideEffectSubject.send(.navigateToSignUpComplete)
             case .failure(let error):
-                print("❌ 회원가입 실패: \(error.localizedDescription)")
+                print("❌ 회원가입/로그인 실패: \(error)")
             }
         }
     }

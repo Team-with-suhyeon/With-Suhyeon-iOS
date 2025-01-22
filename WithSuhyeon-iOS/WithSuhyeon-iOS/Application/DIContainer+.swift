@@ -80,5 +80,9 @@ extension DIContainer {
         DIContainer.shared.register(type: MyPageRepository.self) {
             DefaultMyPageRepository()
         }
+        
+        DIContainer.shared.register(type: SignUpUseCase.self) {
+            SignUpUseCaseImpl()
+        }
     }
 }

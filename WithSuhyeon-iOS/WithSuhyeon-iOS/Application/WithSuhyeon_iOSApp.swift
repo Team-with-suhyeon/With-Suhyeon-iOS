@@ -50,6 +50,8 @@ struct WithSuhyeon_iOSApp: App {
                                 .navigationBarBackButtonHidden(true)
                         case .startView: StartView()
                                 .navigationBarBackButtonHidden(true)
+                        case .mypage: MyPageView()
+                                .navigationBarBackButtonHidden(true)
                         }
                     }
             }

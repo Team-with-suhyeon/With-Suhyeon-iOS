@@ -189,7 +189,8 @@ struct MyPageView : View {
                         feature.send(.tapWithdraw)
                         isWithdrawPresented.toggle()
                     },
-                    secondaryButtonAction: { isWithdrawPresented.toggle() }
+                    secondaryButtonAction: { isWithdrawPresented.toggle() },
+                    isPrimayColorRed: true
                 )
             }
             .background(Color.gray100)

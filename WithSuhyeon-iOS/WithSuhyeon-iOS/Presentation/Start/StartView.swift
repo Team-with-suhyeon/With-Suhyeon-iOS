@@ -26,6 +26,12 @@ struct StartView: View {
                             .scaledToFill()
                             .frame(width: geometry.size.width, height: geometry.size.width * 1.4613)
                             .clipped()
+                        
+                        WithSuhyeonPageIndicator(
+                            totalIndex: startFeature.state.startImages.count,
+                            selectedIndex: startFeature.state.currentImage + 1
+                        )
+                        .padding(.top, 28)
                     }
                     .overlay(
                         VStack(alignment: .leading, spacing: 8) {
@@ -40,7 +46,7 @@ struct StartView: View {
                         }
                             .padding(.horizontal, 16)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.top, geometry.safeAreaInsets.top + 110), alignment: .top)
+                            .padding(.top, geometry.safeAreaInsets.top + 100), alignment: .top)
                 }
             }
             .ignoresSafeArea(edges: .top)
@@ -61,18 +67,12 @@ struct StartView: View {
                     }
             )
             
-//            WithSuhyeonPageIndicator(
-//                totalIndex: startFeature.state.startImages.count,
-//                selectedIndex: startFeature.state.currentImage + 1
-//            )
-            
-            
             VStack(spacing: 0) {
                 WithSuhyeonButton(title: "가입하기", buttonState: .enabled, onTapButton: {
                     startFeature.send(.tapSignUpButton)
                 })
                 .padding(.horizontal, 16)
-                .padding(.top, 40)
+                .padding(.top, 72)
                 
                 HStack(spacing: 5) {
                     Text("이미 계정이 있나요?")

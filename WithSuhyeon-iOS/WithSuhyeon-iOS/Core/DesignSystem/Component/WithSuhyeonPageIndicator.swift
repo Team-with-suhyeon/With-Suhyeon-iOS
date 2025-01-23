@@ -12,7 +12,7 @@ struct WithSuhyeonPageIndicator: View {
     let selectedIndex: Int
     
     var body: some View {
-        HStack(spacing: 28) {
+        HStack(spacing: 12) {
             ForEach(0..<totalIndex, id: \.self) { index in
                 WithSuhyeonIndicator(isActive: min(selectedIndex, totalIndex) == index + 1, page: index + 1)
             }
@@ -27,24 +27,16 @@ struct WithSuhyeonIndicator: View {
     var body: some View {
         ZStack {
             Circle()
-                .fill(Color.gray200)
-                .frame(width: isActive ? 24 : 16, height: isActive ? 24 : 16)
+                .fill(Color.gray400)
+                .frame(width: 8, height: 8)
             
             Circle()
-                .fill(isActive ? Color.gray700 : Color.clear)
-                .frame(width: isActive ? 24 : 16, height: isActive ? 24 : 16)
-                .scaleEffect(isActive ? 1.2 : 1)
+                .fill(isActive ? Color.black : Color.gray400)
+                .frame(width: 8, height: 8)
                 .animation(.spring(), value: isActive)
-                .overlay {
-                }
+                .overlay { }
             
-            Text(String(page))
-                            .foregroundColor(isActive ? Color.white : Color.clear)
-                            .font(.system(size: isActive ? 12 : 10))
-                            .opacity(isActive ? 1 : 0)
-                            .scaleEffect(isActive ? 1.1 : 1)
-                            .animation(.easeInOut(duration: 0.3), value: isActive)
-        }.frame(width: 24, height: 24)
+        }.frame(width: 8, height: 8)
     }
 }
 

@@ -68,28 +68,31 @@ struct BlockingAccountManagement: View {
                         .padding(.top, 24)
                         .padding(.bottom, 12)
                     
-                    ForEach(blockingAccountManagementFeature.state.blockingAccountList, id: \.self) { number in
-                        HStack {
-                            Text(number)
-                                .font(.body03SB)
-                                .foregroundColor(.black)
-                                .padding(.vertical, 11)
-                            Spacer()
-                            Button(action: {
-                                withAnimation {
-                                    blockingAccountManagementFeature.send(.deleteBlockedNumber(number))
+                    ScrollView(.vertical, showsIndicators: false) {
+                        ForEach(blockingAccountManagementFeature.state.blockingAccountList, id: \.self) { number in
+                            HStack {
+                                Text(number)
+                                    .font(.body03SB)
+                                    .foregroundColor(.black)
+                                    .padding(.vertical, 11)
+                                Spacer()
+                                Button(action: {
+                                    withAnimation {
+                                        blockingAccountManagementFeature.send(.deleteBlockedNumber(number))
+                                    }
+                                }) {
+                                    Image(icon: .icXclose24)
+                                        .renderingMode(.template)
+                                        .foregroundColor(.gray400)
                                 }
-                            }) {
-                                Image(icon: .icXclose24)
-                                    .renderingMode(.template)
-                                    .foregroundColor(.gray400)
                             }
+                            .padding(.vertical, 4)
+                            .padding(.horizontal, 16)
+                            .background(Color.gray25)
+                            .cornerRadius(8)
                         }
-                        .padding(.vertical, 4)
-                        .padding(.horizontal, 16)
-                        .background(Color.gray25)
-                        .cornerRadius(8)
                     }
+                    .frame(maxHeight: 400)
                 } else {
                     VStack(alignment: .center) {
                         Image(image: .imgEmptyState)

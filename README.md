@@ -17,7 +17,7 @@
 
 ## 👤 팀원별 역할 분담
 
-|<img src="https://github.com/user-attachments/assets/de375925-136a-45c9-ab41-053defac7d17" width="170" />|<img src="https://github.com/user-attachments/assets/c6aacbc4-c58f-4d2e-927b-67a66684e8c0" width="170" />|<img src="https://github.com/user-attachments/assets/0615b338-2ddb-4d2b-8add-90a43964b3e2" width="170"/>|
+| ![상욱](https://github.com/user-attachments/assets/156d76f9-7065-468b-96eb-45bf2185c414)|![지원](https://github.com/user-attachments/assets/6d11d016-991a-4efd-89fd-0506afead861)|![예지](https://github.com/user-attachments/assets/42115edb-6f9f-4fe7-b07f-e49980fe8fc6)|
 |:---------:|:---------:|:---------:|
 |[우상욱](https://github.com/Sangwook123)|[정지원](https://github.com/codeJiwon)|[김예지](https://github.com/mnbvcxzyj)|
 | `홈, 갤러리` | `수현이 찾기` | `회원가입, 마이페이지` | </br>

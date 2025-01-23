@@ -64,8 +64,16 @@ class BlockingAccountManagementFeature: Feature {
             fetchBlockingAccounts()
         }
     }
-    
     private func addPhoneNumberToBlockingList() {
+        state.errorMessage = ""
+        state.isValidPhoneNumber = true
+        
+        if state.blockingAccountList.contains(state.phoneNumber) {
+            state.errorMessage = "이미 차단된 번호에요"
+            state.isValidPhoneNumber = false
+            return
+        }
+        
         withAnimation {
             state.blockingAccountList.insert(state.phoneNumber, at: 0)
         }
@@ -75,7 +83,6 @@ class BlockingAccountManagementFeature: Feature {
                 switch result {
                 case .success:
                     print("✅ 차단 계정 등록 성공")
-                    self?.state.blockingAccountList.insert(self?.state.phoneNumber ?? "", at: 0)
                     self?.state.phoneNumber = ""
                     self?.state.errorMessage = ""
                 case .failure(let error):
@@ -85,10 +92,13 @@ class BlockingAccountManagementFeature: Feature {
                         switch networkError {
                         case .blockSelfCallBadRequest:
                             self?.state.errorMessage = "본인 번호는 차단할 수 없어요"
+                            self?.removePhoneNumberFromBlockingList()
                         case .blockFormatBadRequest:
                             self?.state.errorMessage = "전화번호 형식이 맞지 않아요"
+                            self?.removePhoneNumberFromBlockingList()
                         case .blockAlreadyExistsBadRequest:
                             self?.state.errorMessage = "이미 차단된 번호에요"
+                            self?.removePhoneNumberFromBlockingList()
                         default:
                             self?.state.errorMessage = ""
                         }
@@ -96,12 +106,14 @@ class BlockingAccountManagementFeature: Feature {
                         self?.state.errorMessage = ""
                     }
                     self?.state.isValidPhoneNumber = false
-                    
-                    withAnimation {
-                        self?.state.blockingAccountList.removeAll { $0 == self?.state.phoneNumber }
-                    }
                 }
             }
+        }
+    }
+    
+    private func removePhoneNumberFromBlockingList() {
+        withAnimation {
+            state.blockingAccountList.removeAll { $0 == state.phoneNumber }
         }
     }
     

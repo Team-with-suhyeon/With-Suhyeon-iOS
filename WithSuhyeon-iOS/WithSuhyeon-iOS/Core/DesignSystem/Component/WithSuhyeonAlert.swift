@@ -15,7 +15,8 @@ struct WithSuhyeonAlert: View {
     let secondaryButtonText: String
     let primaryButtonAction: () -> Void
     let secondaryButtonAction: () -> Void
-    
+    var isPrimaryColorRed: Bool = false
+
     @State private var scaleEffect: CGFloat = 0.5
     @State private var opacity: Double = 0
     
@@ -25,7 +26,9 @@ struct WithSuhyeonAlert: View {
          primaryButtonText: String,
          secondaryButtonText: String,
          primaryButtonAction: @escaping () -> Void,
-         secondaryButtonAction: @escaping () -> Void) {
+         secondaryButtonAction: @escaping () -> Void,
+         isPrimayColorRed: Bool = false
+    ) {
         self.title = title
         self.subTitle = subTitle
         self.withSuhyeonIcon = withSuhyeonIcon
@@ -33,6 +36,7 @@ struct WithSuhyeonAlert: View {
         self.secondaryButtonText = secondaryButtonText
         self.primaryButtonAction = primaryButtonAction
         self.secondaryButtonAction = secondaryButtonAction
+        self.isPrimaryColorRed = isPrimayColorRed
     }
     
     var body: some View {
@@ -46,7 +50,7 @@ struct WithSuhyeonAlert: View {
             }
             
             Text(title)
-                .font(.title02B)
+                .font(.title03B)
                 .foregroundColor(.black)
                 .padding(.horizontal, 24)
             if !subTitle.isEmpty {
@@ -60,7 +64,7 @@ struct WithSuhyeonAlert: View {
             HStack {
                 WithSuhyeonButton(title: secondaryButtonText, buttonState: .disabled, onTapButton: secondaryButtonAction)
                 
-                WithSuhyeonButton(title: primaryButtonText, buttonState: .enabled, onTapButton: primaryButtonAction)
+                WithSuhyeonButton(title: primaryButtonText, buttonState: isPrimaryColorRed ? .alert : .enabled, onTapButton: primaryButtonAction)
             }
             .padding(24)
         }.frame(width: 300)

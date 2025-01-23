@@ -38,4 +38,5 @@ public enum Destination: Hashable {
     case login
     case loginComplete
     case startView
+    case mypage
 }

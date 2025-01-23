@@ -16,14 +16,37 @@ struct StartView: View {
         VStack(spacing: 0) {
             ZStack {
                 GeometryReader { geometry in
-                    LottieView(animation: .named(startFeature.state.startImages[startFeature.state.currentImage]))
-                        .configure { lottieView in
-                            lottieView.animationSpeed = 1
+                    VStack(spacing: 0) {
+                        LottieView(animation: .named(startFeature.state.startImages[startFeature.state.currentImage]))
+                            .configure { lottieView in
+                                lottieView.animationSpeed = 1
+                            }
+                            .playing()
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: geometry.size.width, height: geometry.size.width * 1.4613)
+                            .clipped()
+                        
+                        WithSuhyeonPageIndicator(
+                            totalIndex: startFeature.state.startImages.count,
+                            selectedIndex: startFeature.state.currentImage + 1
+                        )
+                        .padding(.top, 28)
+                    }
+                    .overlay(
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("수현이랑 함께라면\n연인과 여행 걱정없어요")
+                                .font(.title01B)
+                                .foregroundColor(.gray800) 
+                                .multilineTextAlignment(.leading)
+                            Text("어쩌고 저쩌수현이랑 함께라면\n연인과 여행 걱정없어요")
+                                .font(.body02B)
+                                .foregroundColor(.gray500)
+                                .multilineTextAlignment(.leading)
                         }
-                        .playing()
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: geometry.size.width, height: geometry.size.width * 1.4613)
+                            .padding(.horizontal, 16)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.top, geometry.safeAreaInsets.top + 100), alignment: .top)
                 }
             }
             .ignoresSafeArea(edges: .top)
@@ -44,13 +67,12 @@ struct StartView: View {
                     }
             )
             
-            
             VStack(spacing: 0) {
                 WithSuhyeonButton(title: "가입하기", buttonState: .enabled, onTapButton: {
                     startFeature.send(.tapSignUpButton)
                 })
                 .padding(.horizontal, 16)
-                .padding(.top, 42)
+                .padding(.top, 72)
                 
                 HStack(spacing: 5) {
                     Text("이미 계정이 있나요?")

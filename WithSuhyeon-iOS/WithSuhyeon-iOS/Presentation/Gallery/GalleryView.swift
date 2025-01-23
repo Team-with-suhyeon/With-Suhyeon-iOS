@@ -36,10 +36,6 @@ struct GalleryView: View {
                         .id("top")
                     }
                     .scrollBounceBehavior(.basedOnSize)
-                    .onAppear {
-                        proxy.scrollTo(0, anchor: .top)
-                        galleryFeature.send(.enterScreen)
-                    }
                     .onReceive(galleryFeature.sideEffectSubject) { sideEffect in
                         switch sideEffect {
                         case .navigateToDetail(id: let id):
@@ -63,6 +59,9 @@ struct GalleryView: View {
                 .onTapGesture {
                     galleryFeature.send(.tapUploadButton)
                 }
+        }
+        .onAppear {
+            galleryFeature.send(.enterScreen)
         }
         .background(Color.gray50)
     }

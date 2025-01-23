@@ -1,31 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "ic_app1024.png",
-      "idiom" : "universal",
-      "platform" : "ios",
-      "size" : "1024x1024"
-    },
-    {
-      "appearances" : [
-        {
-          "appearance" : "luminosity",
-          "value" : "dark"
-        }
-      ],
-      "filename" : "ic_app1024 1.png",
-      "idiom" : "universal",
-      "platform" : "ios",
-      "size" : "1024x1024"
-    },
-    {
-      "appearances" : [
-        {
-          "appearance" : "luminosity",
-          "value" : "tinted"
-        }
-      ],
-      "filename" : "ic_app1024 2.png",
+      "filename" : "ic_app.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"

@@ -35,7 +35,7 @@ class BlockingAccountRepositoryImpl: BlockingRepository {
             .sink { completionStatus in
                 switch completionStatus {
                 case .finished:
-                    break
+                    completion(.success(()))
                 case .failure(let error):
                     completion(.failure(error))
                     print(error)

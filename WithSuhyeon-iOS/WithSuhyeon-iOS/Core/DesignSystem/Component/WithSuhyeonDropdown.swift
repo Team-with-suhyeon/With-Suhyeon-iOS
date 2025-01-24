@@ -52,6 +52,7 @@ struct WithSuhyeonDropdown<Content: View>:View {
                     .font(.body03R)
                     .foregroundColor(.red01)
                     .frame(alignment: .leading)
+                    .padding(.leading, 16)
             }
         }
         .contentShape(Rectangle())

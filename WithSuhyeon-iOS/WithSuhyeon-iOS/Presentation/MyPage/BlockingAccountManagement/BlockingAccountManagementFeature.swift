@@ -17,6 +17,7 @@ class BlockingAccountManagementFeature: Feature {
         var errorMessage: String = ""
         var nickname: String = ""
         var blockingAccountList: [String] = []
+        var isButtonEnabled: Bool = false
     }
     
     enum Intent {
@@ -74,15 +75,15 @@ class BlockingAccountManagementFeature: Feature {
             return
         }
         
-        withAnimation {
-            state.blockingAccountList.insert(state.phoneNumber, at: 0)
-        }
-        
         blockingAccountRepository.registerBlockingAccount(phoneNumber: state.phoneNumber) { [weak self] result in
+            print("차단 계정 등록")
             DispatchQueue.main.async {
                 switch result {
                 case .success:
                     print("✅ 차단 계정 등록 성공")
+                    withAnimation {
+                        self?.state.blockingAccountList.insert(self?.state.phoneNumber ?? "", at: 0)
+                    }
                     self?.state.phoneNumber = ""
                     self?.state.errorMessage = ""
                 case .failure(let error):
@@ -92,13 +93,10 @@ class BlockingAccountManagementFeature: Feature {
                         switch networkError {
                         case .blockSelfCallBadRequest:
                             self?.state.errorMessage = "본인 번호는 차단할 수 없어요"
-                            self?.removePhoneNumberFromBlockingList()
                         case .blockFormatBadRequest:
                             self?.state.errorMessage = "전화번호 형식이 맞지 않아요"
-                            self?.removePhoneNumberFromBlockingList()
                         case .blockAlreadyExistsBadRequest:
                             self?.state.errorMessage = "이미 차단된 번호에요"
-                            self?.removePhoneNumberFromBlockingList()
                         default:
                             self?.state.errorMessage = ""
                         }
@@ -125,6 +123,7 @@ class BlockingAccountManagementFeature: Feature {
                     print("✅ 차단 계정 삭제 성공")
                     withAnimation {
                         self?.state.blockingAccountList.removeAll { $0 == phoneNumber }
+                        self?.state.isButtonEnabled = false
                     }
                     self?.state.errorMessage = ""
                 case .failure(let error):
@@ -135,6 +134,8 @@ class BlockingAccountManagementFeature: Feature {
     }
     private func updatePhoneNumber(_ phoneNumber: String) {
         state.phoneNumber = phoneNumber
+        state.isValidPhoneNumber = true
+        state.isButtonEnabled = phoneNumber.count == 11
     }
     
     private func fetchBlockingAccounts() {

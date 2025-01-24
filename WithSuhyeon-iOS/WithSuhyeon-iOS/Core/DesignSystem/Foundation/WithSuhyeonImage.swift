@@ -33,4 +33,5 @@ public enum WithSuhyeonImage: String {
     case imgFuckOff = "img_fuckoff"
     case imgEmptyState = "img_emptystate"
     case imgWithDraw = "img_withdraw"
+    case imgWip = "img_wip"
 }

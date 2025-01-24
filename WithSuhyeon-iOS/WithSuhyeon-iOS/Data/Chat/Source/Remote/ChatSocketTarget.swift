@@ -8,12 +8,6 @@
 import Foundation
 import Combine
 
-struct ChatSocketTarget: WebSocketTargetType {
-    var baseURL: String = Configuration.socketURL
-    
-    var path: String = "/chat?userId=17"
-}
-
 protocol ChatSocketProtocol {
     func connect(userId: Int)
     

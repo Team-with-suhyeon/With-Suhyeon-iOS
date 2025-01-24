@@ -17,12 +17,17 @@ struct MyPageView : View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0){
-            Text("마이페이지")
-                .font(.title03B)
-                .foregroundColor(.black)
-                .padding(.top, 7)
-                .padding(.leading, 16)
-                .padding(.bottom, 15)
+            HStack {
+                Text("마이페이지")
+                    .font(.title03B)
+                    .foregroundColor(.black)
+                    .padding(.top, 7)
+                    .padding(.leading, 16)
+                    .padding(.bottom, 15)
+                Spacer()
+            }
+            .frame(maxWidth: .infinity)
+            .background(Color.white)
             ScrollView {
                 VStack(spacing: 0) {
                     VStack(alignment: .leading, spacing: 0) {
@@ -153,7 +158,7 @@ struct MyPageView : View {
                         .padding(.bottom, 8)
                         .frame(height: 50)
                         .contentShape(Rectangle())
-                        .onTapGesture { isWithdrawPresented = true }
+                        .onTapGesture { feature.send(.tapWithdraw) }
                     }
                     .background(
                         RoundedRectangle(cornerRadius: 16)
@@ -161,7 +166,6 @@ struct MyPageView : View {
                     )
                     .padding(16)
                 }
-                
             }
             .withSuhyeonAlert(isPresented: isLogoutPresented, onTapBackground: { isLogoutPresented.toggle() }){
                 WithSuhyeonAlert(
@@ -176,25 +180,8 @@ struct MyPageView : View {
                     secondaryButtonAction: { isLogoutPresented.toggle() }
                 )
             }
-            .withSuhyeonAlert(
-                isPresented: isWithdrawPresented,
-                onTapBackground: { isWithdrawPresented.toggle() }
-            ) {
-                WithSuhyeonAlert(
-                    title: "정말 탈퇴하시겠습니까?",
-                    subTitle: "탈퇴 후 계정 복구가 불가능합니다.",
-                    primaryButtonText: "탈퇴하기",
-                    secondaryButtonText: "취소하기",
-                    primaryButtonAction: {
-                        feature.send(.tapWithdraw)
-                        isWithdrawPresented.toggle()
-                    },
-                    secondaryButtonAction: { isWithdrawPresented.toggle() },
-                    isPrimayColorRed: true
-                )
-            }
-            .background(Color.gray100)
         }
+        .background(Color.gray100)
         .onAppear {
             feature.send(.enterScreen)
         }
@@ -209,7 +196,10 @@ struct MyPageView : View {
                 router.navigate(to: .setInterest)
             case .navigateToInitialScreen:
                 router.clear()
+                router.navigate(to: .startView)
                 router.navigateTab(to: .home)
+            case .navigateToWithdraw:
+                router.navigate(to: .serverWithdraw)
             }
         }
     }

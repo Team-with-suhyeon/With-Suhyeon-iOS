@@ -29,10 +29,12 @@ struct WithSuhyeonSmallChip: View {
                 Text(title)
                     .font(.body02SB)
                     .foregroundColor(chipState == .selected ? Color.primary600 : Color.gray400)
+                
+                Spacer()
             }
-            .frame(width: 166, height: 72, alignment: .leading)
+            .frame(maxWidth: .infinity)
             .padding(.leading, 12)
-            .padding(.vertical, 6)
+            .padding(.vertical, 12)
             .background(
                 RoundedRectangle(cornerRadius: 24)
                     .fill(chipState == .selected ? Color.primary50 : Color.gray25)

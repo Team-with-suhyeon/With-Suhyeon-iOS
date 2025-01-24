@@ -13,7 +13,7 @@ struct FindSuhyeonGenderSelectCell: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 16) {
+            HStack(spacing: 11) {
                 WithSuhyeonSmallChip(
                     title: "남자",
                     chipState: selectedGender == "남자" ? .selected : .unselected,

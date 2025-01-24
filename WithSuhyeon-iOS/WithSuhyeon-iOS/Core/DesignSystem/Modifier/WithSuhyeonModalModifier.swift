@@ -72,7 +72,6 @@ struct WithSuhyeonModalModifier<ModalContent: View>: ViewModifier {
             }
             
             modalContent()
-                .padding(.horizontal, 16)
             
             Button(action: {
                 print("선택완료 버튼 선택")
@@ -90,7 +89,6 @@ struct WithSuhyeonModalModifier<ModalContent: View>: ViewModifier {
             .padding(.top, 32)
             .disabled(!isButtonEnabled)
         }
-        .ignoresSafeArea()
         .background(Color.white)
         .withSuhyeonCornerRadius(24, corners: [.topLeft, .topRight])
     }

@@ -28,6 +28,7 @@ class MyPageFeature: Feature {
         case navigateToBlockingAccountManagement
         case navigateToSetInterest
         case navigateToInitialScreen
+        case navigateToWithdraw
     }
     
     @Inject private var authRepository: AuthRepository
@@ -63,7 +64,7 @@ class MyPageFeature: Feature {
         case .tapLogout:
             logout()
         case .tapWithdraw:
-            withdraw()
+            sideEffectSubject.send(.navigateToWithdraw)
         case .enterScreen:
             getMyPage()
         }

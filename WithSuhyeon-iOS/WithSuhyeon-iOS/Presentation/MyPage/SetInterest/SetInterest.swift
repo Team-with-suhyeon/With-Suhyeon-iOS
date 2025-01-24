@@ -11,10 +11,13 @@ struct SetInterest: View {
     @EnvironmentObject var router: RouterRegistry
     
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             WithSuhyeonTopNavigationBar(title: "관심 지역 설정", rightIcon: .icXclose24, onTapRight: {router.popBack()})
-            
-            Spacer()
+            ZStack(alignment: .center) {
+                Image(image: .imgWip)
+            }
+            .frame(maxWidth:.infinity, maxHeight: .infinity)
+            .background(Color.gray50)
         }
     }
 }

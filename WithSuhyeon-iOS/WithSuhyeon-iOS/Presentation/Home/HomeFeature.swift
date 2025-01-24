@@ -69,7 +69,7 @@ class HomeFeature: Feature {
         case .tapSeeAllButton:
             sideEffectSubject.send(.navigateToGallery("전체보기"))
         case .scrollChange(let offset):
-            if(offset < -300) {
+            if(offset < -100) {
                 state.boundary = 0.3
             } else {
                 state.boundary = 0.9

@@ -66,7 +66,6 @@ struct FindSuhyeonMainPostContainer: View {
             .padding(.horizontal, 20)
         }
         .background(Color.white)
-        .frame(height: 128)
     }
 }
 

@@ -29,8 +29,23 @@ struct FindSuhyeonMainView: View {
             VStack(spacing: 0) {
                 headerView
                 scrollDateView
-                postListView
-                    .background(Color.gray100)
+                    .padding(.top, 16)
+                if(feature.state.posts.isEmpty) {
+                    ZStack(alignment: .center) {
+                        VStack(spacing: 0) {
+                            Image(image: .imgEmptyState)
+                            Text("아직 게시글이 없어요")
+                                .font(.body03R)
+                                .foregroundColor(.gray400)
+                                .padding(.top, 8)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(Color.gray50)
+                    }
+                } else {
+                    postListView
+                        .background(Color.gray100)
+                }
             }
             WithSuhyeonFloatingButton(scrollOffset: feature.state.scrollOffset, title: "글쓰기")
                 .padding(.trailing, 16)
@@ -117,22 +132,22 @@ struct FindSuhyeonMainView: View {
     
     private var scrollDateView: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
-                    ForEach(feature.state.dates, id: \.self) { date in
-                        Button(action: {
-                            feature.send(.selectDate(date))
-                        }) {
-                            Text(date)
-                                .font(.body03B)
-                                .foregroundColor(date == feature.state.selectedDate ? .gray900 : .gray400)
-                        }
-                        .padding(.horizontal, 10)
+            HStack {
+                ForEach(feature.state.dates, id: \.self) { date in
+                    Button(action: {
+                        feature.send(.selectDate(date))
+                    }) {
+                        Text(date)
+                            .font(.body03B)
+                            .foregroundColor(date == feature.state.selectedDate ? .gray900 : .gray400)
                     }
+                    .padding(.horizontal, 10)
                 }
-                .padding(.vertical, 10)
-                .padding(.horizontal, 8)
             }
+            .padding(.vertical, 10)
+            .padding(.horizontal, 8)
         }
+    }
     
     private var postListView: some View {
         ObservableScrollView(
@@ -140,7 +155,7 @@ struct FindSuhyeonMainView: View {
                 feature.send(.scrollChange(offset: value))
             }
         ) {
-            LazyVStack {
+            LazyVStack(spacing: 0) {
                 ForEach(feature.state.posts, id: \.postId) { post in
                     FindSuhyeonMainPostContainer(
                         title: post.title,
@@ -162,10 +177,13 @@ struct FindSuhyeonMainView: View {
                         timeStamp: post.date
                     )
                     .cornerRadius(24)
+                    .padding(.top, 16)
                     .onTapGesture {
                         feature.send(.tapPost(post.postId))
                     }
                 }
+                Spacer()
+                    .frame(height: 16)
             }
             .padding(.horizontal, 16)
         }

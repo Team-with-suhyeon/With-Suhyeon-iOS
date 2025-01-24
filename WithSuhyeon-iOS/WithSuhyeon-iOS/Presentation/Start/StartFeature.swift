@@ -13,6 +13,8 @@ class StartFeature: Feature {
         var currentImage: Int = 0
         var isLastImage: Bool = false
         let startImages: [String] = [ "onboarding1", "onboarding2", "onboarding3"]
+        var title: String = "수현이랑 함께라면\n연인과 여행 걱정없어요"
+        var subTitle: String = "완벽하게 엄빠 몰래 가는 여행\n수현이랑 함께해요"
     }
     
     enum Intent {
@@ -63,10 +65,19 @@ class StartFeature: Feature {
     }
     
     private func updateCurrentImage(_ image: Int) {
-        state = State(
-            currentImage: image,
-            isLastImage: image == (state.startImages.count - 1)
-        )
+        state.currentImage = image
+        state.isLastImage = image == (state.startImages.count - 1)
+        switch image {
+        case 0: 
+            state.title = "수현이랑 함께라면\n연인과 여행 걱정없어요"
+            state.subTitle = "완벽하게 엄빠 몰래 가는 여행\n수현이랑 함께해요"
+        case 1:
+            state.title = "가짜 여행 친구 수현이를\n쉽고 빠르게 찾아봐요"
+            state.subTitle = "연인과의 여행을 숨기기 위해 가짜친구\n역할을 해줄 수 있는 다른 사용자와 매칭해줘요"
+        default :
+            state.title = "내 여행상황에 맞는 사진 찾아\n바로 다운로드해요"
+            state.subTitle = "지금 당장 여행 인증 사진이 필요하다면\n수현이들이 올려둔 공유 앨범에서 찾아봐요"
+        }
     }
     
     func checkAutoLogin() {

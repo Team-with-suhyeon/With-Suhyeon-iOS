@@ -35,11 +35,11 @@ struct StartView: View {
                     }
                     .overlay(
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("수현이랑 함께라면\n연인과 여행 걱정없어요")
+                            Text(startFeature.state.title)
                                 .font(.title01B)
                                 .foregroundColor(.gray800) 
                                 .multilineTextAlignment(.leading)
-                            Text("어쩌고 저쩌수현이랑 함께라면\n연인과 여행 걱정없어요")
+                            Text(startFeature.state.subTitle)
                                 .font(.body02B)
                                 .foregroundColor(.gray500)
                                 .multilineTextAlignment(.leading)

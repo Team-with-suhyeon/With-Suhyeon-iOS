@@ -8,39 +8,30 @@
 import SwiftUI
 
 struct FindSuhyeonGenderSelectCell: View {
+    let genderImages: [(defaultImage: WithSuhyeonImage, selectedImage: WithSuhyeonImage)]
     let selectedGender: String
     let onTapSmallChip: (String) -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 11) {
+        HStack(spacing: 11) {
+            ForEach(Array(genderImages.enumerated()), id: \.offset) { index, genderImage in
+                let genderText = index == 0 ? "남자" : "여자"
+                
                 WithSuhyeonSmallChip(
-                    title: "남자",
-                    chipState: selectedGender == "남자" ? .selected : .unselected,
+                    title: genderText,
+                    defaultImage: genderImage.defaultImage,
+                    selectedImage: genderImage.selectedImage,
+                    chipState: selectedGender == genderText ? .selected : .unselected,
                     clickable: true
                 ) {
-                    onTapSmallChip("남자")
-                }
-
-                WithSuhyeonSmallChip(
-                    title: "여자",
-                    chipState: selectedGender == "여자" ? .selected : .unselected,
-                    clickable: true
-                ) {
-                    onTapSmallChip("여자")
+                    withAnimation(.easeInOut) {
+                        onTapSmallChip(genderText)
+                    }
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 12)
         }
+        .padding(.horizontal, 16)
+        .padding(.bottom, 12)
     }
 }
 
-#Preview {
-    @State var selectedGender: String = "여자"
-    
-    FindSuhyeonGenderSelectCell(
-        selectedGender: selectedGender,
-        onTapSmallChip: { value in }
-    )
-}

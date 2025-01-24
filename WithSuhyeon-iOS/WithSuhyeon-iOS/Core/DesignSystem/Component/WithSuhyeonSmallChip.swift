@@ -9,6 +9,8 @@ import SwiftUI
 
 struct WithSuhyeonSmallChip: View {
     let title: String
+    let defaultImage: WithSuhyeonImage
+    let selectedImage: WithSuhyeonImage
     let chipState: WithSuhyeonChipState
     let clickable: Bool
     let onTapChip: () -> Void
@@ -21,8 +23,9 @@ struct WithSuhyeonSmallChip: View {
         }) {
             HStack(spacing: 16) {
                 ZStack {
-                    Circle()
-                        .fill(chipState == .selected ? Color.white : Color.gray200)
+                    Image(image: chipState == .selected ? selectedImage : defaultImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
                         .frame(width: 48, height: 48)
                 }
                 
@@ -49,36 +52,36 @@ struct WithSuhyeonSmallChip: View {
     }
 }
 
-struct SmallChipTestView: View {
-    @State private var firstChipState: WithSuhyeonChipState = .unselected
-    @State private var secondChipState: WithSuhyeonChipState = .selected
-    
-    var body: some View {
-        VStack(spacing: 16) {
-            WithSuhyeonSmallChip(
-                title: "성별",
-                chipState: firstChipState,
-                clickable: true,
-                onTapChip: {
-                    firstChipState = (firstChipState == .selected) ? .unselected : .selected
-                    print("첫 번째 Chip: \(firstChipState)")
-                }
-            )
-            
-            WithSuhyeonSmallChip(
-                title: "성별",
-                chipState: secondChipState,
-                clickable: true,
-                onTapChip: {
-                    secondChipState = (secondChipState == .selected) ? .unselected : .selected
-                    print("두 번째 Chip: \(secondChipState)")
-                }
-            )
-        }
-        .padding()
-    }
-}
-
-#Preview {
-    SmallChipTestView()
-}
+//struct SmallChipTestView: View {
+//    @State private var firstChipState: WithSuhyeonChipState = .unselected
+//    @State private var secondChipState: WithSuhyeonChipState = .selected
+//    
+//    var body: some View {
+//        VStack(spacing: 16) {
+//            WithSuhyeonSmallChip(
+//                title: "성별",
+//                chipState: firstChipState,
+//                clickable: true,
+//                onTapChip: {
+//                    firstChipState = (firstChipState == .selected) ? .unselected : .selected
+//                    print("첫 번째 Chip: \(firstChipState)")
+//                }
+//            )
+//            
+//            WithSuhyeonSmallChip(
+//                title: "성별",
+//                chipState: secondChipState,
+//                clickable: true,
+//                onTapChip: {
+//                    secondChipState = (secondChipState == .selected) ? .unselected : .selected
+//                    print("두 번째 Chip: \(secondChipState)")
+//                }
+//            )
+//        }
+//        .padding()
+//    }
+//}
+//
+//#Preview {
+//    SmallChipTestView()
+//}

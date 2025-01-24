@@ -254,10 +254,14 @@ struct FindSuhyeonView: View {
                 .padding(.leading, 16)
                 .padding(.top, titleTopPadding(for: .genderSelection))
                 .padding(.bottom, titleBottomPadding(for: .genderSelection))
-            
-            FindSuhyeonGenderSelectCell(selectedGender: feature.state.gender.selectedGender) { value in
-                feature.send(.onTapGenderChip(value))
-            }
+
+            FindSuhyeonGenderSelectCell(
+                genderImages: feature.state.gender.genderImages.map { ($0.defaultImage, $0.selectedImage) },
+                selectedGender: feature.state.gender.selectedGender,
+                onTapSmallChip: { value in
+                    feature.send(.onTapGenderChip(value))
+                }
+            )
         }
     }
     

@@ -20,6 +20,57 @@
 |👑[우상욱](https://github.com/Sangwook123)|[정지원](https://github.com/codeJiwon)|[김예지](https://github.com/mnbvcxzyj)|
 | `홈, 갤러리, 채팅` | `수현이 찾기` | `회원가입, 로그인, 차단 번호` | </br>
 
+## 📱 시연 영상
+<table>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/bc4c3277-e2d5-4999-839c-0e05250a7be4" width="300" /></td>
+    <td><img src="https://github.com/user-attachments/assets/23c84033-f15b-4b3c-ad6d-4f2279f73606" width="300" /></td>
+    <td><img src="https://github.com/user-attachments/assets/73d7c351-77da-4242-9522-dff25d28725d" width="300" /></td>
+  </tr>
+  <tr>
+    <td align="center"><b>스플래시</b></td>
+    <td align="center"><b>온보딩</b></td>
+    <td align="center"><b>회원가입</b></td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/0db23648-c607-41cb-8f8c-76f7e19a1630" width="300" /></td>
+    <td><img src="https://github.com/user-attachments/assets/f9efa72b-dc90-480a-9630-b41864e6b1be" width="300" /></td>
+    <td><img src="https://github.com/user-attachments/assets/61c16cab-10eb-4286-b314-eea9a99717f5" width="300" /></td>
+  </tr>
+  <tr>
+    <td align="center"><b>로그인</b></td>
+    <td align="center"><b>홈</b></td>
+    <td align="center"><b>갤러리</b></td>
+  </tr>
+</table>
+<table>
+  <tr>
+      <td><img src="https://github.com/user-attachments/assets/ced89238-7d63-4589-820d-62ebeef79323" width="300" /></td>
+    <td><img src="https://github.com/user-attachments/assets/8a87e2df-d285-403e-b071-6c1920e3f9ab" width="300" /></td>
+    <td><img src="https://github.com/user-attachments/assets/1a217660-0cdc-475b-98dd-32bb2b957401" width="300" /></td>
+  </tr>
+  <tr>
+    <td align="center"><b>수현이 찾기</b></td>
+    <td align="center"><b>상세 만남</b></td>
+    <td align="center"><b>채팅</b></td>  </tr>
+</table>
+<table>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/d84d43c2-444b-4053-96a4-ae89bf0aeccc" width="300" /></td>
+    <td><img src="https://github.com/user-attachments/assets/86173672-54a7-4148-b256-d49869f9d2ff" width="300" /></td>
+    <td><img src="https://github.com/user-attachments/assets/b1656675-f14e-45f1-96ff-9ff393fe85f8" width="300" /></td>
+</td>
+  </tr>
+  <tr>
+    <td align="center"><b>마이페이지</b></td>
+    <td align="center"><b>차단</b></td>
+    <td align="center"><b>탈퇴</b></td>
+  </tr>
+</table>
+</br>
+
 ## ⚙️ 기술 및 아키텍쳐
 + `IDE - Xcode 16.2`</br>
 + `SwiftUI`</br>

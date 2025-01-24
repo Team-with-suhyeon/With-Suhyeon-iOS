@@ -34,10 +34,9 @@ enum DropdownState {
 
 class FindSuhyeonMainFeature: Feature {
     struct LocationState {
-        var selectedMainLocationIndex: Int = 0
-        var selectedSubLocationIndex: Int = 0
+        var selectedMainLocationIndex: Int = -1
+        var selectedSubLocationIndex: Int = -1
         var tempSelectedLocation: String = ""
-        var selectedDate: String = ""
         var buttonEnable: Bool = false
         var dropdownState: DropdownState = .defaultState
     }

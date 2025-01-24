@@ -79,7 +79,6 @@ class FindSuhyeonFeature: Feature {
         var selectedMainLocationIndex: Int = -1
         var selectedSubLocationIndex: Int = -1
         var tempSelectedLocation: String = ""
-        var selectedDate: String = ""
         var buttonEnable: Bool = false
         var dropdownState: DropdownState = .defaultState
     }

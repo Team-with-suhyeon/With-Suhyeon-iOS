@@ -12,9 +12,8 @@ struct ServerWithdraw: View {
     
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
-            WithSuhyeonTopNavigationBar(title: "차단 계정 관리", rightIcon: .icXclose24, onTapRight: {
-                router.clear()
-                router.navigate(to: .mypage)
+            WithSuhyeonTopNavigationBar(title: "탈퇴하기", rightIcon: .icXclose24, onTapRight: {
+                router.popBack()
             })
             Spacer()
             

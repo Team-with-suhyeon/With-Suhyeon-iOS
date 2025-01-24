@@ -96,7 +96,7 @@ class FindSuhyeonDetailFeature: Feature {
         case .tapBackButton:
             sideEffectSubject.send(.popBack)
         case .tapDeleteButton:
-            break
+            deletePost()
         case .tapBottomSheetCloseButton:
             state.bottomSheetIsPresented = false
         case .enterScreen:
@@ -123,10 +123,19 @@ class FindSuhyeonDetailFeature: Feature {
             self?.state.ownerId = value.chatRoom.ownerId
             self?.state.writerId = value.chatRoom.writerId
             self?.state.postId = value.chatRoom.postId
+            self?.state.isMine = value.isMine
             if(value.isMine) {
                 self?.state.buttonTitle = "대화 중인 채팅"
             } else {
                 self?.state.buttonTitle = "채팅하기"
+            }
+        }
+    }
+    
+    private func deletePost() {
+        findSuhyeonRepository.deleteFindSuhyeon(id: state.id) { [weak self] value in
+            if(value) {
+                self?.sideEffectSubject.send(.popBack)
             }
         }
     }

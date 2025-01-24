@@ -25,7 +25,7 @@ struct FindSuhyeonView: View {
                 TabView(selection: Binding(get: {feature.state.findSuhyeonTask}, set: { value in feature.updateTask(findSuhyeonTask: value) })) {
                     ZStack {
                         ScrollView {
-                            VStack(spacing: 16) {
+                            VStack(alignment: .leading, spacing: 0) {
                                 ForEach(FindSuhyeonFeature.ProgressState.allCases.reversed(), id: \.self) { state in
                                     if state.rawValue <= feature.state.progressState.rawValue {
                                         viewForState(state)
@@ -103,9 +103,8 @@ struct FindSuhyeonView: View {
                     }
                     .tag(FindSuhyeonTask.second)
                 }
-            }
-            .padding(.horizontal, 8)
-            .withSuhyeonModal(
+                
+            }.withSuhyeonModal(
                 isPresented: feature.state.isPresent,
                 isButtonEnabled: {
                     switch feature.state.alertType {
@@ -172,20 +171,30 @@ struct FindSuhyeonView: View {
                 }
             )
             
+            
             if(feature.state.isButtonVisible && !feature.state.isPresent) {
-                WithSuhyeonButton(title: "입력 완료", buttonState: feature.state.buttonState) {
+                WithSuhyeonButton(
+                    title: "입력 완료",
+                    buttonState: feature.state.buttonState,
+                    clickable: feature.state.buttonState == .enabled
+                ) {
                     feature.send(.tapButton)
                 }
                 .padding(.horizontal, 16)
             }
             
             if(feature.state.findSuhyeonTask == .second) {
-                WithSuhyeonButton(title: "작성 완료", buttonState: feature.state.buttonState) {
+                WithSuhyeonButton(
+                    title: "작성 완료",
+                    buttonState: feature.state.buttonState,
+                    clickable: feature.state.buttonState == .enabled
+                ) {
                     feature.send(.tapCompleteButton)
                 }
                 .padding(.horizontal, 16)
             }
         }
+        
         .onAppear {
             feature.send(.enterScreen)
         }
@@ -242,7 +251,7 @@ struct FindSuhyeonView: View {
                 .font(titleFont(for: .genderSelection))
                 .foregroundColor(titleColor(for: .genderSelection))
                 .animation(.easeInOut, value: feature.state.progressState)
-                .padding(.horizontal, 16)
+                .padding(.leading, 16)
                 .padding(.top, titleTopPadding(for: .genderSelection))
                 .padding(.bottom, titleBottomPadding(for: .genderSelection))
             
@@ -407,6 +416,7 @@ struct FindSuhyeonView: View {
                 ) {
                     feature.send(.selectAgeRange(age))
                 }
+                .padding(.horizontal, 16)
             }
         }
     }
@@ -422,9 +432,9 @@ struct FindSuhyeonView: View {
                 ) {
                     feature.send(.selectRequest(request))
                 }
+                .padding(.horizontal, 16)
             }
         }
-        .padding()
     }
     
     private func locationModalView() -> some View {

@@ -45,7 +45,7 @@ struct FindSuhyeonDetailView: View {
                         .padding(.leading, 16)
                     
                     HStack(spacing: 12) {
-                        KFImage(URL(string: feature.state.profileImageURL))
+                        Image(feature.state.profileImageURL)
                             .resizable()
                             .clipShape(Circle())
                             .frame(width: 38, height: 38)

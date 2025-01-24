@@ -52,6 +52,15 @@ class FindSuhyeonFeature: Feature {
     struct GenderState {
         var selectedGender: String = ""
         var isGenderSelected: Bool = false
+        var genderImages: [GenderImage] = [
+            GenderImage(defaultImage: .imgBoyDefault, selectedImage: .imgBoySelected),
+            GenderImage(defaultImage: .imgGirlDefault, selectedImage: .imgGirlSelected)
+        ]
+    }
+    
+    struct GenderImage {
+        let defaultImage: WithSuhyeonImage
+        let selectedImage: WithSuhyeonImage
     }
     
     struct AgeState {
@@ -132,6 +141,7 @@ class FindSuhyeonFeature: Feature {
         case setRequestDropdownState(DropdownState)
         case setLocationDropdownState(DropdownState)
         case setDateTimeDropdownState(DropdownState)
+        case selectGender(String)
         case selectAgeRange(String)
         case selectRequest(String)
         case selectLocation(main: Int, sub: Int)
@@ -236,6 +246,9 @@ class FindSuhyeonFeature: Feature {
             state.dateTime.dropdownState = (state.dateTime.selectedDateIndex == 0) ? .defaultState : newState
             state.isPresent = true
             
+        case .selectGender(let gender):
+            selectGender(gender)
+            
         case .selectAgeRange(let age):
             state.age.selectedAgeRange = age
             state.selectedAge = age
@@ -283,6 +296,7 @@ class FindSuhyeonFeature: Feature {
                 if !state.gender.isGenderSelected { send(.progressToNext) }
             }
             state.gender.isGenderSelected = true
+
         case .dismissBottomSheet:
             state.isPresent = false
         case .tapAgeDropdown(let type):
@@ -340,6 +354,11 @@ class FindSuhyeonFeature: Feature {
         case .tapCompleteButton:
             postFindSuhyeon()
         }
+    }
+    
+    func selectGender(_ gender: String){
+        state.gender.selectedGender = gender
+        state.gender.isGenderSelected = true
     }
     
     private func getLocationOptions() {

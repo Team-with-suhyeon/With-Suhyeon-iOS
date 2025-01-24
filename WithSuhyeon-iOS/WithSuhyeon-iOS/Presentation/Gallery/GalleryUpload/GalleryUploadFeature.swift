@@ -25,6 +25,8 @@ class GalleryUploadFeature: Feature {
         var categories: [Category] = []
         var selectedCategoryIndex: Int? = nil
         var focusedTextField: String? = nil
+        var buttonState: WithSuhyeonButtonState = .disabled
+        var isUploading: Bool = false
     }
     
     enum Intent {
@@ -123,20 +125,48 @@ class GalleryUploadFeature: Feature {
         Task {
             if let data = try? await item.loadTransferable(type: Data.self),
                let uiImage = UIImage(data: data) {
-                state.selectedImage = uiImage
+                // 메인 스레드에서 UI 업데이트
+                DispatchQueue.main.async { [weak self] in
+                    self?.state.selectedImage = uiImage
+                    self?.checkButtonState()
+                }
             }
         }
     }
     
     private func updateTitle(_ title: String) {
         state.title = title
+        if(title.count > 30) {
+            state.titleTextFieldState = .error
+        } else {
+            state.titleTextFieldState = .editing
+        }
+        checkButtonState()
     }
     
     private func updateComment(_ comment: String) {
         state.comment = comment
+        if(comment.count > 200) {
+            state.titleTextFieldState = .error
+        } else {
+            state.titleTextFieldState = .editing
+        }
+        checkButtonState()
+    }
+    
+    private func checkButtonState() {
+        if(state.titleTextFieldState == .editing && state.title.count > 0 && state.commentTextFieldState == .editing && state.comment.count > 0 && state.selectedImage != nil && state.selectedCategoryIndex != nil){
+            state.buttonState = .enabled
+        } else {
+            state.buttonState = .disabled
+        }
     }
     
     private func upload() {
+        if (state.isUploading) {
+            return
+        }
+        state.isUploading = true
         guard let data = state.selectedImage?.jpegData(compressionQuality: 0.8) else { return }
         let compressedData = dataCompress(imageData: data)
         guard let selectedIndex = state.selectedCategoryIndex else { return }
@@ -148,6 +178,7 @@ class GalleryUploadFeature: Feature {
                 content: state.comment
             )
         ) { [weak self] completion in
+            self?.state.isUploading = false
             if(completion) {
                 self?.sideEffectSubject.send(.popBack)
             }

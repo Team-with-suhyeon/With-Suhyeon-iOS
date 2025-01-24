@@ -89,6 +89,10 @@ struct LoginView: View {
                 }
             ).padding(.horizontal, 16)
         }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            hideKeyboard()
+        }
         .animation(.easeInOut, value: loginFeature.state.phoneAuthStep)
         .onReceive(loginFeature.sideEffectSubject) { sideEffect in
             switch sideEffect {

@@ -280,7 +280,7 @@ class SignUpFeature: Feature {
         
         state.authCode = authCode
         
-        if authCode.count < 6 {
+        if authCode.count <= 6 {
             state.isAuthNumberCorrect = true
         }
         

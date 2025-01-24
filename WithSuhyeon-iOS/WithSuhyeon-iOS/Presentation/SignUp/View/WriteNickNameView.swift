@@ -31,6 +31,10 @@ struct WriteNickNameView: View {
             )
             Spacer()
         }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            hideKeyboard()
+        }
         .padding(.horizontal, 20)
     }
 }

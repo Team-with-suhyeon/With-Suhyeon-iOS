@@ -62,6 +62,10 @@ struct PhoneAuthenticationView: View {
             }
             Spacer()
         }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            hideKeyboard()
+        }
         .padding(.top, 12)
         .padding(.horizontal, 20)
         .animation(.easeInOut, value: signUpFeature.state.phoneAuthStep)

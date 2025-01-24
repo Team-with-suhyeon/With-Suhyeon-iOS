@@ -117,6 +117,14 @@ class FindSuhyeonFeature: Feature {
         var inputTitle: String = ""
         var inputContent: String = ""
         var completeButtonState: WithSuhyeonButtonState = .disabled
+        
+        var moneyTextFieldState: WithSuhyeonTextFieldState = .editing
+        var moneyTextFieldErrorMessage: String = "99,999원까지 입력할 수 있어요"
+        
+        var titleTextFieldState: WithSuhyeonTextFieldState = .editing
+        var titleTextFieldErrorMessage: String = "최대 30자까지 입력할 수 있어"
+        var contentTextFieldState: WithSuhyeonTextFieldState = .editing
+        var contentTextFieldErrorMessage: String = "최대 200자까지 입력할 수 있어"
     }
     
     enum Intent {
@@ -311,11 +319,24 @@ class FindSuhyeonFeature: Feature {
             state.isButtonVisible = isFocused
         case .writeTitle(let title):
             state.inputTitle = title
-            if(!title.isEmpty) {
+            if(!title.isEmpty && title.count <= 30 && state.inputContent.count <= 200) {
                 state.completeButtonState = .enabled
+            }
+            if(title.count > 30) {
+                state.titleTextFieldState = .error
+            } else {
+                state.titleTextFieldState = .editing
             }
         case .writeContent(let title):
             state.inputContent = title
+            if(!title.isEmpty && title.count <= 200 && state.inputTitle.count <= 30) {
+                state.completeButtonState = .enabled
+            }
+            if(title.count > 30) {
+                state.contentTextFieldState = .error
+            } else {
+                state.contentTextFieldState = .editing
+            }
         case .tapCompleteButton:
             postFindSuhyeon()
         }
@@ -333,22 +354,33 @@ class FindSuhyeonFeature: Feature {
     
     func updateSelectedMoney(text: String) {
         state.selectedMoney = text
-        guard Int(text) != nil else {
+        let money = text.replacingOccurrences(of: ",", with: "")
+        guard Int(money) != nil || money.isEmpty else {
             state.buttonState = .disabled
+            state.moneyTextFieldState = .error
+            state.moneyTextFieldErrorMessage = "숫자만 입력해주세요"
             return
         }
+        guard Int(money) ?? 0 <= 99999 else {
+            state.buttonState = .disabled
+            state.moneyTextFieldState = .error
+            state.moneyTextFieldErrorMessage = "99,999원까지 입력할 수있어요"
+            return
+        }
+        state.moneyTextFieldState = .editing
         state.buttonState = .enabled
     }
     
     private func postFindSuhyeon() {
         let fommatedDate = convertToISOFormat(from: state.selectedDate)
+        let money = state.selectedMoney.replacingOccurrences(of: ",", with: "")
         let request = FindSuhyeonPostRequest(
             gender: state.selectedGender == "남자" ? .man : .woman,
             age: state.selectedAge,
             requests: state.selectedRequests,
             region: state.selectedLocation,
             date: fommatedDate ?? "",
-            price: Int(state.selectedMoney) ?? 0,
+            price: Int(money) ?? 0,
             title: state.inputTitle,
             content: state.inputContent
         )

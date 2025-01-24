@@ -18,7 +18,7 @@ struct MessageContainer: View {
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
             if(!isMine){
-                KFImage(URL(string: imageUrl))
+                Image(imageUrl)
                     .resizable()
                     .clipShape(Circle())
                     .frame(width: 38, height: 38)

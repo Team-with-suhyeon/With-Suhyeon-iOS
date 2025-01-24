@@ -18,7 +18,7 @@ class ChatFeature: Feature {
     }
     
     enum SideEffect {
-        case navigateToChatRoom(ownerRoomID: String, peerRoomID: String, ownerID: Int, peerID: Int, postID: Int, nickname: String)
+        case navigateToChatRoom(ownerRoomID: String, peerRoomID: String, ownerID: Int, peerID: Int, postID: Int, nickname: String, title: String, location: String, money: String, imageUrl: String)
     }
     
     @Inject var chatRepository: ChatRepository
@@ -55,7 +55,11 @@ class ChatFeature: Feature {
                     ownerID: state.chatList[index].ownerID,
                     peerID: state.chatList[index].peerID,
                     postID: state.chatList[index].postID,
-                    nickname: state.chatList[index].nickname
+                    nickname: state.chatList[index].nickname,
+                    title: state.chatList[index].title,
+                    location: state.chatList[index].location,
+                    money: state.chatList[index].money,
+                    imageUrl: state.chatList[index].profileImage
                 )
             )
         }

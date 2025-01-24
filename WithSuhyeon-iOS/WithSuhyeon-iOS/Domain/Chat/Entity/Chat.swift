@@ -12,7 +12,11 @@ struct Chat {
     var peerID: Int
     var postID: Int
     var nickname: String
+    var profileImage: String
     var lastMessage: String
     var unreadCount: Int
     var date: String
+    var title: String
+    var location: String
+    var money: String
 }

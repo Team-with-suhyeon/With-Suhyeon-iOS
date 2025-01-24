@@ -112,8 +112,8 @@ struct FindSuhyeonDetailView: View {
                 
             case .popBack:
                 router.popBack()
-            case let .navigateToChat(ownerChatRoomID,peerChatRoomID,ownerID,peerID,postID,nickname):
-                router.navigate(to: .chatRoom(ownerRoomId: ownerChatRoomID, peerRoomId: peerChatRoomID, ownerId: ownerID, peerId: peerID, postId: postID, nickname: nickname))
+            case let .navigateToChat(ownerChatRoomID,peerChatRoomID,ownerID,peerID,postID,nickname,title,location,money,imageUrl):
+                router.navigate(to: .chatRoom(ownerRoomId: ownerChatRoomID, peerRoomId: peerChatRoomID, ownerId: ownerID, peerId: peerID, postId: postID, nickname: nickname, title: title, location: location, money: money, imageUrl: imageUrl))
             case .navigateToChatMain:
                 router.popBack()
                 router.navigateTab(to: .chat)

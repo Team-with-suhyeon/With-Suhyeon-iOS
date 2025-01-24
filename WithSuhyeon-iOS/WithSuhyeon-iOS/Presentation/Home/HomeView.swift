@@ -22,7 +22,8 @@ struct HomeView : View {
             LinearGradient(
                 gradient: Gradient(stops: [
                     .init(color: .homeGradientStart, location: 0.0),
-                    .init(color: .homeGradientEnd, location: 0.3),
+                    .init(color: .homeGradientEnd, location: 0.3)
+                    ,
                     .init(color: .homeGradientEnd, location: feature.state.boundary),
                     .init(color: .white, location: feature.state.boundary),
                     .init(color: .white, location: 1.0),
@@ -193,23 +194,46 @@ struct HomeView : View {
                             }
                             .padding(.top, 16)
                             .padding(.horizontal, 16)
-                            
-                            VStack(spacing: 12) {
-                                ForEach(feature.state.findSuhyeons.indices, id: \.self) { index in
-                                    HomeFindSuhyeonContainer(
-                                        title: feature.state.findSuhyeons[index].title,
-                                        money: feature.state.findSuhyeons[index].price.formattedWithComma,
-                                        gender: feature.state.findSuhyeons[index].gender,
-                                        age: feature.state.findSuhyeons[index].age,
-                                        timeStamp: feature.state.findSuhyeons[index].date
+                            if(feature.state.findSuhyeons.isEmpty) {
+                                ZStack(alignment: .center) {
+                                    VStack(spacing: 0) {
+                                        Image(image: .imgEmptyState)
+                                        Text("아직 게시글이 없어요")
+                                            .font(.body03R)
+                                            .foregroundColor(.gray400)
+                                            .padding(.top, 8)
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 408)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 34)
+                                            .fill(Color.white)
+                                    )
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 34)
+                                            .stroke(Color.gray100, lineWidth: 1)
                                     )
                                     .padding(.horizontal, 16)
-                                    .onTapGesture {
-                                        feature.send(.tapWithSuhyeonContainer(index))
+                                    .padding(.bottom, 16)
+                                }
+                            } else {
+                                VStack(spacing: 12) {
+                                    ForEach(feature.state.findSuhyeons.indices, id: \.self) { index in
+                                        HomeFindSuhyeonContainer(
+                                            title: feature.state.findSuhyeons[index].title,
+                                            money: feature.state.findSuhyeons[index].price.formattedWithComma,
+                                            gender: feature.state.findSuhyeons[index].gender,
+                                            age: feature.state.findSuhyeons[index].age,
+                                            timeStamp: feature.state.findSuhyeons[index].date
+                                        )
+                                        .padding(.horizontal, 16)
+                                        .onTapGesture {
+                                            feature.send(.tapWithSuhyeonContainer(index))
+                                        }
                                     }
                                 }
+                                .padding(.bottom, 16)
                             }
-                            .padding(.bottom, 16)
                         }
                         .background(Color.white)
                     }

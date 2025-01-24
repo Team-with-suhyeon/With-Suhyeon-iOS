@@ -19,24 +19,37 @@ struct ChatView : View {
                 .padding(.top, 7)
                 .padding(.leading, 16)
                 .padding(.bottom, 15)
-            
-            ScrollView {
-                LazyVStack(spacing: 0) {
-                    ForEach(feature.state.chatList.indices, id: \.self) { index in
-                        ChatUserContainer(
-                            imageUrl: "https://reqres.in/img/faces/7-image.jpg",
-                            nickname: feature.state.chatList[index].nickname,
-                            lastChat: feature.state.chatList[index].lastMessage,
-                            date: feature.state.chatList[index].date,
-                            count: feature.state.chatList[index].unreadCount
-                        )
-                        .padding(.vertical, 20)
-                        .onTapGesture {
-                            feature.send(.tapItem(index: index))
-                        }
-                        
-                        if index < feature.state.chatList.count - 1 {
-                            Divider()
+            if(feature.state.chatList.isEmpty) {
+                ZStack(alignment: .center) {
+                    VStack(spacing: 0) {
+                        Image(image: .imgEmptyState)
+                        Text("새로운 채팅이 없어요")
+                            .font(.body03R)
+                            .foregroundColor(.gray400)
+                            .padding(.top, 8)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color.gray50)
+                }
+            } else {
+                ScrollView {
+                    LazyVStack(spacing: 0) {
+                        ForEach(feature.state.chatList.indices, id: \.self) { index in
+                            ChatUserContainer(
+                                imageUrl: "https://reqres.in/img/faces/7-image.jpg",
+                                nickname: feature.state.chatList[index].nickname,
+                                lastChat: feature.state.chatList[index].lastMessage,
+                                date: feature.state.chatList[index].date,
+                                count: feature.state.chatList[index].unreadCount
+                            )
+                            .padding(.vertical, 20)
+                            .onTapGesture {
+                                feature.send(.tapItem(index: index))
+                            }
+                            
+                            if index < feature.state.chatList.count - 1 {
+                                Divider()
+                            }
                         }
                     }
                 }

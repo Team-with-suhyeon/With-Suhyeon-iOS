@@ -19,7 +19,7 @@ struct WithSuhyeon_iOSApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $router.path) {
-                StartView()
+                SplashView()
                     .navigationDestination(for: Destination.self){ destination in
                         switch destination {
                         case .main(let fromSignUp) : MainTabBar(fromSignup: fromSignUp)
@@ -51,6 +51,8 @@ struct WithSuhyeon_iOSApp: App {
                         case .startView: StartView()
                                 .navigationBarBackButtonHidden(true)
                         case .mypage: MyPageView()
+                                .navigationBarBackButtonHidden(true)
+                        case .serverWithdraw: ServerWithdraw()
                                 .navigationBarBackButtonHidden(true)
                         }
                     }

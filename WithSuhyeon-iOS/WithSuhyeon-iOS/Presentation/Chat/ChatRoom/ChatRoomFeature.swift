@@ -19,6 +19,10 @@ class ChatRoomFeature: Feature {
         
         var inputText: String = ""
         
+        var title: String = ""
+        var location: String = ""
+        var price: String = ""
+        
         var ownerChatRoomID: String = ""
         var peerChatRoomID: String = ""
         var ownerID: Int = 0

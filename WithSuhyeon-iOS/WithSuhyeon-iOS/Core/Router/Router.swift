@@ -39,4 +39,5 @@ public enum Destination: Hashable {
     case loginComplete
     case startView
     case mypage
+    case serverWithdraw
 }

@@ -19,7 +19,7 @@ struct GalleryDetailView : View {
     
     var body: some View {
         VStack(spacing: 0) {
-            WithSuhyeonTopNavigationBar(title: "", leftIcon: .icArrowLeft24, onTapLeft: { galleryDetailFeature.send(.tapBackButton) })
+            WithSuhyeonTopNavigationBar(title: "", leftIcon: .icArrowLeft24, rightIcon: .icMenu24, onTapLeft: { galleryDetailFeature.send(.tapBackButton) }, onTapRight: { galleryDetailFeature.send(.tapSeeMoreButton)})
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
                     GeometryReader { geometry in
@@ -73,6 +73,10 @@ struct GalleryDetailView : View {
                         .padding(.horizontal, 16)
                 }
             }
+        }
+        .confirmationDialog("타이틀", isPresented: Binding(get: { galleryDetailFeature.state.bottomSheetIsPresented }, set: { _,_ in galleryDetailFeature.send(.tapBottomSheetCloseButton)})) {
+            Button("삭제하기", role: .destructive) { galleryDetailFeature.send(.tapDeleteButton) }
+            Button("닫기", role: .cancel) {}
         }
         .onAppear {
             galleryDetailFeature.send(.enterScreen)

@@ -29,7 +29,7 @@ struct GenderButton: View {
         .padding(.bottom, 16)
         .background (
             RoundedRectangle(cornerRadius: 24)
-                .fill(isSelected ? Color.primary50 : Color.white)
+                .fill(isSelected ? Color.primary50 : Color.gray50)
         )
         .background(
             RoundedRectangle(cornerRadius: 24)

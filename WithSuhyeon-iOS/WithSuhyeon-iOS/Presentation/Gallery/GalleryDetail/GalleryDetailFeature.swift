@@ -25,12 +25,16 @@ class GalleryDetailFeature: Feature {
         var content: String = ""
         var isSaving: Bool = false
         var saveResultMessage: String = ""
+        var bottomSheetIsPresented: Bool = false
     }
     
     enum Intent {
         case tapBackButton
         case tapDownloadButton
         case enterScreen
+        case tapSeeMoreButton
+        case tapDeleteButton
+        case tapBottomSheetCloseButton
     }
     
     enum SideEffect {
@@ -69,6 +73,12 @@ class GalleryDetailFeature: Feature {
             saveImageToPhotoLibrary()
         case .enterScreen:
             getGalleryDetail()
+        case .tapSeeMoreButton:
+            state.bottomSheetIsPresented = true
+        case .tapDeleteButton:
+            deleteGalleryItem()
+        case .tapBottomSheetCloseButton:
+            state.bottomSheetIsPresented = false
         }
     }
     
@@ -130,6 +140,12 @@ class GalleryDetailFeature: Feature {
             self?.state.isMine = result.isMine
             self?.state.nickname = result.nickname
             self?.state.title = result.title
+        }
+    }
+    
+    private func deleteGalleryItem() {
+        galleryRepository.deleteGallery(id: state.id) { [weak self] _ in
+            self?.sideEffectSubject.send(.popBack)
         }
     }
 }

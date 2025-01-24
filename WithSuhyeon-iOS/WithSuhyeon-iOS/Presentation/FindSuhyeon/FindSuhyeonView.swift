@@ -465,29 +465,11 @@ struct FindSuhyeonView: View {
     }
     
     private func dateTimeModalView() -> some View {
-        let now = Date()
-        let calendar = Calendar.current
-        let currentHour = calendar.component(.hour, from: now)
-        let currentMinute = calendar.component(.minute, from: now)
-        
-        let roundedMinute = ((currentMinute + 4) / 5) * 5
-        let finalMinute = roundedMinute >= 60 ? 0 : roundedMinute
-
-        let isPM = currentHour >= 12
-        let twelveHourFormat = currentHour % 12 == 0 ? 12 : currentHour % 12
-        let period = isPM ? "오후" : "오전"
-
-        let formatter = DateFormatter()
-        formatter.dateFormat = "M월 d일 E"
-        formatter.locale = Locale(identifier: "ko_KR")
-        let todayString = formatter.string(from: now)
-        let todayIndex = dates.firstIndex(of: todayString) ?? 0
-
-        return CustomDatePicker(
-            selectedDateIndex: todayIndex,
-            selectedHour: twelveHourFormat,
-            selectedMinute: finalMinute,
-            selectedAmPm: period,
+        CustomDatePicker(
+            selectedDateIndex: feature.state.dateTime.tempDateIndex,
+            selectedHour: feature.state.dateTime.tempHour,
+            selectedMinute: feature.state.dateTime.tempMinute,
+            selectedAmPm: feature.state.dateTime.tempAmPm,
             dates: dates,
             hours: hours,
             minutes: minutes,

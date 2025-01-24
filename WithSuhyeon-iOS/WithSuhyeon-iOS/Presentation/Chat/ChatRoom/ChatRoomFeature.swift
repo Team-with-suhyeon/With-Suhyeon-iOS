@@ -22,6 +22,7 @@ class ChatRoomFeature: Feature {
         var title: String = ""
         var location: String = ""
         var price: String = ""
+        var imageURL: String = ""
         
         var ownerChatRoomID: String = ""
         var peerChatRoomID: String = ""
@@ -59,13 +60,17 @@ class ChatRoomFeature: Feature {
     private let intentSubject = PassthroughSubject<Intent, Never>()
     let sideEffectSubject = PassthroughSubject<SideEffect, Never>()
     
-    init(ownerChatRoomId: String, peerChatRoomId: String, ownerID: Int, peerID: Int, postID: Int, nickname: String) {
+    init(ownerChatRoomId: String, peerChatRoomId: String, ownerID: Int, peerID: Int, postID: Int, nickname: String, title: String, location: String, money: String, imageUrl: String) {
+        state.location = location
+        state.price = money
+        state.title = title
         state.ownerChatRoomID = ownerChatRoomId
         state.peerChatRoomID = peerChatRoomId
         state.ownerID = ownerID
         state.peerID = peerID
         state.postID = postID
         state.nickname = nickname
+        state.imageURL = imageUrl
         
         bindIntents()
     }

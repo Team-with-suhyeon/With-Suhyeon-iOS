@@ -111,6 +111,10 @@ struct BlockingAccountManagement: View {
             
             Spacer()
         }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            hideKeyboard()
+        }
         .onAppear {
             blockingAccountManagementFeature.send(.fetchBlockingAccounts)
         }

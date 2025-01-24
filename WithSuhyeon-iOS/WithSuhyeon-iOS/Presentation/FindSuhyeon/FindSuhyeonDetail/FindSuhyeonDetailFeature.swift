@@ -45,7 +45,7 @@ class FindSuhyeonDetailFeature: Feature {
     
     enum SideEffect {
         case popBack
-        case navigateToChat(ownerRoomID: String, peerRoomID: String, ownerID: Int, peerID: Int, postID: Int, nickname: String)
+        case navigateToChat(ownerRoomID: String, peerRoomID: String, ownerID: Int, peerID: Int, postID: Int, nickname: String, title: String, location: String, money: String, imageUrl: String)
         case navigateToChatMain
     }
     
@@ -88,7 +88,11 @@ class FindSuhyeonDetailFeature: Feature {
                         ownerID: state.ownerId,
                         peerID: state.writerId,
                         postID: state.postId,
-                        nickname: state.nickname
+                        nickname: state.nickname,
+                        title: state.title,
+                        location: state.location,
+                        money: state.money,
+                        imageUrl: state.profileImageURL
                     )
                 )
             }

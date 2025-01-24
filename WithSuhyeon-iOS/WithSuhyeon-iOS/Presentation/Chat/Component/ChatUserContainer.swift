@@ -18,7 +18,7 @@ struct ChatUserContainer: View {
     
     var body: some View {
         HStack {
-            KFImage(URL(string: imageUrl))
+            Image(imageUrl)
                 .resizable()
                 .clipShape(Circle())
                 .frame(width: 48, height: 48)

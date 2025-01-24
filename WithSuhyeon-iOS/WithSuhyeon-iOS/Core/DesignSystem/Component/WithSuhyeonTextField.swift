@@ -23,6 +23,7 @@ struct WithSuhyeonTextField: View {
     let onChangeText: (String) -> Void
     let onFocusChanged: (Bool) -> Void
     let isUnderMaxLength: Bool
+    let isNumber: Bool
     
     init(
         placeholder: String,
@@ -37,7 +38,8 @@ struct WithSuhyeonTextField: View {
         onTapButton: @escaping () -> Void = {},
         onChangeText: @escaping (String) -> Void,
         onFocusChanged: @escaping (Bool) -> Void = { value in },
-        isUnderMaxLength: Bool = false
+        isUnderMaxLength: Bool = false,
+        isNumber: Bool = false
     ) {
         self.placeholder = placeholder
         self.state = state
@@ -52,6 +54,7 @@ struct WithSuhyeonTextField: View {
         self.onChangeText = onChangeText
         self.onFocusChanged = onFocusChanged
         self.isUnderMaxLength = isUnderMaxLength
+        self.isNumber = isNumber
     }
     
     @State private var text: String = ""
@@ -101,9 +104,20 @@ struct WithSuhyeonTextField: View {
                 
                 TextField(placeholder, text: $text)
                     .onChange(of: text) { value in
-                        let newValue = isUnderMaxLength ? String(value.prefix(maxLength)) : value
+                        var newValue = isUnderMaxLength ? String(value.prefix(maxLength)) : value
+                        if (isNumber) {
+                            let cleanedString = newValue.replacingOccurrences(of: ",", with: "")
+                            if let number = Int(cleanedString) {
+                                let formatter = NumberFormatter()
+                                formatter.numberStyle = .decimal
+                                if let formattedString = formatter.string(from: NSNumber(value: number)) {
+                                    newValue = formattedString
+                                }
+                            }
+                        }
                         onChangeText(newValue)
                         text = newValue
+                        
                     }
                     .focused($isFocused)
                     .keyboardType(keyboardType)

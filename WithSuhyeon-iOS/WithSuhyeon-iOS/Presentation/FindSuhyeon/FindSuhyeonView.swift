@@ -57,15 +57,15 @@ struct FindSuhyeonView: View {
                                     .padding(.leading, 16)
                                 
                                 WithSuhyeonTextField(
-                                    placeholder: "텍스트를 입력해주세요",
-                                    state: .editing,
+                                    placeholder: "제목 입력하기",
+                                    state: feature.state.titleTextFieldState,
                                     keyboardType: .default,
                                     maxLength: 30,
                                     countable: true,
                                     hasButton: false,
                                     buttonText: "",
                                     buttonState: .disabled,
-                                    errorText: "",
+                                    errorText: feature.state.titleTextFieldErrorMessage,
                                     onTapButton: {},
                                     onChangeText: { value in
                                         feature.send(.writeTitle(value))
@@ -76,19 +76,19 @@ struct FindSuhyeonView: View {
                                 .padding(.horizontal, 16)
                                 .padding(.top, 8)
                                 
-                                Text("설명 (선택)")
+                                Text("설명")
                                     .font(.body03SB)
                                     .foregroundColor(.gray600)
                                     .padding(.top, 36)
                                     .padding(.leading, 16)
                                 
                                 WithSuhyeonLongTextField(
-                                    placeholder: "텍스트를 입력해주세요",
-                                    state: .editing,
+                                    placeholder: "설명 입력하기",
+                                    state: feature.state.contentTextFieldState,
                                     keyboardType: .default,
                                     maxLength: 200,
                                     countable: true,
-                                    errorText: "",
+                                    errorText: feature.state.contentTextFieldErrorMessage,
                                     onChangeText: { value in
                                         feature.send(.writeContent(value))
                                     },
@@ -97,11 +97,16 @@ struct FindSuhyeonView: View {
                                 )
                                 .padding(.horizontal, 16)
                                 .padding(.top, 8)
+                                .padding(.bottom, 68)
                                 .id("comment")
                             }
                         }
                     }
                     .tag(FindSuhyeonTask.second)
+                }
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    hideKeyboard()
                 }
                 
             }.withSuhyeonModal(
@@ -194,7 +199,6 @@ struct FindSuhyeonView: View {
                 .padding(.horizontal, 16)
             }
         }
-        
         .onAppear {
             feature.send(.enterScreen)
         }
@@ -370,17 +374,17 @@ struct FindSuhyeonView: View {
                 .foregroundColor(.black)
                 .padding(.horizontal, 16)
                 .padding(.bottom, 20)
-            ZStack(alignment: .trailing) {
+            ZStack(alignment: .topTrailing) {
                 WithSuhyeonTextField(
                     placeholder: "금액 입력하기",
-                    state: .editing,
-                    keyboardType: .numberPad,
+                    state: feature.state.moneyTextFieldState,
+                    keyboardType: .decimalPad,
                     maxLength: 0,
                     countable: false,
                     hasButton: false,
                     buttonText: "",
                     buttonState: .disabled,
-                    errorText: "최대 00자까지 입력할 수 있어",
+                    errorText: feature.state.moneyTextFieldErrorMessage,
                     onTapButton: {
                     },
                     onChangeText: { text in
@@ -388,7 +392,8 @@ struct FindSuhyeonView: View {
                     },
                     onFocusChanged: { focus in
                         feature.send(.focusOnTextField(focus))
-                    }
+                    },
+                    isNumber: true
                 )
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
@@ -398,7 +403,7 @@ struct FindSuhyeonView: View {
                     Text("원")
                         .font(.body02B)
                         .padding(.trailing, 32)
-                        .padding(.bottom, 6)
+                        .padding(.top, 28)
                         .foregroundColor(.gray400)
                 }
             }

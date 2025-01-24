@@ -18,9 +18,13 @@ public struct ChatRoomDTO: Codable {
     let chatOwnerId: Int
     let chatPeerId: Int
     let chatPeerNickname: String
+    let chatPeerProfileImage: String
     let lastChatMessage: String
     let lastChatAt: String
     let unReadCount: Int
+    let postTitle: String
+    let postPlace: String
+    let postCost: String
 }
 
 extension ChatRoomDTO {
@@ -32,9 +36,13 @@ extension ChatRoomDTO {
             peerID: chatPeerId,
             postID: postId,
             nickname: chatPeerNickname,
+            profileImage: chatPeerProfileImage,
             lastMessage: lastChatMessage,
             unreadCount: unReadCount,
-            date: lastChatAt.toFormattedDateOnly() ?? ""
+            date: lastChatAt.toFormattedDateOnly() ?? "",
+            title: postTitle,
+            location: postPlace,
+            money: postCost
         )
     }
 }

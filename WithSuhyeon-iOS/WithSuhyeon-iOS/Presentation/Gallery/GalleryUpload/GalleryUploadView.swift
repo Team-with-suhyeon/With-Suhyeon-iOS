@@ -68,14 +68,14 @@ struct GalleryUploadView: View {
                         
                         WithSuhyeonTextField(
                             placeholder: "텍스트를 입력해주세요",
-                            state: .editing,
+                            state: feature.state.titleTextFieldState,
                             keyboardType: .default,
                             maxLength: 30,
                             countable: true,
                             hasButton: false,
                             buttonText: "",
                             buttonState: .disabled,
-                            errorText: "",
+                            errorText: "최대 30자까지 입력할 수 있어",
                             onTapButton: {},
                             onChangeText: { value in
                                 feature.send(.writeTitle(value))
@@ -90,7 +90,7 @@ struct GalleryUploadView: View {
                         .padding(.top, 8)
                         .id("title")
                         
-                        Text("설명 (선택)")
+                        Text("설명")
                             .font(.body03SB)
                             .foregroundColor(.gray600)
                             .padding(.top, 36)
@@ -98,11 +98,11 @@ struct GalleryUploadView: View {
                         
                         WithSuhyeonLongTextField(
                             placeholder: "텍스트를 입력해주세요",
-                            state: .editing,
+                            state: feature.state.commentTextFieldState,
                             keyboardType: .default,
                             maxLength: 200,
                             countable: true,
-                            errorText: "",
+                            errorText: "최대 200자까지 입력할 수 있어",
                             onChangeText: { value in
                                 feature.send(.writeComment(value))
                             },
@@ -153,7 +153,7 @@ struct GalleryUploadView: View {
                     }
                 }
             }
-            WithSuhyeonButton(title: "완료", buttonState: .enabled) {
+            WithSuhyeonButton(title: "완료", buttonState: feature.state.buttonState, clickable: feature.state.buttonState == .enabled) {
                 feature.send(.tapCompleteButton)
             }
             .padding(.horizontal, 16)
@@ -175,6 +175,7 @@ struct GalleryUploadView: View {
                         feature.send(.tapCategoryItem($0))
                     }
                 )
+                .padding(.horizontal, 16)
                 
             },
             onDismiss: {

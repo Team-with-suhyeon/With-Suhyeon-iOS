@@ -12,14 +12,18 @@ struct ChatRoomView: View {
     @EnvironmentObject var router: RouterRegistry
     @StateObject var feature : ChatRoomFeature
     
-    init(ownerChatRoomId: String, peerChatRoomId: String, ownerID: Int, peerID: Int, postID: Int, nickname: String) {
+    init(ownerChatRoomId: String, peerChatRoomId: String, ownerID: Int, peerID: Int, postID: Int, nickname: String, location: String, money: String, title: String, imageUrl: String) {
         self._feature = StateObject(wrappedValue: ChatRoomFeature(
             ownerChatRoomId: ownerChatRoomId,
             peerChatRoomId: peerChatRoomId,
             ownerID: ownerID,
             peerID: peerID,
             postID: postID,
-            nickname: nickname
+            nickname: nickname,
+            title: title,
+            location: location,
+            money: money,
+            imageUrl: imageUrl
         )
         )
     }
@@ -36,13 +40,13 @@ struct ChatRoomView: View {
             
             HStack {
                 VStack(alignment: .leading, spacing: 4){
-                    Text("강남/역삼/삼성")
+                    Text(feature.state.location)
                         .font(.caption01SB)
                         .foregroundColor(.gray400)
-                    Text("1월 25일 토요일 오후 2:00")
+                    Text(feature.state.title)
                         .font(.body03B)
                         .foregroundColor(.gray950)
-                    Text("20,000원")
+                    Text(feature.state.price)
                         .font(.body03B)
                         .foregroundColor(.gray900)
                 }
@@ -78,7 +82,7 @@ struct ChatRoomView: View {
                                 
                                 ForEach(feature.state.groupedMessages[index].1.indices, id: \.self) { index2 in
                                     MessageContainer(
-                                        imageUrl: "https://reqres.in/img/faces/7-image.jpg",
+                                        imageUrl: feature.state.imageURL,
                                         message: feature.state.groupedMessages[index].1[index2].message,
                                         isMine: feature.state.groupedMessages[index].1[index2].isMine,
                                         time: feature.state.groupedMessages[index].1[index2].time

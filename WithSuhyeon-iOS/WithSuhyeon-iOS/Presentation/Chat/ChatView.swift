@@ -36,7 +36,7 @@ struct ChatView : View {
                     LazyVStack(spacing: 0) {
                         ForEach(feature.state.chatList.indices, id: \.self) { index in
                             ChatUserContainer(
-                                imageUrl: "https://reqres.in/img/faces/7-image.jpg",
+                                imageUrl: feature.state.chatList[index].profileImage,
                                 nickname: feature.state.chatList[index].nickname,
                                 lastChat: feature.state.chatList[index].lastMessage,
                                 date: feature.state.chatList[index].date,
@@ -61,7 +61,7 @@ struct ChatView : View {
         .onReceive(feature.sideEffectSubject) { sideEffect in
             switch sideEffect {
                 
-            case let .navigateToChatRoom(ownerRoomId, peerRoomId, ownerId, peerId, postId, nickname):
+            case let .navigateToChatRoom(ownerRoomId, peerRoomId, ownerId, peerId, postId, nickname, title, location, money, imageURL):
                 router.navigate(
                     to: .chatRoom(
                         ownerRoomId: ownerRoomId,
@@ -69,7 +69,11 @@ struct ChatView : View {
                         ownerId: ownerId,
                         peerId: peerId,
                         postId: postId,
-                        nickname: nickname
+                        nickname: nickname,
+                        title: title,
+                        location: location,
+                        money: money,
+                        imageUrl: imageURL
                     )
                 )
             }

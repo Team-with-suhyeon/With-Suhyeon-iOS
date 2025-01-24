@@ -83,12 +83,8 @@ struct WithSuhyeonLongTextField: View {
                 TextEditor(text: $text)
                     .focused($isFocused)
                     .onChange(of: text, perform: { newText in
-                        if newText.count <= maxLength {
-                            text = newText
-                            onChangeText(newText)
-                        } else {
-                            text = String(newText.prefix(maxLength))
-                        }
+                        text = newText
+                        onChangeText(newText)
                     })
                     .keyboardType(keyboardType)
                     .font(.body03R)

@@ -52,7 +52,7 @@ struct GalleryUploadView: View {
                             onTapDropdown: {
                                 feature.send(.tapDropdownButton)
                             },
-                            errorMessage: ""
+                            errorMessage: "필수로 입력해줘"
                         ) {
                             Text(feature.state.selectedCategory.first ?? "")
                                 .font(.body03SB)
@@ -75,7 +75,7 @@ struct GalleryUploadView: View {
                             hasButton: false,
                             buttonText: "",
                             buttonState: .disabled,
-                            errorText: "최대 30자까지 입력할 수 있어",
+                            errorText: feature.state.titleErrorMessage,
                             onTapButton: {},
                             onChangeText: { value in
                                 feature.send(.writeTitle(value))
@@ -102,7 +102,7 @@ struct GalleryUploadView: View {
                             keyboardType: .default,
                             maxLength: 200,
                             countable: true,
-                            errorText: "최대 200자까지 입력할 수 있어",
+                            errorText: feature.state.commentErrorMessage,
                             onChangeText: { value in
                                 feature.send(.writeComment(value))
                             },
@@ -153,7 +153,7 @@ struct GalleryUploadView: View {
                     }
                 }
             }
-            WithSuhyeonButton(title: "완료", buttonState: feature.state.buttonState, clickable: feature.state.buttonState == .enabled) {
+            WithSuhyeonButton(title: "완료", buttonState: .enabled, clickable: true) {
                 feature.send(.tapCompleteButton)
             }
             .padding(.horizontal, 16)

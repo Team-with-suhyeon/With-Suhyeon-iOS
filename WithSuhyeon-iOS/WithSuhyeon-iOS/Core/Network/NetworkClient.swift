@@ -213,6 +213,8 @@ final class NetworkClient: NetworkRequestable {
             return .invalidCertificationNumber
         case (400, "REDIS_002"):
             return .expiredCertificationNumber
+        case (400, "REQUEST_001"):
+            return .blockFormatBadRequest
         default:
             return .unknownError
         }

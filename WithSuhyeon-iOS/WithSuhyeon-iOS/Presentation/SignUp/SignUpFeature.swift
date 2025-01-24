@@ -115,6 +115,7 @@ class SignUpFeature: Feature {
     enum SideEffect {
         case navigateToSignUpComplete
         case navigateToStartView
+        case hideKeyboard
     }
     
     @Published private(set) var state = State()
@@ -292,6 +293,7 @@ class SignUpFeature: Feature {
            currentIndex < SignUpContentCase.allCases.count - 1 {
             currentContent = SignUpContentCase.allCases[currentIndex + 1]
             updateProgress()
+            sideEffectSubject.send(.hideKeyboard)
         }
     }
     

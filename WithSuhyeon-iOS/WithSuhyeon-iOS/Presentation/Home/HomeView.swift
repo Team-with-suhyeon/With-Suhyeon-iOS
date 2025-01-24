@@ -250,7 +250,7 @@ struct HomeView : View {
         .onReceive(feature.sideEffectSubject) { sideEffect in
             switch sideEffect {
             case .navigateToFindSuhyeon(let id):
-                router.navigateTab(to: .findSuhyeon)
+                router.navigate(to: .findSuhyeonDetail(id: id))
             case .navigateToGallery(let category):
                 router.navigateTab(to: .gallery)
             }

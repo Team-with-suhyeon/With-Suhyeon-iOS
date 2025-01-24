@@ -43,7 +43,7 @@ struct BlockingAccountManagement: View {
                     countable: false,
                     hasButton: true,
                     buttonText: "차단하기",
-                    buttonState: .enabled,
+                    buttonState: blockingAccountManagementFeature.state.isButtonEnabled ? .enabled : .disabled,
                     errorText: blockingAccountManagementFeature.state.errorMessage,
                     onTapButton: {
                         withAnimation {

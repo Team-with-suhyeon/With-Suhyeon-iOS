@@ -22,6 +22,8 @@ class GalleryUploadFeature: Feature {
         var commentTextFieldState: WithSuhyeonTextFieldState = .editing
         var title: String = ""
         var comment: String = ""
+        var titleErrorMessage = "필수로 입력해주세요"
+        var commentErrorMessage = "필수로 입력해주세요"
         var categories: [Category] = []
         var selectedCategoryIndex: Int? = nil
         var focusedTextField: String? = nil
@@ -97,6 +99,23 @@ class GalleryUploadFeature: Feature {
         case .focusOnCommentTextField:
             state.focusedTextField = "comment"
         case .tapCompleteButton:
+            if(state.selectedImage == nil) {
+                break
+            }
+            if(state.selectedCategoryIndex == nil) {
+                state.dropdownState = .isError
+                break
+            }
+            if(state.title.isEmpty) {
+                state.titleTextFieldState = .error
+                state.titleErrorMessage = "필수로 입력해주세요"
+                break
+            }
+            if(state.comment.isEmpty) {
+                state.commentTextFieldState = .error
+                state.titleErrorMessage = "필수로 입력해주세요"
+                break
+            }
             upload()
         case .writeTitle(let title):
             updateTitle(title)
@@ -138,6 +157,7 @@ class GalleryUploadFeature: Feature {
         state.title = title
         if(title.count > 30) {
             state.titleTextFieldState = .error
+            state.titleErrorMessage = "최대 30자까지 입력할 수 있어요"
         } else {
             state.titleTextFieldState = .editing
         }
@@ -147,9 +167,10 @@ class GalleryUploadFeature: Feature {
     private func updateComment(_ comment: String) {
         state.comment = comment
         if(comment.count > 200) {
-            state.titleTextFieldState = .error
+            state.commentTextFieldState = .error
+            state.commentErrorMessage = "최대 200자까지 입력할 수 있어요"
         } else {
-            state.titleTextFieldState = .editing
+            state.commentTextFieldState = .editing
         }
         checkButtonState()
     }

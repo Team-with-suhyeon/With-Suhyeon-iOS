@@ -40,6 +40,8 @@ class ChatRoomFeature: Feature {
         case tapSendButton
         case tapBackground
         case keyboardAppeared
+        case appForeground
+        case appBackground
     }
     
     enum SideEffect {
@@ -56,6 +58,7 @@ class ChatRoomFeature: Feature {
     @Published private(set) var state = State()
     private var cancellables = Set<AnyCancellable>()
     private var createChatCancellable: AnyCancellable?
+    private var chatCancellable: AnyCancellable?
     
     private let intentSubject = PassthroughSubject<Intent, Never>()
     let sideEffectSubject = PassthroughSubject<SideEffect, Never>()
@@ -106,6 +109,14 @@ class ChatRoomFeature: Feature {
         case .keyboardAppeared:
             sideEffectSubject.send(.scrollToLast)
             
+        case .appForeground:
+            if(state.ownerChatRoomID == "NO"){ break }
+            retryJoin()
+            getMessages()
+            chatRoomPublishing()
+        case .appBackground:
+            if(state.ownerChatRoomID == "NO"){ break }
+            cancelChatPublishing()
         }
     }
     
@@ -132,6 +143,14 @@ class ChatRoomFeature: Feature {
             return
         }
         chatRepository.patchExitChatRooms(id: state.ownerChatRoomID){ [weak self] result in
+            if result {
+                print("성공")
+            }
+        }
+    }
+    
+    func retryJoin() {
+        chatRepository.patchJoinChatRooms(id: state.ownerChatRoomID){ [weak self] result in
             if result {
                 print("성공")
             }
@@ -203,7 +222,7 @@ class ChatRoomFeature: Feature {
     
     
     func chatRoomPublishing() {
-        chatRepository.receiveChat()
+        chatCancellable = chatRepository.receiveChat()
             .receive(on: DispatchQueue.main)
             .sink { completion in
                 switch completion {
@@ -215,6 +234,5 @@ class ChatRoomFeature: Feature {
             } receiveValue: { [weak self] result in
                 self?.state.messages.append(result)
             }
-            .store(in: &cancellables)
     }
 }

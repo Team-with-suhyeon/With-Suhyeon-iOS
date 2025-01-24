@@ -15,6 +15,8 @@ class ChatFeature: Feature {
     
     enum Intent {
         case tapItem(index: Int)
+        case appForeground
+        case appBackground
     }
     
     enum SideEffect {
@@ -25,13 +27,13 @@ class ChatFeature: Feature {
     
     @Published private(set) var state = State()
     private var cancellables = Set<AnyCancellable>()
+    private var chatRoomCancellable: AnyCancellable?
     
     private let intentSubject = PassthroughSubject<Intent, Never>()
     let sideEffectSubject = PassthroughSubject<SideEffect, Never>()
     
     init() {
         bindIntents()
-        chatRoomPublishing()
     }
     
     private func bindIntents() {
@@ -62,6 +64,10 @@ class ChatFeature: Feature {
                     imageUrl: state.chatList[index].profileImage
                 )
             )
+        case .appForeground:
+            chatRoomPublishing()
+        case .appBackground:
+            cancelChatRoomPublishing()
         }
     }
     
@@ -72,7 +78,7 @@ class ChatFeature: Feature {
     }
     
     func chatRoomPublishing() {
-        chatRepository.receiveChatRooms()
+        chatRoomCancellable = chatRepository.receiveChatRooms()
             .receive(on: DispatchQueue.main)
             .sink { completion in
                 switch completion {
@@ -84,7 +90,11 @@ class ChatFeature: Feature {
             } receiveValue: { [weak self] result in
                 self?.state.chatList = result
             }
-            .store(in: &cancellables)
+    }
+    
+    func cancelChatRoomPublishing() {
+        chatRoomCancellable?.cancel()
+        chatRoomCancellable = nil
     }
 }
 

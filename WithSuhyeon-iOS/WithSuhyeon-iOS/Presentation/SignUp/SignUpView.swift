@@ -50,8 +50,8 @@ struct SignUpView: View {
         }
         .onReceive(signUpFeature.sideEffectSubject) { sideEffect in
             switch sideEffect {
-            case .navigateToSignUpComplete:
-                router.navigate(to: .signUpComplete)
+            case .navigateToSignUpComplete(let nickname):
+                router.navigate(to: .signUpComplete(nickname: nickname))
             case .navigateToStartView:
                 router.navigate(to: .startView)
             case .hideKeyboard:

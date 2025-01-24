@@ -10,6 +10,7 @@ import SwiftUI
 struct ChatRoomView: View {
     
     @EnvironmentObject var router: RouterRegistry
+    @Environment(\.scenePhase) private var scenePhase
     @StateObject var feature : ChatRoomFeature
     
     init(ownerChatRoomId: String, peerChatRoomId: String, ownerID: Int, peerID: Int, postID: Int, nickname: String, location: String, money: String, title: String, imageUrl: String) {
@@ -108,7 +109,7 @@ struct ChatRoomView: View {
                     case .popBack:
                         router.popBack()
                     case .navigateToPromise:
-                        router.navigate(to: .main(fromSignUp: false))
+                        router.navigate(to: .main(fromSignUp: false, nickname: ""))
                     case .scrollTo(tag: let tag):
                         DispatchQueue.main.async {
                             withAnimation {
@@ -176,6 +177,14 @@ struct ChatRoomView: View {
         }
         .onAppear {
             feature.joinChatRoom()
+        }
+        .onChange(of: scenePhase) { newPhase in
+            if newPhase == .active {
+                feature.send(.appForeground)
+                
+            } else {
+                feature.send(.appBackground)
+            }
         }
     }
 }

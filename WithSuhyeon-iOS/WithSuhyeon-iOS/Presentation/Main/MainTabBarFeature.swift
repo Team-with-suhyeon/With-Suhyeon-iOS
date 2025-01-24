@@ -34,6 +34,8 @@ class MainTabBarFeature: Feature {
     
     init() {
         bindIntents()
+        connect()
+        WebSocketClient.shared.handleAppLifecycleEvents()
     }
     
     private func bindIntents() {
@@ -54,8 +56,8 @@ class MainTabBarFeature: Feature {
             sideEffectSubject.send(.navigateToBlockingAccountManagement)
         case .dismissBlockingAccountSheet:
             state.blockingAccountSheetIsPresent = false
-        case .enterScreen:
-            connect()
+        case .enterScreen: break
+            //connect()
         }
     }
     

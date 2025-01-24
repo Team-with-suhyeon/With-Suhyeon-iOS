@@ -113,7 +113,7 @@ class SignUpFeature: Feature {
     }
     
     enum SideEffect {
-        case navigateToSignUpComplete
+        case navigateToSignUpComplete(String)
         case navigateToStartView
         case hideKeyboard
     }
@@ -420,7 +420,7 @@ class SignUpFeature: Feature {
             switch result {
             case .success:
                 print("✅ 회원가입, 로그인 성공")
-                self?.sideEffectSubject.send(.navigateToSignUpComplete)
+                self?.sideEffectSubject.send(.navigateToSignUpComplete(self?.state.nickname ?? ""))
             case .failure(let error):
                 print("❌ 회원가입/로그인 실패: \(error)")
             }

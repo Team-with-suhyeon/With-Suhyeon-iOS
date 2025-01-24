@@ -34,7 +34,7 @@ struct SplashView: View {
                 router.navigate(to: .startView)
             case .navigateToMainView:
                 router.clear()
-                router.navigate(to: .main(fromSignUp: false))
+                router.navigate(to: .main(fromSignUp: false, nickname: ""))
             }
         }
     }

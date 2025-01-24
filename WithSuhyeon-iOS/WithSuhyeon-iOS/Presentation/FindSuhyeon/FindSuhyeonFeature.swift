@@ -388,7 +388,7 @@ class FindSuhyeonFeature: Feature {
         }
         state.moneyTextFieldState = .editing
         state.buttonState = .enabled
-    }
+    } 
     
     private func postFindSuhyeon() {
         let fommatedDate = convertToISOFormat(from: state.selectedDate)

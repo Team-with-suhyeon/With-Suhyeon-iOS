@@ -12,11 +12,15 @@ struct MainTabBar : View {
     @StateObject var feature = MainTabBarFeature()
     @StateObject var signUpFeature = SignUpFeature()
     
+    private var nickname: String
+    
+    
     @State var fromSignup: Bool = false
-    init(fromSignup: Bool) {
+    init(fromSignup: Bool, nickname: String) {
         UITabBar.appearance().isHidden = true
         
         self._fromSignup = State(initialValue: fromSignup)
+        self.nickname = nickname
     }
     
     var body: some View {
@@ -74,7 +78,7 @@ struct MainTabBar : View {
         .withSuhyeonSheet(
             isPresented: feature.state.blockingAccountSheetIsPresent,
             title: "차단하고 싶은 번호가 있나요?",
-            description: "차단한 사용자는 \(signUpFeature.state.nickname)님의 게시글을 볼 수 없어요",
+            description: "차단한 사용자는 \(nickname)님의 게시글을 볼 수 없어요",
             sheetContent: {
                 Image(image: .imgFuckOff).renderingMode(.original)
             },

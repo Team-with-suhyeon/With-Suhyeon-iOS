@@ -18,7 +18,7 @@ public enum MainTab: CaseIterable {
         switch self {
         case .home: return "홈"
         case .findSuhyeon: return "수현이 찾기"
-        case .gallery: return "갤러리"
+        case .gallery: return "공유앨범"
         case .chat: return "채팅"
         case .myPage: return "MY"
         }

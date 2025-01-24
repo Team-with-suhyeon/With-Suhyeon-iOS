@@ -85,7 +85,7 @@ struct GalleryCategoryHeader: View {
     }
     
     private var headerTitle: some View {
-        Text("갤러리")
+        Text("공유앨범")
             .font(.title03B)
             .padding(.top, 7)
             .padding(.leading, 16)

@@ -86,6 +86,7 @@ struct FindSuhyeonMainView: View {
                 ) { mainIndex, subIndex in
                     feature.send(.selectLocation(main: mainIndex, sub: subIndex))
                 }
+                .ignoresSafeArea(.all, edges: .bottom)
                 .frame(maxHeight: 400)
             },
             onDismiss: {
@@ -95,11 +96,9 @@ struct FindSuhyeonMainView: View {
                 switch feature.state.alertType {
                 case .locationSelect:
                     if feature.state.location.dropdownState.toWithSuhyeonDropdownState() == .defaultState {
-                        feature.send(.tapBottomSheetButton)
                         feature.send(.setLocationDropdownState(.isSelected))
+                        feature.send(.tapBottomSheetButton)
                     }
-                default:
-                    break
                 }
             }
         )
@@ -212,6 +211,7 @@ struct FindSuhyeonMainView: View {
                     feature.send(.selectLocation(main: mainIndex, sub: subIndex))
                 }
             )
+            .ignoresSafeArea(.all, edges: .bottom)
             .frame(maxHeight: 400)
         }
     }

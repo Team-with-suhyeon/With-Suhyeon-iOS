@@ -20,7 +20,6 @@ enum FindSuhyeonAlertType {
         case .requestSelect: "요청사항 선택"
         case .locationSelect: "만날위치 선택"
         case .dateSelect: "날짜와 시간을 선택해줘"
-            
         }
     }
 }
@@ -77,26 +76,25 @@ class FindSuhyeonFeature: Feature {
     
     struct LocationState {
         var locationOptions: [Region] = []
-        var selectedMainLocationIndex: Int = 0
-        var selectedSubLocationIndex: Int = 0
+        var selectedMainLocationIndex: Int = -1
+        var selectedSubLocationIndex: Int = -1
         var tempSelectedLocation: String = ""
-        var selectedDate: String = ""
         var buttonEnable: Bool = false
         var dropdownState: DropdownState = .defaultState
     }
     
     struct DateTimeState {
-        var selectedDateIndex: Int = 0
-        var selectedHour: Int = 9
-        var selectedMinute: Int = 0
-        var selectedAmPm: String = "오전"
-        var buttonEnable: Bool = false
+        var selectedDateIndex: Int
+        var selectedHour: Int
+        var selectedMinute: Int
+        var selectedAmPm: String
+        var buttonEnable: Bool = true
         var dropdownState: DropdownState = .defaultState
         
-        var tempDateIndex: Int = 0
-        var tempHour: Int = 9
-        var tempMinute: Int = 0
-        var tempAmPm: String = "오전"
+        var tempDateIndex: Int
+        var tempHour: Int
+        var tempMinute: Int
+        var tempAmPm: String
     }
     
     struct State {
@@ -106,7 +104,7 @@ class FindSuhyeonFeature: Feature {
         var age = AgeState()
         var request = RequestState()
         var location = LocationState()
-        var dateTime = DateTimeState()
+        var dateTime: DateTimeState
         var dates = FindSuhyeonView.generateDatesForYear()
         
         var isPresent: Bool = false
@@ -134,6 +132,37 @@ class FindSuhyeonFeature: Feature {
         var titleTextFieldErrorMessage: String = "최대 30자까지 입력할 수 있어"
         var contentTextFieldState: WithSuhyeonTextFieldState = .editing
         var contentTextFieldErrorMessage: String = "최대 200자까지 입력할 수 있어"
+        
+        init() {
+            let now = Date()
+            let calendar = Calendar.current
+            let currentHour = calendar.component(.hour, from: now)
+            let currentMinute = calendar.component(.minute, from: now)
+            
+            let roundedMinute = ((currentMinute + 4) / 5) * 5
+            let finalMinute = roundedMinute >= 60 ? 0 : roundedMinute
+            
+            let isPM = currentHour >= 12
+            let twelveHourFormat = currentHour % 12 == 0 ? 12 : currentHour % 12
+            let period = isPM ? "오후" : "오전"
+            
+            let formatter = DateFormatter()
+            formatter.dateFormat = "M월 d일 E"
+            formatter.locale = Locale(identifier: "ko_KR")
+            let todayString = formatter.string(from: now)
+            let todayIndex = dates.firstIndex(of: todayString) ?? 0
+            
+            self.dateTime = DateTimeState(
+                selectedDateIndex: todayIndex,
+                selectedHour: twelveHourFormat,
+                selectedMinute: finalMinute,
+                selectedAmPm: period,
+                tempDateIndex: todayIndex,
+                tempHour: twelveHourFormat,
+                tempMinute: finalMinute,
+                tempAmPm: period
+            )
+        }
     }
     
     enum Intent {
@@ -296,7 +325,7 @@ class FindSuhyeonFeature: Feature {
                 if !state.gender.isGenderSelected { send(.progressToNext) }
             }
             state.gender.isGenderSelected = true
-
+            
         case .dismissBottomSheet:
             state.isPresent = false
         case .tapAgeDropdown(let type):
@@ -388,7 +417,7 @@ class FindSuhyeonFeature: Feature {
         }
         state.moneyTextFieldState = .editing
         state.buttonState = .enabled
-    } 
+    }
     
     private func postFindSuhyeon() {
         let fommatedDate = convertToISOFormat(from: state.selectedDate)
@@ -410,7 +439,7 @@ class FindSuhyeonFeature: Feature {
             }
         }
     }
-
+    
     func convertToISOFormat(from dateString: String) -> String? {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "ko_KR")
@@ -436,5 +465,4 @@ class FindSuhyeonFeature: Feature {
         
         return isoFormatter.string(from: fixedDate)
     }
-
 }

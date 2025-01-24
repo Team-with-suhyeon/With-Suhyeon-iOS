@@ -262,7 +262,7 @@ struct FindSuhyeonView: View {
                 .padding(.leading, 16)
                 .padding(.top, titleTopPadding(for: .genderSelection))
                 .padding(.bottom, titleBottomPadding(for: .genderSelection))
-
+            
             FindSuhyeonGenderSelectCell(
                 genderImages: feature.state.gender.genderImages.map { ($0.defaultImage, $0.selectedImage) },
                 selectedGender: feature.state.gender.selectedGender,
@@ -509,7 +509,6 @@ struct FindSuhyeonView: View {
         )
         
     }
-    
     
     static func generateDatesForYear() -> [String] {
         let formatter = DateFormatter()

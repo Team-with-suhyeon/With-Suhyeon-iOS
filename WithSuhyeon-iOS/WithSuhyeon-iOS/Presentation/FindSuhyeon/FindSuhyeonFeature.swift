@@ -20,7 +20,6 @@ enum FindSuhyeonAlertType {
         case .requestSelect: "요청사항 선택"
         case .locationSelect: "만날위치 선택"
         case .dateSelect: "날짜와 시간을 선택해줘"
-            
         }
     }
 }
@@ -77,8 +76,8 @@ class FindSuhyeonFeature: Feature {
     
     struct LocationState {
         var locationOptions: [Region] = []
-        var selectedMainLocationIndex: Int = 0
-        var selectedSubLocationIndex: Int = 0
+        var selectedMainLocationIndex: Int = -1
+        var selectedSubLocationIndex: Int = -1
         var tempSelectedLocation: String = ""
         var selectedDate: String = ""
         var buttonEnable: Bool = false
@@ -436,5 +435,4 @@ class FindSuhyeonFeature: Feature {
         
         return isoFormatter.string(from: fixedDate)
     }
-
 }

@@ -54,6 +54,8 @@ struct SignUpView: View {
                 router.navigate(to: .signUpComplete)
             case .navigateToStartView:
                 router.navigate(to: .startView)
+            case .hideKeyboard:
+                hideKeyboard()
             }
             
         }

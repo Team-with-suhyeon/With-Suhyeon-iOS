@@ -14,14 +14,7 @@
 | ![상욱](https://github.com/user-attachments/assets/156d76f9-7065-468b-96eb-45bf2185c414)|![지원](https://github.com/user-attachments/assets/6d11d016-991a-4efd-89fd-0506afead861)|![예지](https://github.com/user-attachments/assets/42115edb-6f9f-4fe7-b07f-e49980fe8fc6)|
 |:---------:|:---------:|:---------:|
 |👑[우상욱](https://github.com/Sangwook123)|[정지원](https://github.com/codeJiwon)|[김예지](https://github.com/mnbvcxzyj)|
-| `홈, 갤러리, 채팅` | `수현이 찾기` | `회원가입` | </br>
-
-## 👤 팀원별 역할 분담
-
-| ![상욱](https://github.com/user-attachments/assets/156d76f9-7065-468b-96eb-45bf2185c414)|![지원](https://github.com/user-attachments/assets/6d11d016-991a-4efd-89fd-0506afead861)|![예지](https://github.com/user-attachments/assets/42115edb-6f9f-4fe7-b07f-e49980fe8fc6)|
-|:---------:|:---------:|:---------:|
-|👑[우상욱](https://github.com/Sangwook123)|[정지원](https://github.com/codeJiwon)|[김예지](https://github.com/mnbvcxzyj)|
-| `홈, 갤러리, 채팅` | `수현이 찾기` | `회원가입` | </br>
+| `홈, 갤러리, 채팅` | `수현이 찾기` | `회원가입, 차단 번호` | </br>
 
 ## ⚙️ 기술 및 아키텍쳐
 + `IDE - Xcode 16.2`</br>

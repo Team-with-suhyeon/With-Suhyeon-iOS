@@ -10,6 +10,7 @@ import SwiftUI
 @main
 struct WithSuhyeon_iOSApp: App {
     @StateObject var router = RouterRegistry()
+    @Environment(\.scenePhase) private var scenePhase
     
     init() {
         DIContainer.shared.registerDependencies()
@@ -22,7 +23,7 @@ struct WithSuhyeon_iOSApp: App {
                 SplashView()
                     .navigationDestination(for: Destination.self){ destination in
                         switch destination {
-                        case .main(let fromSignUp) : MainTabBar(fromSignup: fromSignUp)
+                        case let .main(fromSignUp, nickname) : MainTabBar(fromSignup: fromSignUp, nickname: nickname)
                                 .navigationBarBackButtonHidden(true)
                         case .galleryUpload : GalleryUploadView()
                                 .navigationBarBackButtonHidden(true)
@@ -36,7 +37,7 @@ struct WithSuhyeon_iOSApp: App {
                                 .navigationBarBackButtonHidden(true)
                         case .setInterest: SetInterest()
                                 .navigationBarBackButtonHidden(true)
-                        case .signUpComplete: SignUpCompleteView()
+                        case .signUpComplete(let nickname): SignUpCompleteView(nickname: nickname)
                                 .navigationBarBackButtonHidden(true)
                         case .findSuhyeon: FindSuhyeonView()
                                 .navigationBarBackButtonHidden(true)
@@ -58,6 +59,11 @@ struct WithSuhyeon_iOSApp: App {
                     }
             }
             .environmentObject(router)
+            .onChange(of: scenePhase) { newPhase in
+                if newPhase == .active {
+                    WebSocketClient.shared.handleAppLifecycleEvents()
+                }
+            }
         }
     }
 }

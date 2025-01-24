@@ -33,6 +33,10 @@ struct FindSuhyeonView: View {
                                 }
                                 .animation(.easeInOut, value: feature.state.progressState)
                             }
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                hideKeyboard()
+                            }
                         }
                     }
                     .tag(FindSuhyeonTask.first)
@@ -100,13 +104,13 @@ struct FindSuhyeonView: View {
                                 .padding(.bottom, 68)
                                 .id("comment")
                             }
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                hideKeyboard()
+                            }
                         }
                     }
                     .tag(FindSuhyeonTask.second)
-                }
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    hideKeyboard()
                 }
                 
             }.withSuhyeonModal(

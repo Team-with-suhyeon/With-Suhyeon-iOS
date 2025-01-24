@@ -103,7 +103,7 @@ struct StartView: View {
             case .navigateToLogin:
                 router.navigate(to: .login)
             case .navigateToMain:
-                router.navigate(to: .main(fromSignUp: false))
+                router.navigate(to: .main(fromSignUp: false, nickname: ""))
             }
         }
     }

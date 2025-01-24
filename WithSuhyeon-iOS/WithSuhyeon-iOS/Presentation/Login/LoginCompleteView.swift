@@ -32,7 +32,7 @@ struct LoginCompleteView: View {
             Spacer()
             
             WithSuhyeonButton(title: "시작하기", buttonState: .enabled, onTapButton: {
-                router.navigate(to: .main(fromSignUp: false))
+                router.navigate(to: .main(fromSignUp: false, nickname: ""))
             })
             .padding(.horizontal, 16)
         }

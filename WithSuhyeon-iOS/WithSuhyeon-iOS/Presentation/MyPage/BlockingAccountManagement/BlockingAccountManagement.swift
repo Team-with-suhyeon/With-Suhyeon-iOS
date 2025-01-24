@@ -4,12 +4,14 @@ import SwiftUI
 struct BlockingAccountManagement: View {
     @EnvironmentObject var router: RouterRegistry
     @StateObject var blockingAccountManagementFeature = BlockingAccountManagementFeature()
+    @StateObject var signUpFeature = SignUpFeature()
+    
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             WithSuhyeonTopNavigationBar(title: "차단 계정 관리", rightIcon: .icXclose24, onTapRight: {
                 router.clear()
-                router.navigate(to: .main(fromSignUp: false))
+                router.navigate(to: .main(fromSignUp: false, nickname: ""))
             })
             
             VStack(alignment: .leading, spacing: 8) {
@@ -17,7 +19,7 @@ struct BlockingAccountManagement: View {
                     .font(.title02B)
                     .foregroundColor(.black)
                 
-                Text("차단한 사용자는 \(blockingAccountManagementFeature.state.nickname)님의 게시글을 볼 수 없어요")
+                Text("차단한 사용자는 \(signUpFeature.state.nickname)님의 게시글을 볼 수 없어요")
                     .font(.caption01SB)
                     .foregroundColor(.gray400)
             }

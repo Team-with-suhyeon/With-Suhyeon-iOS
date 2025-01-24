@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ChatView : View {
     @EnvironmentObject var router: RouterRegistry
+    @Environment(\.scenePhase) private var scenePhase
     @StateObject var feature: ChatFeature = ChatFeature()
     
     var body: some View {
@@ -57,6 +58,7 @@ struct ChatView : View {
         }
         .onAppear {
             feature.getChatRooms()
+            feature.chatRoomPublishing()
         }
         .onReceive(feature.sideEffectSubject) { sideEffect in
             switch sideEffect {
@@ -76,6 +78,14 @@ struct ChatView : View {
                         imageUrl: imageURL
                     )
                 )
+            }
+        }
+        .onChange(of: scenePhase) { newPhase in
+            if newPhase == .active {
+                feature.send(.appForeground)
+                
+            } else {
+                feature.send(.appBackground)
             }
         }
     }

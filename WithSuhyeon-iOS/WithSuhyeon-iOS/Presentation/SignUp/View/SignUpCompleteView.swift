@@ -12,6 +12,11 @@ import Lottie
 struct SignUpCompleteView: View {
     @EnvironmentObject private var router: RouterRegistry
     @State private var showBottomSheet: Bool = false
+    private var nickname: String
+    
+    init(nickname: String) {
+        self.nickname = nickname
+    }
     
     var body: some View {
         VStack(alignment: .center, spacing: 25){
@@ -32,7 +37,7 @@ struct SignUpCompleteView: View {
             Spacer()
             
             WithSuhyeonButton(title: "완료", buttonState: .enabled, onTapButton: {
-                router.navigate(to: .main(fromSignUp: true))
+                router.navigate(to: .main(fromSignUp: true, nickname: nickname))
             })
             .padding(.horizontal, 8)
         }
@@ -42,5 +47,5 @@ struct SignUpCompleteView: View {
 }
 
 #Preview {
-    SignUpCompleteView()
+    SignUpCompleteView(nickname: "이이잉")
 }

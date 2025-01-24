@@ -18,7 +18,7 @@ final class WebSocketClient {
     private let subject = PassthroughSubject<String, Never>()
     private var isConnecting = false
     private var retryCount = 0
-    private let maxRetryCount = 5
+    private let maxRetryCount = 200
     private let initialRetryInterval: TimeInterval = 2.0
     private var targetType: WebSocketTargetType? = nil
     
@@ -45,6 +45,7 @@ final class WebSocketClient {
     
     func disconnect() {
         webSocketTask?.cancel(with: .goingAway, reason: nil)
+        isConnecting = false
         print("❌ WebSocket 연결 종료")
     }
     
@@ -87,13 +88,12 @@ final class WebSocketClient {
                 @unknown default:
                     fatalError()
                 }
+                self.receiveMessage()
                 
             case .failure(let error):
                 print("❌ WebSocket 메시지 수신 실패: \(error.localizedDescription)")
                 self.handleConnectionFailure()
             }
-            
-            self.receiveMessage()
         }
     }
     
@@ -116,22 +116,40 @@ final class WebSocketClient {
     }
     
     func handleAppLifecycleEvents() {
-        // 앱이 포그라운드에서 백그라운드로 전환될 때
-        NotificationCenter.default.addObserver(forName: UIApplication.willResignActiveNotification, object: nil, queue: .main) { [weak self] _ in
+        NotificationCenter.default.addObserver(
+            forName: UIApplication.willResignActiveNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            print("앱 백그라운드")
             guard let self = self else { return }
+            print("연결 해제")
             self.disconnect()
         }
         
-        // 앱이 백그라운드에서 포그라운드로 전환될 때
-        NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { [weak self] _ in
+        NotificationCenter.default.addObserver(
+            forName: UIApplication.willEnterForegroundNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
             guard let self = self else { return }
-            // 필요한 경우 다시 연결
-            // self.connect(target: yourWebSocketTarget)
+            print("앱 포그라운드")
+            self.retryCount = 0
+            
+            if let target = self.targetType {
+                print("연결 시도")
+                self.connect(target: target)
+            }
         }
         
-        // 앱이 종료될 때
-        NotificationCenter.default.addObserver(forName: UIApplication.willTerminateNotification, object: nil, queue: .main) { [weak self] _ in
+        NotificationCenter.default.addObserver(
+            forName: UIApplication.willTerminateNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            print("앱 곧 백그라운드")
             guard let self = self else { return }
+            print("연결 해제")
             self.disconnect()
         }
     }

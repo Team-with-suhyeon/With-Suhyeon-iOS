@@ -53,11 +53,12 @@ struct WithSuhyeonAlert: View {
                 .font(.title03B)
                 .foregroundColor(.black)
                 .padding(.horizontal, 24)
+            
             if !subTitle.isEmpty {
                 Text(subTitle)
                     .font(.body03SB)
                     .foregroundColor(.gray500)
-                    .padding(.top, 6)
+                    .padding(.top, 10)
                     .padding(.horizontal, 24)
             }
             
@@ -83,4 +84,6 @@ struct WithSuhyeonAlert: View {
 
 #Preview {
     WithSuhyeonAlert(title: "이 게시물을\n정말 삭제하시겠습니까?", subTitle: "한번 삭제된 게시물은\n다시 복구할 수 없습니다.", withSuhyeonIcon: .icBookmark24, primaryButtonText: "삭제하기", secondaryButtonText: "취소하기", primaryButtonAction: {}, secondaryButtonAction: {})
+    
+    WithSuhyeonAlert(title: "정말 탈퇴하시겠습니까?", subTitle: "", primaryButtonText: "탈퇴하기", secondaryButtonText: "취소하기", primaryButtonAction: {}, secondaryButtonAction: {}, isPrimayColorRed: true)
 }

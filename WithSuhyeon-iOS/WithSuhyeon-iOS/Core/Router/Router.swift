@@ -40,4 +40,5 @@ public enum Destination: Hashable {
     case startView
     case mypage
     case serverWithdraw
+    case setting
 }

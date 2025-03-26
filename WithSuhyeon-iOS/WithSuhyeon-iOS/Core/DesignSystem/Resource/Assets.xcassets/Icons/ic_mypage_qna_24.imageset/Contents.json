@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "mypage_ic_qna.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

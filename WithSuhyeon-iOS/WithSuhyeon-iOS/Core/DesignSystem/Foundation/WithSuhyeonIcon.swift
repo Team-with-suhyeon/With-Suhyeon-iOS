@@ -51,5 +51,5 @@ public enum WithSuhyeonIcon: String {
     case icInfo18 = "ic_info_18"
     case icArrowRight16 = "ic_arrow_right_16"
     case icLocationHome16 = "ic_location_home_16"
-    case icMypageQna18 = "ic_my_page_qna_18"
+    case icMypageQna24 = "ic_mypage_qna_24"
 }

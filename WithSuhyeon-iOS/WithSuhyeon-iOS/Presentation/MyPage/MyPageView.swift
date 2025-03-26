@@ -152,9 +152,10 @@ struct MyPageView : View {
                     .padding(.leading, 16)
                     VStack {
                         HStack {
-                            Image(icon: .icMypageQna18)
+                            Image(icon: .icMypageQna24)
                                 .renderingMode(.template)
-                                .foregroundColor(.black)
+                                .resizable()
+                                .frame(width: 20, height: 20)
                                 .padding(.leading, 12)
                             
                             Text("피드백 하기")

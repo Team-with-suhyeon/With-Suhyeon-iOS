@@ -13,11 +13,7 @@ struct MyPost: View {
     var body: some View {
         VStack(spacing: 0) {
             WithSuhyeonTopNavigationBar(title: "내 게시물", rightIcon: .icXclose24, onTapRight: {router.popBack()})
-            ZStack(alignment: .center) {
-                Image(image: .imgWip)
-            }
-            .frame(maxWidth:.infinity, maxHeight: .infinity)
-            .background(Color.gray50)
+            
         }
     }
 }

@@ -41,6 +41,8 @@ class MyPageFeature: Feature {
     private let intentSubject = PassthroughSubject<Intent, Never>()
     let sideEffectSubject = PassthroughSubject<SideEffect, Never>()
     
+    @Inject var getRegionsUseCase: GetRegionsUseCase
+    
     init() {
         bindIntents()
     }

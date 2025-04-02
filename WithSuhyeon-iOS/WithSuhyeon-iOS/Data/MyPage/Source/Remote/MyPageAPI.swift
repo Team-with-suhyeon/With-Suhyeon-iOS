@@ -19,4 +19,10 @@ struct MyPageAPI: MyPageApiProtocol {
         
         return client.request(UserResponseDTO.self, target: target)
     }
+    
+    func getMyFindSuhyeonPosts() -> AnyPublisher<MyFindSuhyeonPostsResponseDTO, NetworkError>{
+        let target = MyPageTarget.getMyFindSuhyeonPosts
+        
+        return client.request(MyFindSuhyeonPostsResponseDTO.self, target: target)
+    }
 }

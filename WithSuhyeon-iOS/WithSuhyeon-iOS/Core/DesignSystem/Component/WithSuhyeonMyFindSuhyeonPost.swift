@@ -49,17 +49,15 @@ struct WithSuhyeonMyFindSuhyeonPost: View {
                 }
             }
             .padding(.vertical, 24)
+            .padding(.horizontal, 16)
             
             Divider()
                 .foregroundColor(.gray.opacity(0.2))
         }
-        .padding(.horizontal, 16)
         .background(Color.white)
     }
 }
 
-
-// MARK: - Preview
 struct WithSuhyeonMyFindSuhyeonPost_preview: PreviewProvider {
     static var previews: some View {
         WithSuhyeonMyFindSuhyeonPost(

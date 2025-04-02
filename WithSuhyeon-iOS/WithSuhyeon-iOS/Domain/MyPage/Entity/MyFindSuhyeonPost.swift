@@ -7,7 +7,8 @@
 
 import Foundation
 
-struct MyFindSuhyeonPost {
+struct MyFindSuhyeonPost: Identifiable {
+    let id = UUID()
     let title: String
     let region: String
     let date: String

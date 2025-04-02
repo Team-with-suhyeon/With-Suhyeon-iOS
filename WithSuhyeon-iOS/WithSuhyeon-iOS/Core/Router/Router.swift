@@ -41,4 +41,5 @@ public enum Destination: Hashable {
     case mypage
     case serverWithdraw
     case setting
+    case termsAndPolicies
 }

@@ -12,7 +12,7 @@ import Kingfisher
 struct MyPageView : View {
     @EnvironmentObject var router: RouterRegistry
     @StateObject var feature = MyPageFeature()
-
+    
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0){
@@ -42,7 +42,7 @@ struct MyPageView : View {
                                 .resizable()
                                 .clipShape(Circle())
                                 .frame(width: 48, height: 48)
-
+                            
                             
                             Text(feature.state.nickname)
                                 .font(.body02B)
@@ -170,9 +170,7 @@ struct MyPageView : View {
                         .padding(.top, 8)
                         .frame(height: 50)
                         .contentShape(Rectangle())
-                        .onTapGesture {
-                            feature.send(.tapBlockingAccountManagement)
-                        }
+                        .onTapGesture { }
                         
                         HStack {
                             Image(icon: .icInfo18)
@@ -190,7 +188,7 @@ struct MyPageView : View {
                         .frame(height: 50)
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            feature.send(.tapSetInterest)
+                            feature.send(.tapTermsAndPolicies)
                         }
                     }
                     .background(
@@ -224,6 +222,8 @@ struct MyPageView : View {
                 router.navigate(to: .serverWithdraw)
             case .navigateToSetting:
                 router.navigate(to: .setting)
+            case .navigateToTermsAndPolicies:
+                router.navigate(to: .termsAndPolicies)
             }
         }
     }

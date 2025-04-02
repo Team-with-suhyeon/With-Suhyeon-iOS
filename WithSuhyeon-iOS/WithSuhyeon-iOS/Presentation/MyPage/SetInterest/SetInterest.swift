@@ -13,7 +13,7 @@ struct SetInterest: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            WithSuhyeonTopNavigationBar(title: "관심 지역 설정", onTapLeft: { router.navigate(to: .mypage)})
+            WithSuhyeonTopNavigationBar(title: "관심 지역 설정", onTapLeft: { router.popBack() })
             
             Text("자주 보고싶은 \n지역을 선택해주세요")
                 .font(.title02B)
@@ -31,7 +31,7 @@ struct SetInterest: View {
             
             WithSuhyeonButton(title: "완료", buttonState: feature.state.buttonEnabled, onTapButton: {})
                 .padding(.horizontal, 16)
-        
+            
         }
         .onAppear {
             feature.send(.enterScreen)

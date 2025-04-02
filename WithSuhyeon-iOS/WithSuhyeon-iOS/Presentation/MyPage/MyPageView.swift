@@ -25,12 +25,6 @@ struct MyPageView : View {
                     .padding(.bottom, 15)
                 
                 Spacer()
-                
-                Image(icon: .icSetting24)
-                    .padding(10)
-                    .onTapGesture {
-                        feature.send(.tapSetting)
-                    }
             }
             .frame(maxWidth: .infinity)
             .background(Color.white)
@@ -199,6 +193,48 @@ struct MyPageView : View {
                     .padding(.top, 8)
                     .padding(.bottom, 16)
                 }
+                
+                HStack {
+                    Text("기타")
+                        .font(.body03B)
+                        .foregroundColor(.gray900)
+                    
+                    Spacer()
+                }
+                .padding(.top, 16)
+                .padding(.leading, 16)
+                VStack {
+                    HStack {
+                        Text("로그아웃")
+                            .font(.body03SB)
+                            .foregroundColor(.black)
+                        Spacer()
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(14)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        feature.send(.tapLogout)
+                    }
+                    
+                    HStack {
+                        Text("탈퇴하기")
+                            .font(.body03SB)
+                            .foregroundColor(.red)
+                        Spacer()
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(14)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        feature.send(.tapWithdraw)
+                    }
+                }
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color.white)
+                )
+                .padding(.horizontal, 16)
             }
         }
         .background(Color.gray100)

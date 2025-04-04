@@ -30,6 +30,8 @@ class ChatRoomFeature: Feature {
         var peerID: Int = 0
         var postID: Int = 0
         var nickname: String = ""
+        
+        var bottomSheetIsPresented: Bool = false
     }
     
     enum Intent {
@@ -42,6 +44,8 @@ class ChatRoomFeature: Feature {
         case keyboardAppeared
         case appForeground
         case appBackground
+        case tapSeeMoreButton
+        case tapBottomSheetCloseButton
     }
     
     enum SideEffect {
@@ -117,6 +121,13 @@ class ChatRoomFeature: Feature {
         case .appBackground:
             if(state.ownerChatRoomID == "NO"){ break }
             cancelChatPublishing()
+            
+        case .tapSeeMoreButton:
+            state.bottomSheetIsPresented = true
+            
+        case .tapBottomSheetCloseButton:
+            state.bottomSheetIsPresented = false
+            
         }
     }
     

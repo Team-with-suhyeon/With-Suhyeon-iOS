@@ -41,4 +41,16 @@ struct AuthAPI: AuthAPIProtocol {
         
         return client.request(UserIDResponseDTO.self, target: target)
     }
+    
+    func logout() -> AnyPublisher<Bool, NetworkError> {
+        let target: AuthTarget = .logout
+        
+        return client.request(target: target)
+    }
+    
+    func withdraw() -> AnyPublisher<Bool, NetworkError> {
+        let target: AuthTarget = .withdraw
+        
+        return client.request(target: target)
+    }
 }

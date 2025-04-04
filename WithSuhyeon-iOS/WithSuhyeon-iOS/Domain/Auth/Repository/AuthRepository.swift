@@ -22,4 +22,7 @@ protocol AuthRepository {
     
     func sendAuthCode(flow: String, phoneNumber: String, completion: @escaping (Result<Void, NetworkError>) -> Void)
     func validateAuthCode(flow: String, authCode: String, phoneNumber: String, completion: @escaping (Result<Void, NetworkError>) -> Void)
+    
+    func logout(completion: @escaping (Result<Void, NetworkError>) -> Void)
+    func withdraw(completion: @escaping (Result<Void, NetworkError>) -> Void)
 }

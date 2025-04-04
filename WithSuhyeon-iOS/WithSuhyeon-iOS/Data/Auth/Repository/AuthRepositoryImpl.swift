@@ -132,4 +132,43 @@ class AuthRepositoryImpl: AuthRepository {
             .store(in: &subscriptions)
     }
     
+    func logout(completion: @escaping (Result<Void, NetworkError>) -> Void) {
+        authAPI.logout()
+            .sink { result in
+                switch result {
+                case .finished:
+                    break
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            } receiveValue: { [weak self] success in
+                if success {
+                    self?.clearTokens()
+                    completion(.success(()))
+                } else {
+                    completion(.failure(.unknownError))
+                }
+            }
+            .store(in: &subscriptions)
+    }
+
+    func withdraw(completion: @escaping (Result<Void, NetworkError>) -> Void) {
+        authAPI.withdraw()
+            .sink { result in
+                switch result {
+                case .finished:
+                    break
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            } receiveValue: { [weak self] success in
+                if success {
+                    self?.clearTokens()
+                    completion(.success(()))
+                } else {
+                    completion(.failure(.unknownError))
+                }
+            }
+            .store(in: &subscriptions)
+    }
 }

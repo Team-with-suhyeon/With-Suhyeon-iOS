@@ -21,6 +21,8 @@ class MyPageFeature: Feature {
         case tapLogout
         case tapWithdraw
         case enterScreen
+        case tapSetting
+        case tapTermsAndPolicies
     }
     
     enum SideEffect {
@@ -29,6 +31,8 @@ class MyPageFeature: Feature {
         case navigateToSetInterest
         case navigateToInitialScreen
         case navigateToWithdraw
+        case navigateToSetting
+        case navigateToTermsAndPolicies
     }
     
     @Inject private var authRepository: AuthRepository
@@ -38,6 +42,8 @@ class MyPageFeature: Feature {
     
     private let intentSubject = PassthroughSubject<Intent, Never>()
     let sideEffectSubject = PassthroughSubject<SideEffect, Never>()
+    
+    @Inject var getRegionsUseCase: GetRegionsUseCase
     
     init() {
         bindIntents()
@@ -67,6 +73,10 @@ class MyPageFeature: Feature {
             sideEffectSubject.send(.navigateToWithdraw)
         case .enterScreen:
             getMyPage()
+        case .tapSetting:
+            sideEffectSubject.send(.navigateToSetting)
+        case .tapTermsAndPolicies: 
+            sideEffectSubject.send(.navigateToTermsAndPolicies)
         }
     }
     

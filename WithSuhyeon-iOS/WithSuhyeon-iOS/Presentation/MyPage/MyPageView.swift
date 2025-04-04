@@ -12,8 +12,7 @@ import Kingfisher
 struct MyPageView : View {
     @EnvironmentObject var router: RouterRegistry
     @StateObject var feature = MyPageFeature()
-    @State var isLogoutPresented: Bool = false
-    @State var isWithdrawPresented: Bool = false
+    
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0){
@@ -24,6 +23,7 @@ struct MyPageView : View {
                     .padding(.top, 7)
                     .padding(.leading, 16)
                     .padding(.bottom, 15)
+                
                 Spacer()
             }
             .frame(maxWidth: .infinity)
@@ -37,6 +37,7 @@ struct MyPageView : View {
                                 .clipShape(Circle())
                                 .frame(width: 48, height: 48)
                             
+                            
                             Text(feature.state.nickname)
                                 .font(.body02B)
                                 .padding(.leading, 12)
@@ -47,6 +48,11 @@ struct MyPageView : View {
                         .padding(.top, 20)
                         .padding(.leading, 20)
                         .padding(.bottom, 16)
+                        
+                        Divider()
+                            .padding(.horizontal, 20)
+                            .foregroundColor(.gray100)
+                            .frame(height: 1)
                         
                         HStack(alignment: .center) {
                             Text("내 게시물")
@@ -61,7 +67,7 @@ struct MyPageView : View {
                         }
                         .frame(height: 50)
                         .padding(.horizontal, 20)
-                        .padding(.bottom, 8)
+                        .padding(.vertical, 8)
                         .contentShape(Rectangle())
                         .onTapGesture {
                             feature.send(.tapMyPost)
@@ -128,12 +134,27 @@ struct MyPageView : View {
                     .padding(.horizontal, 16)
                     .padding(.top, 8)
                     .padding(.bottom, 16)
+                    
+                    HStack {
+                        Text("고객센터")
+                            .font(.body03B)
+                            .foregroundColor(.gray900)
+                        
+                        Spacer()
+                    }
+                    .padding(.top, 16)
+                    .padding(.leading, 16)
                     VStack {
                         HStack {
-                            Text("로그아웃")
+                            Image(icon: .icMypageQna24)
+                                .renderingMode(.template)
+                                .resizable()
+                                .frame(width: 20, height: 20)
+                                .padding(.leading, 12)
+                            
+                            Text("피드백 하기")
                                 .font(.body03SB)
                                 .foregroundColor(.black)
-                                .padding(.leading, 12)
                             
                             Spacer()
                             Image(icon: .icArrowRight20)
@@ -143,12 +164,14 @@ struct MyPageView : View {
                         .padding(.top, 8)
                         .frame(height: 50)
                         .contentShape(Rectangle())
-                        .onTapGesture { isLogoutPresented = true }
+                        .onTapGesture { }
+                        
                         HStack {
-                            Text("탈퇴하기")
-                                .font(.body03SB)
-                                .foregroundColor(.red01)
+                            Image(icon: .icInfo18)
                                 .padding(.leading, 12)
+                            Text("약관 및 정책")
+                                .font(.body03SB)
+                                .foregroundColor(.black)
                             
                             Spacer()
                             Image(icon: .icArrowRight20)
@@ -158,27 +181,60 @@ struct MyPageView : View {
                         .padding(.bottom, 8)
                         .frame(height: 50)
                         .contentShape(Rectangle())
-                        .onTapGesture { feature.send(.tapWithdraw) }
+                        .onTapGesture {
+                            feature.send(.tapTermsAndPolicies)
+                        }
                     }
                     .background(
                         RoundedRectangle(cornerRadius: 16)
                             .fill(Color.white)
                     )
-                    .padding(16)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+                    .padding(.bottom, 16)
                 }
-            }
-            .withSuhyeonAlert(isPresented: isLogoutPresented, onTapBackground: { isLogoutPresented.toggle() }){
-                WithSuhyeonAlert(
-                    title: "정말 로그아웃하시겠습니까?",
-                    subTitle: "",
-                    primaryButtonText: "로그아웃",
-                    secondaryButtonText: "취소하기",
-                    primaryButtonAction: {
+                
+                HStack {
+                    Text("기타")
+                        .font(.body03B)
+                        .foregroundColor(.gray900)
+                    
+                    Spacer()
+                }
+                .padding(.top, 16)
+                .padding(.leading, 16)
+                VStack {
+                    HStack {
+                        Text("로그아웃")
+                            .font(.body03SB)
+                            .foregroundColor(.black)
+                        Spacer()
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(14)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
                         feature.send(.tapLogout)
-                        isLogoutPresented.toggle()
-                    },
-                    secondaryButtonAction: { isLogoutPresented.toggle() }
+                    }
+                    
+                    HStack {
+                        Text("탈퇴하기")
+                            .font(.body03SB)
+                            .foregroundColor(.red)
+                        Spacer()
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(14)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        feature.send(.tapWithdraw)
+                    }
+                }
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color.white)
                 )
+                .padding(.horizontal, 16)
             }
         }
         .background(Color.gray100)
@@ -200,6 +256,10 @@ struct MyPageView : View {
                 router.navigateTab(to: .home)
             case .navigateToWithdraw:
                 router.navigate(to: .serverWithdraw)
+            case .navigateToSetting:
+                router.navigate(to: .setting)
+            case .navigateToTermsAndPolicies:
+                router.navigate(to: .termsAndPolicies)
             }
         }
     }

@@ -11,7 +11,6 @@ import Combine
 import Alamofire
 
 class DefaultMyPageRepository: MyPageRepository {
-    
     @Inject var myPageAPI: MyPageApiProtocol
     var subscriptions = Set<AnyCancellable>()
     
@@ -30,5 +29,30 @@ class DefaultMyPageRepository: MyPageRepository {
             } receiveValue: { user in
                 completion(user)
             }.store(in: &subscriptions)
+    }
+    
+    func getMyFindSuhyeonPosts(completion: @escaping ([MyFindSuhyeonPost]) -> Void) {
+        myPageAPI.getMyFindSuhyeonPosts()
+            .map { response in
+                response.posts.map { dto in
+                    MyFindSuhyeonPost(
+                        title: dto.title,
+                        region: dto.region,
+                        date: dto.date,
+                        matching: dto.matching
+                    )
+                }
+            }
+            .sink { completionResult in
+                switch completionResult {
+                case .finished:
+                    break
+                case .failure(let error):
+                    print(error)
+                }
+            } receiveValue: { posts in
+                completion(posts)
+            }
+            .store(in: &subscriptions)
     }
 }

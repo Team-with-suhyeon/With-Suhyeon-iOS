@@ -9,4 +9,5 @@ import Foundation
 
 protocol MyPageRepository {
     func getUser(completion: @escaping (User) -> Void)
+    func getMyFindSuhyeonPosts(completion: @escaping ([MyFindSuhyeonPost]) -> Void)
 }

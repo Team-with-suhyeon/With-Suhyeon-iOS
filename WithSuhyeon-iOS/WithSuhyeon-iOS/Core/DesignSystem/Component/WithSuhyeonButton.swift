@@ -29,12 +29,12 @@ struct WithSuhyeonButton: View {
                     Image(icon: icon)
                         .renderingMode(.template)
                         .foregroundColor(
-                            buttonState == .disabled ? Color.gray400 : Color.white
+                            buttonState == .disabled ? Color.gray500 : Color.white
                         )
                 }
                 Text(title)
                     .foregroundColor(
-                        buttonState == .disabled ? Color.gray400 : Color.white
+                        buttonState == .disabled ? Color.gray500 : Color.white
                     )
                     .font(.body01B)
             }
@@ -53,7 +53,7 @@ struct WithSuhyeonButton: View {
         switch buttonState {
             
         case .disabled:
-            return Color.gray200
+            return Color.gray100
         case .enabled:
             return Color.primary500
         case .alert:

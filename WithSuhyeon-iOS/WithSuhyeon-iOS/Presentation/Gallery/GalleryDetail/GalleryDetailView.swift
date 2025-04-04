@@ -12,6 +12,8 @@ import Kingfisher
 struct GalleryDetailView : View {
     @EnvironmentObject private var router: RouterRegistry
     @StateObject private var galleryDetailFeature: GalleryDetailFeature
+    @State private var isAlertPresented: Bool = false
+    @State private var isDeleteMode: Bool = true
     
     init(id: Int) {
         self._galleryDetailFeature = StateObject(wrappedValue: GalleryDetailFeature(id: id))
@@ -74,10 +76,43 @@ struct GalleryDetailView : View {
                 }
             }
         }
-        .confirmationDialog("타이틀", isPresented: Binding(get: { galleryDetailFeature.state.bottomSheetIsPresented }, set: { _,_ in galleryDetailFeature.send(.tapBottomSheetCloseButton)})) {
-            Button("삭제하기", role: .destructive) { galleryDetailFeature.send(.tapDeleteButton) }
+        .confirmationDialog("타이틀", isPresented: Binding(get: { galleryDetailFeature.state.bottomSheetIsPresented }, set: { _,_ in galleryDetailFeature.send(.tapBottomSheetCloseButton) })) {
+            if galleryDetailFeature.state.isMine {
+                Button("삭제하기", role: .destructive) {
+                    isDeleteMode = true
+                    isAlertPresented = true
+                }
+            } else {
+                Button("신고하기", role: .destructive) {
+                    isDeleteMode = false
+                    isAlertPresented = true
+                }
+            }
             Button("닫기", role: .cancel) {}
         }
+        .withSuhyeonAlert(isPresented: isAlertPresented, onTapBackground: {
+            isAlertPresented.toggle()
+        }) {
+            WithSuhyeonAlert(
+                title: isDeleteMode ? "정말 삭제하시겠습니까?" : "이 게시물을\n정말 신고하시겠습니까??",
+                subTitle: isDeleteMode ? "삭제된 게시물은 복구할 수 없습니다." : "허위 신고시 이용이 제한될 수 있습니다.",
+                primaryButtonText: isDeleteMode ? "삭제하기" : "신고하기",
+                secondaryButtonText: "취소하기",
+                primaryButtonAction: {
+                    if isDeleteMode {
+                        galleryDetailFeature.send(.tapDeleteButton)
+                    } else {
+                        print("신고 요청")
+                    }
+                    isAlertPresented.toggle()
+                },
+                secondaryButtonAction: {
+                    isAlertPresented.toggle()
+                },
+                isPrimayColorRed: true
+            )
+        }
+        
         .onAppear {
             galleryDetailFeature.send(.enterScreen)
         }

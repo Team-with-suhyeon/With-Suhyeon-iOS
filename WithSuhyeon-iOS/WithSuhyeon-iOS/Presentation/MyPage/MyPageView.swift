@@ -13,6 +13,8 @@ struct MyPageView : View {
     @EnvironmentObject var router: RouterRegistry
     @StateObject var feature = MyPageFeature()
     
+    @State private var isLogoutPresented: Bool = false
+    @State private var isWithdrawPresented: Bool = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0){
@@ -214,7 +216,7 @@ struct MyPageView : View {
                     .padding(14)
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        feature.send(.tapLogout)
+                        isLogoutPresented.toggle()
                     }
                     
                     HStack {
@@ -227,7 +229,7 @@ struct MyPageView : View {
                     .padding(14)
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        feature.send(.tapWithdraw)
+                        isWithdrawPresented.toggle()
                     }
                 }
                 .background(
@@ -243,7 +245,6 @@ struct MyPageView : View {
         }
         .onReceive(feature.sideEffectSubject) { sideEffect in
             switch sideEffect {
-                
             case .navigateToMyPost:
                 router.navigate(to: .myPost)
             case .navigateToBlockingAccountManagement:
@@ -254,13 +255,36 @@ struct MyPageView : View {
                 router.clear()
                 router.navigate(to: .startView)
                 router.navigateTab(to: .home)
-            case .navigateToWithdraw:
-                router.navigate(to: .serverWithdraw)
-            case .navigateToSetting:
-                router.navigate(to: .setting)
             case .navigateToTermsAndPolicies:
                 router.navigate(to: .termsAndPolicies)
             }
+        }
+        .withSuhyeonAlert(isPresented: isLogoutPresented, onTapBackground: { isLogoutPresented.toggle() }){
+            WithSuhyeonAlert(
+                title: "정말 로그아웃하시겠습니까?",
+                subTitle: "",
+                primaryButtonText: "로그아웃",
+                secondaryButtonText: "취소하기",
+                primaryButtonAction: {
+                    feature.send(.tapLogout)
+                    isLogoutPresented.toggle()
+                },
+                secondaryButtonAction: { isLogoutPresented.toggle() }
+            )
+        }
+        .withSuhyeonAlert(isPresented: isWithdrawPresented, onTapBackground: { isWithdrawPresented.toggle() }){
+            WithSuhyeonAlert(
+                title: "정말 탈퇴하시겠습니까?",
+                subTitle: "작성한 내용이 저장되지 않고 모두 사라집니다",
+                primaryButtonText: "탈퇴하기",
+                secondaryButtonText: "취소하기",
+                primaryButtonAction: {
+                    feature.send(.tapWithdraw)
+                    isWithdrawPresented.toggle()
+                },
+                secondaryButtonAction: { isWithdrawPresented.toggle() },
+                isPrimayColorRed: true
+            )
         }
     }
 }

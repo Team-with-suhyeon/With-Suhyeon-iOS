@@ -12,6 +12,8 @@ import Kingfisher
 struct FindSuhyeonDetailView: View {
     @EnvironmentObject var router: RouterRegistry
     @StateObject var feature: FindSuhyeonDetailFeature
+    @State private var isAlertPresented: Bool = false
+    @State private var isDeleteMode: Bool = true
     
     init(id: Int) {
         self._feature = StateObject(wrappedValue: FindSuhyeonDetailFeature(id: id))
@@ -100,9 +102,41 @@ struct FindSuhyeonDetailView: View {
             }
             .padding(.top, 16)
         }
-        .confirmationDialog("타이틀", isPresented: Binding(get: { feature.state.bottomSheetIsPresented }, set: { _,_ in feature.send(.tapBottomSheetCloseButton)})) {
-            Button("삭제하기", role: .destructive) { feature.send(.tapDeleteButton) }
+        .confirmationDialog("타이틀", isPresented: Binding(get: { feature.state.bottomSheetIsPresented }, set: { _,_ in feature.send(.tapBottomSheetCloseButton) })) {
+            if feature.state.isMine {
+                Button("삭제하기", role: .destructive) {
+                    isDeleteMode = true
+                    isAlertPresented = true
+                }
+            } else {
+                Button("신고하기", role: .destructive) {
+                    isDeleteMode = false
+                    isAlertPresented = true
+                }
+            }
             Button("닫기", role: .cancel) {}
+        }
+        .withSuhyeonAlert(isPresented: isAlertPresented, onTapBackground: {
+            isAlertPresented.toggle()
+        }) {
+            WithSuhyeonAlert(
+                title: isDeleteMode ? "정말 삭제하시겠습니까?" : "이 게시물을\n정말 신고하시겠습니까??",
+                subTitle: isDeleteMode ? "삭제된 게시물은 복구할 수 없습니다." : "허위 신고시 이용이 제한될 수 있습니다.",
+                primaryButtonText: isDeleteMode ? "삭제하기" : "신고하기",
+                secondaryButtonText: "취소하기",
+                primaryButtonAction: {
+                    if isDeleteMode {
+                        feature.send(.tapDeleteButton)
+                    } else {
+                        print("신고 요청")
+                    }
+                    isAlertPresented.toggle()
+                },
+                secondaryButtonAction: {
+                    isAlertPresented.toggle()
+                },
+                isPrimayColorRed: true
+            )
         }
         .onAppear {
             feature.send(.enterScreen)
@@ -123,5 +157,5 @@ struct FindSuhyeonDetailView: View {
 }
 
 #Preview {
-   // FindSuhyeonDetailView()
+//    FindSuhyeonDetailView()
 }

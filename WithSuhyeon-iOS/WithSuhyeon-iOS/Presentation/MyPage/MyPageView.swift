@@ -12,6 +12,7 @@ import Kingfisher
 struct MyPageView : View {
     @EnvironmentObject var router: RouterRegistry
     @StateObject var feature = MyPageFeature()
+    @State private var isNotificationOn: Bool = false
     
     @State private var isLogoutPresented: Bool = false
     @State private var isWithdrawPresented: Bool = false
@@ -197,6 +198,38 @@ struct MyPageView : View {
                 }
                 
                 HStack {
+                    Text("알림 설정")
+                        .font(.body03B)
+                        .foregroundColor(.gray900)
+                    Spacer()
+                }
+                .padding(.top, 16)
+                .padding(.leading, 16)
+                
+                VStack {
+                    HStack {
+                        Text("알림 수신 설정")
+                            .font(.body03SB)
+                            .foregroundColor(.black)
+                        
+                        Spacer()
+                        
+                        Toggle("", isOn: $isNotificationOn)
+                            .labelsHidden()
+                            .toggleStyle(SwitchToggleStyle(tint: .primary500))
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 14)
+                    .contentShape(Rectangle())
+                }
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color.white)
+                )
+                .padding(.horizontal, 16)
+                
+                
+                HStack {
                     Text("기타")
                         .font(.body03B)
                         .foregroundColor(.gray900)
@@ -213,8 +246,10 @@ struct MyPageView : View {
                         Spacer()
                     }
                     .frame(maxWidth: .infinity)
-                    .padding(14)
+                    .padding(.horizontal, 14)
+                    .frame(height: 50)
                     .contentShape(Rectangle())
+
                     .onTapGesture {
                         isLogoutPresented.toggle()
                     }
@@ -226,7 +261,8 @@ struct MyPageView : View {
                         Spacer()
                     }
                     .frame(maxWidth: .infinity)
-                    .padding(14)
+                    .padding(.horizontal, 14)
+                    .frame(height: 50)
                     .contentShape(Rectangle())
                     .onTapGesture {
                         isWithdrawPresented.toggle()

@@ -183,10 +183,10 @@ struct ChatRoomView: View {
         }
         .confirmationDialog("타이틀", isPresented: Binding(get: { feature.state.bottomSheetIsPresented }, set: { _,_ in feature.send(.tapBottomSheetCloseButton) })) {
             
-            Button("차단하기", role: .destructive) {
-                isBlockMode = true
-                isAlertPresented = true
-            }
+//            Button("차단하기", role: .destructive) {
+//                isBlockMode = true
+//                isAlertPresented = true
+//            }
             
             Button("신고하기", role: .destructive) {
                 isBlockMode = false

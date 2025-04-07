@@ -77,10 +77,8 @@ class SplashFeature: Feature {
     private func navigateIfReady() {
         if state.accessTokenReceived && state.readyForNavigation {
             if state.accessToken.isEmpty {
-                print("오잉")
                 sideEffectSubject.send(.navigateToStartView)
             } else {
-                print("오잉")
                 sideEffectSubject.send(.navigateToMainView)
             }
         }

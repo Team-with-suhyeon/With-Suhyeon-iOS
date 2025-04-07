@@ -53,10 +53,6 @@ struct WithSuhyeon_iOSApp: App {
                                 .navigationBarBackButtonHidden(true)
                         case .mypage: MyPageView()
                                 .navigationBarBackButtonHidden(true)
-                        case .serverWithdraw: ServerWithdraw()
-                                .navigationBarBackButtonHidden(true)
-                        case .setting: Setting()
-                                .navigationBarBackButtonHidden(true)
                         case .termsAndPolicies: TermsAndPolicies()
                                 .navigationBarBackButtonHidden(true)
                         }

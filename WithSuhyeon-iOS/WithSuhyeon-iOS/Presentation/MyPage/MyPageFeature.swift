@@ -21,7 +21,6 @@ class MyPageFeature: Feature {
         case tapLogout
         case tapWithdraw
         case enterScreen
-        case tapSetting
         case tapTermsAndPolicies
     }
     
@@ -30,8 +29,6 @@ class MyPageFeature: Feature {
         case navigateToBlockingAccountManagement
         case navigateToSetInterest
         case navigateToInitialScreen
-        case navigateToWithdraw
-        case navigateToSetting
         case navigateToTermsAndPolicies
     }
     
@@ -70,24 +67,38 @@ class MyPageFeature: Feature {
         case .tapLogout:
             logout()
         case .tapWithdraw:
-            sideEffectSubject.send(.navigateToWithdraw)
+            withdraw()
         case .enterScreen:
             getMyPage()
-        case .tapSetting:
-            sideEffectSubject.send(.navigateToSetting)
-        case .tapTermsAndPolicies: 
+        case .tapTermsAndPolicies:
             sideEffectSubject.send(.navigateToTermsAndPolicies)
         }
     }
     
     private func logout() {
-        authRepository.clearTokens()
-        sideEffectSubject.send(.navigateToInitialScreen)
+        authRepository.logout { [weak self] result in
+            switch result {
+            case.success:
+                self?.sideEffectSubject.send(.navigateToInitialScreen)
+            case .failure(let error):
+                print("Logout Error: \(error)")
+                self?.authRepository.clearTokens()
+                self?.sideEffectSubject.send(.navigateToInitialScreen)
+            }
+        }
     }
     
     private func withdraw() {
-        authRepository.clearTokens()
-        sideEffectSubject.send(.navigateToInitialScreen)
+        authRepository.withdraw { [weak self] result in
+            switch result {
+            case.success:
+                self?.sideEffectSubject.send(.navigateToInitialScreen)
+            case .failure(let error):
+                print("Withdraw Error: \(error)")
+                self?.authRepository.clearTokens()
+                self?.sideEffectSubject.send(.navigateToInitialScreen)
+            }
+        }
     }
     
     private func getMyPage() {

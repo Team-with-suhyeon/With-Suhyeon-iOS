@@ -12,6 +12,8 @@ struct ChatRoomView: View {
     @EnvironmentObject var router: RouterRegistry
     @Environment(\.scenePhase) private var scenePhase
     @StateObject var feature : ChatRoomFeature
+    @State private var isAlertPresented: Bool = false
+    @State private var isBlockMode: Bool = true
     
     init(ownerChatRoomId: String, peerChatRoomId: String, ownerID: Int, peerID: Int, postID: Int, nickname: String, location: String, money: String, title: String, imageUrl: String) {
         self._feature = StateObject(wrappedValue: ChatRoomFeature(
@@ -34,8 +36,12 @@ struct ChatRoomView: View {
             WithSuhyeonTopNavigationBar(
                 title: feature.state.nickname,
                 leftIcon: .icArrowLeft24,
+                rightIcon: .icMenu24,
                 onTapLeft: {
                     feature.send(.tapBackButton)
+                },
+                onTapRight: {
+                    feature.send(.tapSeeMoreButton)
                 }
             )
             
@@ -174,6 +180,37 @@ struct ChatRoomView: View {
                 }
                 .padding(.horizontal, 16)
             }
+        }
+        .confirmationDialog("타이틀", isPresented: Binding(get: { feature.state.bottomSheetIsPresented }, set: { _,_ in feature.send(.tapBottomSheetCloseButton) })) {
+            
+//            Button("차단하기", role: .destructive) {
+//                isBlockMode = true
+//                isAlertPresented = true
+//            }
+            
+            Button("신고하기", role: .destructive) {
+                isBlockMode = false
+                isAlertPresented = true
+            }
+            
+            Button("닫기", role: .cancel) {}
+        }
+        .withSuhyeonAlert(isPresented: isAlertPresented, onTapBackground: {
+            isAlertPresented.toggle()
+        }) {
+            WithSuhyeonAlert(
+                title: isBlockMode ? "상대방을\n정말 차단하시겠습니까?" : "상대방을\n정말 신고하시겠습니까?",
+                subTitle: isBlockMode ? "" : "",
+                primaryButtonText: isBlockMode ? "차단하기" : "신고하기",
+                secondaryButtonText: "취소하기",
+                primaryButtonAction: {
+                    isAlertPresented.toggle()
+                },
+                secondaryButtonAction: {
+                    isAlertPresented.toggle()
+                },
+                isPrimayColorRed: true
+            )
         }
         .onAppear {
             feature.joinChatRoom()

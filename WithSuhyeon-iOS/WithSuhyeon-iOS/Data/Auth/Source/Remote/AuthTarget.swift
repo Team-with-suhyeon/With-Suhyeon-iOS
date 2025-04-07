@@ -16,6 +16,8 @@ enum AuthTarget {
     case getUserId
     case sendAuthCode(flow: String, phoneNumber: String)
     case validateAuthCode(flow: String, authCode: String, phoneNumber: String)
+    case logout
+    case withdraw
 }
 
 protocol AuthAPIProtocol {
@@ -24,6 +26,8 @@ protocol AuthAPIProtocol {
     func getUserId() -> AnyPublisher<UserIDResponseDTO, NetworkError>
     func sendAuthCode(flow: String, phoneNumber: String) -> AnyPublisher<Bool, NetworkError>
     func validateAuthCode(flow: String, authCode: String, phoneNumber: String) -> AnyPublisher<Bool, NetworkError>
+    func logout() -> AnyPublisher<Bool, NetworkError>
+    func withdraw() -> AnyPublisher<Bool, NetworkError>
 }
 
 extension AuthTarget: TargetType {
@@ -34,10 +38,12 @@ extension AuthTarget: TargetType {
     
     var method: Alamofire.HTTPMethod {
         switch self {
-        case .signUp, .login, .sendAuthCode, .validateAuthCode:
+        case .signUp, .login, .sendAuthCode, .validateAuthCode, .logout:
             return .post
         case .getUserId:
             return .get
+        case .withdraw:
+            return .delete
         }
     }
     
@@ -53,6 +59,10 @@ extension AuthTarget: TargetType {
             return "/api/v1/message/send"
         case .validateAuthCode:
             return "/api/v1/message/verify"
+        case .logout:
+            return "/api/v1/auth/logout"
+        case .withdraw:
+            return "/api/v1/auth/withdraw"
         }
     }
     
@@ -68,7 +78,10 @@ extension AuthTarget: TargetType {
             return .bodyAndQuery(body: ["phoneNumber": phoneNumber], query: ["flow": flow])
         case .validateAuthCode(let flow, let authCode, let phoneNumber):
             return .bodyAndQuery(body: ["phoneNumber": phoneNumber, "verifyNumber" : authCode], query: ["flow": flow])
-
+        case .logout:
+            return .none
+        case .withdraw:
+            return .none
         }
     }
     

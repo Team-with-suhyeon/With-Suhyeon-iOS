@@ -200,7 +200,7 @@ struct ChatRoomView: View {
         }) {
             WithSuhyeonAlert(
                 title: isBlockMode ? "상대방을\n정말 차단하시겠습니까?" : "상대방을\n정말 신고하시겠습니까?",
-                subTitle: isBlockMode ? "여기에 뭐넣을거임" : "여기에 뭐넣을거임",
+                subTitle: isBlockMode ? "" : "",
                 primaryButtonText: isBlockMode ? "차단하기" : "신고하기",
                 secondaryButtonText: "취소하기",
                 primaryButtonAction: {

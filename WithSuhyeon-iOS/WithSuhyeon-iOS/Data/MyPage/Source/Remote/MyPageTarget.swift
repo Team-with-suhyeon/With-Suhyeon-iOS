@@ -34,7 +34,7 @@ extension MyPageTarget: TargetType {
         case .getUser, .getMyFindSuhyeonPosts, .getMyInterestRegion:
             return .get
         case .postMyInterestRegion:
-            return .post
+            return .patch
         }
     }
     

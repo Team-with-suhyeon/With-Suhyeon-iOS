@@ -29,7 +29,7 @@ struct SetInterest: View {
                 }
             )
             
-            WithSuhyeonButton(title: "완료", buttonState: feature.state.buttonEnabled, onTapButton: {})
+            WithSuhyeonButton(title: "완료", buttonState: .enabled, onTapButton: { feature.send(.submitLocation) })
                 .padding(.horizontal, 16)
             
         }

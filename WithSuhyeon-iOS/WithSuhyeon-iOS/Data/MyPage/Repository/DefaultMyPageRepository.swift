@@ -74,7 +74,7 @@ class DefaultMyPageRepository: MyPageRepository {
             .store(in: &subscriptions)
     }
     
-    func postMyInterestRegion(regionRequest: MyInterestRegionRequestDTO, completion: @escaping (Bool) -> Void) {
+    func postMyInterestRegion(region regionRequest: MyInterestRegionRequestDTO, completion: @escaping (Bool) -> Void) {
         myPageAPI.postMyInterestRegion(region: regionRequest)
             .sink { completionResult in
                 switch completionResult {

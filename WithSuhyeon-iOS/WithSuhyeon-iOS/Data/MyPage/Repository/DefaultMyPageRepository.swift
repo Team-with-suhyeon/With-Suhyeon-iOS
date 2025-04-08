@@ -55,4 +55,37 @@ class DefaultMyPageRepository: MyPageRepository {
             }
             .store(in: &subscriptions)
     }
+    
+    func getMyInterestRegion(completion: @escaping (MyInterestRegion) -> Void) {
+        myPageAPI.getMyInterestRegion()
+            .map { dto in
+                MyInterestRegion(region: dto.region)
+            }
+            .sink { completionResult in
+                switch completionResult {
+                case .finished:
+                    break
+                case .failure(let error):
+                    print(error)
+                }
+            } receiveValue: { interestRegion in
+                completion(interestRegion)
+            }
+            .store(in: &subscriptions)
+    }
+    
+    func postMyInterestRegion(regionRequest: MyInterestRegionRequestDTO, completion: @escaping (Bool) -> Void) {
+        myPageAPI.postMyInterestRegion(region: regionRequest)
+            .sink { completionResult in
+                switch completionResult {
+                case .finished:
+                    break
+                case .failure(let error):
+                    print(error)
+                }
+            } receiveValue: { success in
+                completion(success)
+            }
+            .store(in: &subscriptions)
+    }
 }

@@ -39,7 +39,9 @@ struct MyPageView : View {
                 )
                 
                 CustomerCenterSectionView(
-                    onTapFeedback: { },
+                    onTapFeedback: {
+                        feature.send(.tapFeedback)
+                    },
                     onTapTerms: {
                         feature.send(.tapTermsAndPolicies)
                     }
@@ -75,6 +77,8 @@ struct MyPageView : View {
                 router.navigateTab(to: .home)
             case .navigateToTermsAndPolicies:
                 router.navigate(to: .termsAndPolicies)
+            case .navigateToFeedback:
+                router.navigate(to: .feedback)
             }
         }
         .withSuhyeonAlert(isPresented: isLogoutPresented, onTapBackground: { isLogoutPresented.toggle() }){
@@ -150,7 +154,7 @@ struct ProfileSectionView: View {
                 .padding(.bottom, 8)
                 .foregroundColor(.gray100)
                 .frame(height: 1)
-        
+            
             
             HStack(spacing: 0) {
                 Text("내 게시물")

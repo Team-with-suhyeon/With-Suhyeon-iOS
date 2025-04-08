@@ -55,6 +55,8 @@ struct WithSuhyeon_iOSApp: App {
                                 .navigationBarBackButtonHidden(true)
                         case .termsAndPolicies: TermsAndPolicies()
                                 .navigationBarBackButtonHidden(true)
+                        case .feedback: Feedback()
+                                .navigationBarBackButtonHidden(true)
                         }
                     }
             }

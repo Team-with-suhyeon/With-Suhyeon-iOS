@@ -126,7 +126,7 @@ class FindSuhyeonFeature: Feature {
         var completeButtonState: WithSuhyeonButtonState = .disabled
         
         var moneyTextFieldState: WithSuhyeonTextFieldState = .editing
-        var moneyTextFieldErrorMessage: String = "99,999원까지 입력할 수 있어요"
+        var moneyTextFieldErrorMessage: String = "최대 00자까지 입력할 수 있어"
         
         var titleTextFieldState: WithSuhyeonTextFieldState = .editing
         var titleTextFieldErrorMessage: String = "최대 30자까지 입력할 수 있어"
@@ -409,10 +409,10 @@ class FindSuhyeonFeature: Feature {
             state.moneyTextFieldErrorMessage = "숫자만 입력해주세요"
             return
         }
-        guard Int(money) ?? 0 <= 99999 else {
+        guard Int(money) ?? 0 <= 100000 else {
             state.buttonState = .disabled
             state.moneyTextFieldState = .error
-            state.moneyTextFieldErrorMessage = "99,999원까지 입력할 수있어요"
+            state.moneyTextFieldErrorMessage = "100000원까지 입력할 수있어요"
             return
         }
         state.moneyTextFieldState = .editing

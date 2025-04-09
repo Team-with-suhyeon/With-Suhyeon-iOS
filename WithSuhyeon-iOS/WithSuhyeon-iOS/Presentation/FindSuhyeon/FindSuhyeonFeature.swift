@@ -19,7 +19,7 @@ enum FindSuhyeonAlertType {
         case .ageSelect: "나이대 선택"
         case .requestSelect: "요청사항 선택"
         case .locationSelect: "만날위치 선택"
-        case .dateSelect: "날짜와 시간을 선택해줘"
+        case .dateSelect: "날짜 및 시간 선택"
         }
     }
 }
@@ -38,11 +38,11 @@ enum FindShuhyeonViewType {
     
     var title: String {
         switch self {
-        case .genderSelect: "수현이의 성별을 선택해줘"
-        case .ageSelect: "수현이의 나이대를 선택해줘"
-        case .requestSelect: "요청사항을 선택해줘"
-        case .locationSelect: "수현이 만날 곳을 선택해줘"
-        case .dateSelect: "언제 만날지 선택해줘"
+        case .genderSelect: "수현이의 성별을 선택해주세요"
+        case .ageSelect: "수현이의 나이대를 선택해주세요"
+        case .requestSelect: "요청사항을 선택해주세요"
+        case .locationSelect: "수현이와 만날 곳을 선택해주세요"
+        case .dateSelect: "수현이와 언제 만날지 선택해주세요"
         }
     }
 }

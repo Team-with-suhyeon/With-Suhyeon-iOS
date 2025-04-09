@@ -129,9 +129,9 @@ class FindSuhyeonFeature: Feature {
         var moneyTextFieldErrorMessage: String = "최대 00자까지 입력할 수 있어"
         
         var titleTextFieldState: WithSuhyeonTextFieldState = .editing
-        var titleTextFieldErrorMessage: String = "최대 30자까지 입력할 수 있어"
+        var titleTextFieldErrorMessage: String = "최대 30자까지 입력할 수 있어요"
         var contentTextFieldState: WithSuhyeonTextFieldState = .editing
-        var contentTextFieldErrorMessage: String = "최대 200자까지 입력할 수 있어"
+        var contentTextFieldErrorMessage: String = "최대 200자까지 입력할 수 있어요"
         
         init() {
             let now = Date()

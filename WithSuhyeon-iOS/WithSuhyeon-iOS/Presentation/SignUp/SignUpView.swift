@@ -23,10 +23,22 @@ struct SignUpView: View {
             
             WithSuhyeonProgressBar(progress: signUpFeature.state.progress)
             
-            Text(signUpFeature.currentContent.title)
+            Group {
+              Text(signUpFeature.currentContent.title)
                 .font(.title02B)
                 .padding(.leading, 16)
-                .padding(.vertical, 20)
+                .padding(.top, 20)
+
+              if signUpFeature.currentContent == .activeAreaView {
+                Text("관심지역은 마이페이지에서 수정할 수 있어요")
+                  .foregroundColor(.gray600)
+                  .font(.caption01SB)
+                  .padding(.leading, 16)
+                  .padding(.top, 5)
+                  .padding(.bottom, 20)
+              }
+            }
+            .padding(.bottom, signUpFeature.currentContent == .activeAreaView ? 0 : 20)
             
             SignUpContent(selectedTab: signUpFeature.currentContent)
             

@@ -311,6 +311,9 @@ class FindSuhyeonFeature: Feature {
             state.dateTime.selectedHour = state.dateTime.tempHour
             state.dateTime.selectedMinute = state.dateTime.tempMinute
             state.dateTime.selectedAmPm = state.dateTime.tempAmPm
+            let selectedTime = "\(state.dateTime.selectedAmPm) \(String(format: "%02d", state.dateTime.selectedHour)):\(String(format: "%02d", state.dateTime.selectedMinute))"
+            state.selectedDate = "\(state.dates[state.dateTime.selectedDateIndex]) \(selectedTime)"
+            state.dateTime.buttonEnable = true
             state.isPresent = false
             
         case .progressToNext:

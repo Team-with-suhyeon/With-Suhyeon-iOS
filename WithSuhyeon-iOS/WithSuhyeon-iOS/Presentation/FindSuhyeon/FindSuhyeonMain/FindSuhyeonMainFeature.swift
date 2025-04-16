@@ -65,6 +65,7 @@ class FindSuhyeonMainFeature: Feature {
         case dismissBottomSheet
         case enterScreen
         case scrollChange(offset: CGFloat)
+        case pullToRefresh
     }
     
     enum SideEffect {
@@ -133,6 +134,8 @@ class FindSuhyeonMainFeature: Feature {
             getMain()
         case .scrollChange(offset: let offset):
             state.scrollOffset = offset
+        case .pullToRefresh:
+            getMain()
         }
     }
     

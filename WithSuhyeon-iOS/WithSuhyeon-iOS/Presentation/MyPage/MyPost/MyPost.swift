@@ -76,6 +76,7 @@ struct MyPost: View {
             }
         }
         .ignoresSafeArea(.keyboard, edges: .bottom)
+        .enableBackSwipe()
     }
 }
 

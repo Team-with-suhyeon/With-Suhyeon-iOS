@@ -43,6 +43,9 @@ struct GalleryView: View {
                         }
                         .id("top")
                     }
+                    .refreshable {
+                        galleryFeature.send(.enterScreen)
+                    }
                     .scrollBounceBehavior(.basedOnSize)
                     .onReceive(galleryFeature.sideEffectSubject) { sideEffect in
                         switch sideEffect {

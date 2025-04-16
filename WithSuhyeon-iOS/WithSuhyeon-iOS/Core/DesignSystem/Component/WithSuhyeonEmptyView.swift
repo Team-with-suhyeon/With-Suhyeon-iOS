@@ -20,7 +20,6 @@ struct WithSuhyeonEmptyView: View {
                     .padding(.top, 8)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.gray50)
         }
     }
 }

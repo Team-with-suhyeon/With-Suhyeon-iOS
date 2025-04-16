@@ -8,11 +8,23 @@
 import SwiftUI
 
 struct WithSuhyeonEmptyView: View {
+    let emptyMessage: String
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ZStack(alignment: .center) {
+            VStack(spacing: 0) {
+                Image(image: .imgEmptyState)
+                Text(emptyMessage)
+                    .font(.body03R)
+                    .foregroundColor(.gray400)
+                    .padding(.top, 8)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color.gray50)
+        }
     }
 }
 
 #Preview {
-    WithSuhyeonEmptyView()
+    WithSuhyeonEmptyView(emptyMessage: "메세지가 없습니다.")
 }

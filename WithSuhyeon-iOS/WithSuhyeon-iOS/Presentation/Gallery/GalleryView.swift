@@ -27,10 +27,18 @@ struct GalleryView: View {
                             galleryFeature.send(.scrollChange(offset: value))
                         }
                     ) {
-                        LazyVStack(spacing: 0) {
-                            
-                            ContentViewList(items: galleryFeature.state.galleryItems){ id in
-                                galleryFeature.send(.tapGalleryItem(id: id))
+                        LazyVStack {
+                            if galleryFeature.state.isLoading {
+                                ProgressView()
+                                    .padding()
+                            } else if galleryFeature.state.galleryItems.isEmpty {
+                                Spacer()
+                                WithSuhyeonEmptyView(emptyMessage: "게시글이 없습니다.")
+                                Spacer()
+                            } else {
+                                ContentViewList(items: galleryFeature.state.galleryItems) { id in
+                                    galleryFeature.send(.tapGalleryItem(id: id))
+                                }
                             }
                         }
                         .id("top")

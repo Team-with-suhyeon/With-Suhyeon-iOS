@@ -33,7 +33,13 @@ struct MyPageAPI: MyPageApiProtocol {
     
     func postMyInterestRegion(region: MyInterestRegionRequestDTO) -> AnyPublisher<Bool, NetworkError> {
         let target = MyPageTarget.postMyInterestRegion(region: region)
+
+        return client.request(target: target)
+    }
+    
+    func getMyGalleryPosts() -> AnyPublisher<MyGalleryPostsResponseDTO, NetworkError> {
+        let target = MyPageTarget.getMyGalleryPosts
         
-        return client.request(Bool.self, target: target)
+        return client.request(MyGalleryPostsResponseDTO.self, target: target)
     }
 }

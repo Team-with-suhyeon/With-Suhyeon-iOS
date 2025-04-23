@@ -15,6 +15,7 @@ enum MyPageTarget {
     case getMyFindSuhyeonPosts
     case getMyInterestRegion
     case postMyInterestRegion(region: MyInterestRegionRequestDTO)
+    case getMyGalleryPosts
 }
 
 protocol MyPageApiProtocol {
@@ -22,6 +23,7 @@ protocol MyPageApiProtocol {
     func getMyFindSuhyeonPosts() -> AnyPublisher<MyFindSuhyeonPostsResponseDTO, NetworkError>
     func getMyInterestRegion () -> AnyPublisher<MyInterestRegionResponseDTO, NetworkError>
     func postMyInterestRegion(region: MyInterestRegionRequestDTO) -> AnyPublisher<Bool, NetworkError>
+    func getMyGalleryPosts() -> AnyPublisher<MyGalleryPostsResponseDTO, NetworkError>
 }
 
 extension MyPageTarget: TargetType {
@@ -31,7 +33,7 @@ extension MyPageTarget: TargetType {
     
     var method: Alamofire.HTTPMethod {
         switch self {
-        case .getUser, .getMyFindSuhyeonPosts, .getMyInterestRegion:
+        case .getUser, .getMyFindSuhyeonPosts, .getMyInterestRegion, .getMyGalleryPosts:
             return .get
         case .postMyInterestRegion:
             return .patch
@@ -48,12 +50,14 @@ extension MyPageTarget: TargetType {
             return "/api/v1/mypage/preference"
         case .postMyInterestRegion:
             return "/api/v1/mypage/preference"
+        case .getMyGalleryPosts:
+            return "/api/v1/mypage/galleries"
         }
     }
     
     var parameters: RequestParameters {
         switch self {
-        case .getUser, .getMyFindSuhyeonPosts, .getMyInterestRegion:
+        case .getUser, .getMyFindSuhyeonPosts, .getMyInterestRegion, .getMyGalleryPosts:
             return .none
         case .postMyInterestRegion(region: let region):
             return .body(region)

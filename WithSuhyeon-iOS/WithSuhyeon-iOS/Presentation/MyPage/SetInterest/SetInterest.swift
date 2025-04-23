@@ -36,6 +36,12 @@ struct SetInterest: View {
         .onAppear {
             feature.send(.enterScreen)
         }
+        .onReceive(feature.sideEffectSubject) { effect in
+            switch effect {
+            case .navigateToMyPage:
+                router.popBack()
+            }
+        }
         .enableBackSwipe()
     }
     

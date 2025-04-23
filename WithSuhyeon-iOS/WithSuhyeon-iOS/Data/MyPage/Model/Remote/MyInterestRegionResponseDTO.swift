@@ -10,3 +10,10 @@ import Foundation
 public struct MyInterestRegionResponseDTO: Codable {
     let region: String
 }
+
+
+extension MyInterestRegionResponseDTO {
+    var entity: MyInterestRegion {
+        MyInterestRegion(region: region)
+    }
+}

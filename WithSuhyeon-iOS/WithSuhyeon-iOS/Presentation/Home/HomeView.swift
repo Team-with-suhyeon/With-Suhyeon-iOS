@@ -123,7 +123,7 @@ struct HomeView : View {
                                     .frame(height: 4)
                                 
                                 HStack {
-                                    VStack(alignment: .leading, spacing: 0) {
+                                    VStack(alignment: .leading, spacing: 2) {
                                         HStack(spacing: 0) {
                                             Text("내 주변")
                                                 .font(.title03B)
@@ -157,18 +157,23 @@ struct HomeView : View {
                                 .padding(.horizontal, 16)
                                 
                                 if feature.state.findSuhyeons.isEmpty {
-                                    WithSuhyeonEmptyView(emptyMessage: "아직 게시글이 없어요")
-                                        .frame(height: 235)
-                                        .background(
-                                            RoundedRectangle(cornerRadius: 34)
-                                                .fill(Color.white)
-                                        )
-                                        .background(
-                                            RoundedRectangle(cornerRadius: 34)
-                                                .stroke(Color.gray100, lineWidth: 1)
-                                        )
-                                        .padding(.horizontal, 16)
-                                        .padding(.bottom, 16)
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 34)
+                                            .fill(Color.white)
+                                        
+                                        RoundedRectangle(cornerRadius: 34)
+                                            .stroke(Color.gray100, lineWidth: 1)
+                                        
+                                        VStack {
+                                            Spacer()
+                                            WithSuhyeonEmptyView(emptyMessage: "아직 게시글이 없어요")
+                                                .padding(.bottom, 27)
+                                        }
+                                    }
+                                    .frame(height: 235)
+                                    .padding(.horizontal, 16)
+                                    .padding(.bottom, 16)
+                                    
                                 } else {
                                     VStack(spacing: 12) {
                                         ForEach(feature.state.findSuhyeons.indices, id: \.self) { index in
@@ -208,7 +213,9 @@ struct HomeView : View {
                     router.navigateTab(to: .gallery)
                 }
             }
-            
+            .refreshable{
+                feature.send(.pullToRefresh)
+            }
         }
     }
     

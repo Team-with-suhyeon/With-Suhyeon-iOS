@@ -36,6 +36,7 @@ struct SetInterest: View {
         .onAppear {
             feature.send(.enterScreen)
         }
+        .enableBackSwipe()
     }
     
 }

@@ -153,6 +153,7 @@ struct FindSuhyeonDetailView: View {
                 router.navigateTab(to: .chat)
             }
         }
+        .enableBackSwipe()
     }
 }
 

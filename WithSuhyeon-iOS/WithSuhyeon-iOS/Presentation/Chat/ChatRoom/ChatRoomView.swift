@@ -223,6 +223,7 @@ struct ChatRoomView: View {
                 feature.send(.appBackground)
             }
         }
+        .enableBackSwipe()
     }
 }
 

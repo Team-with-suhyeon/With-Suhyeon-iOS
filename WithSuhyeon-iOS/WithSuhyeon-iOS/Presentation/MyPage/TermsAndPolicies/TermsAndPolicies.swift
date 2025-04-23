@@ -78,8 +78,8 @@ struct TermsAndPolicies: View {
             
             Spacer()
         }
+        .enableBackSwipe()
     }
-    
 }
 
 #Preview {

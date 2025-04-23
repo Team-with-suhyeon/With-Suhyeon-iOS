@@ -30,11 +30,10 @@ struct GalleryView: View {
                         LazyVStack {
                             if galleryFeature.state.isLoading {
                                 ProgressView()
-                                    .padding()
+                                    .padding(.top, 250)
                             } else if galleryFeature.state.galleryItems.isEmpty {
-                                Spacer()
-                                WithSuhyeonEmptyView(emptyMessage: "게시글이 없습니다.")
-                                Spacer()
+                                WithSuhyeonEmptyView(emptyMessage: "게시글이 없어요")
+                                    .padding(.top, 140)
                             } else {
                                 ContentViewList(items: galleryFeature.state.galleryItems) { id in
                                     galleryFeature.send(.tapGalleryItem(id: id))

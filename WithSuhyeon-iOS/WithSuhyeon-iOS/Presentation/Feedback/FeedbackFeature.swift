@@ -11,7 +11,7 @@ import Combine
 class FeedbackFeature: Feature {
     struct State {
         var isLoading: Bool = true
-        var request: URLRequest? = URLRequest(url: URL(string: "https://naver.com")!)
+        var request: URLRequest? = URLRequest(url: URL(string: "https://forms.gle/5cVrV5QY2mHZq9VJ8")!)
     }
     
     enum Intent {

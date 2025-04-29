@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "ic_home_filled_24.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

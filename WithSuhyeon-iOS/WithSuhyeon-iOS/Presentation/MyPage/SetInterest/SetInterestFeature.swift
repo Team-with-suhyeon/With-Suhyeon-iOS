@@ -25,6 +25,7 @@ class SetInterestFeature: Feature {
     }
     
     enum SideEffect {
+        case navigateToMyPage
     }
     
     @Published private(set) var state = State()
@@ -123,11 +124,12 @@ class SetInterestFeature: Feature {
         
         let requestDTO = MyInterestRegionRequestDTO(region: regionString)
         
-        myPageRepository.postMyInterestRegion(region: requestDTO) { success in
+        myPageRepository.postMyInterestRegion(region: requestDTO) { [weak self] success in
+            guard let self = self else { return }
             if success {
-                print("✅ 성공")
+                self.sideEffectSubject.send(.navigateToMyPage)
             } else {
-                print("❌ 실패")
+               print("실패")
             }
         }
     }

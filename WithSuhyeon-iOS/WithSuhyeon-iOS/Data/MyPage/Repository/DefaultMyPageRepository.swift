@@ -33,18 +33,25 @@ class DefaultMyPageRepository: MyPageRepository {
     
     func getMyFindSuhyeonPosts(completion: @escaping ([MyFindSuhyeonPost]) -> Void) {
         myPageAPI.getMyFindSuhyeonPosts()
-            .map { response in
-                response.posts.map { dto in
-                    MyFindSuhyeonPost(
-                        title: dto.title,
-                        region: dto.region,
-                        date: dto.date,
-                        matching: dto.matching
-                    )
+            .map { $0.userPosts.map { $0.entity } }
+            .sink { completion in
+                switch completion {
+                case .finished:
+                    break
+                case .failure(let error):
+                    print(error)
                 }
+            } receiveValue: { posts in
+                completion(posts)
             }
-            .sink { completionResult in
-                switch completionResult {
+            .store(in: &subscriptions)
+    }
+    
+    func getMyGalleryPosts(completion: @escaping ([MyGalleryPost]) -> Void) {
+        myPageAPI.getMyGalleryPosts()
+            .map { $0.userGalleries.map { $0.entity } }
+            .sink { completion in
+                switch completion {
                 case .finished:
                     break
                 case .failure(let error):
@@ -58,26 +65,24 @@ class DefaultMyPageRepository: MyPageRepository {
     
     func getMyInterestRegion(completion: @escaping (MyInterestRegion) -> Void) {
         myPageAPI.getMyInterestRegion()
-            .map { dto in
-                MyInterestRegion(region: dto.region)
-            }
-            .sink { completionResult in
-                switch completionResult {
+            .map { $0.entity }
+            .sink { completion in
+                switch completion {
                 case .finished:
                     break
                 case .failure(let error):
                     print(error)
                 }
-            } receiveValue: { interestRegion in
-                completion(interestRegion)
+            } receiveValue: { region in
+                completion(region)
             }
             .store(in: &subscriptions)
     }
     
     func postMyInterestRegion(region regionRequest: MyInterestRegionRequestDTO, completion: @escaping (Bool) -> Void) {
         myPageAPI.postMyInterestRegion(region: regionRequest)
-            .sink { completionResult in
-                switch completionResult {
+            .sink { completion in
+                switch completion {
                 case .finished:
                     break
                 case .failure(let error):

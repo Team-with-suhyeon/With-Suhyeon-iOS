@@ -11,15 +11,22 @@ import Combine
 class MyPostFeature: Feature {
     struct State {
         var selectedTabIndex: Int = 0
-        
+        var myPosts: [MyFindSuhyeonPost] = []
+        var myGalleryPosts: [MyGalleryPost] = []
+        var isLoading: Bool = false
+        var errorMessage: String?
     }
     
     enum Intent {
+        case enterScreen
         case selectedTab(index: Int)
+        case tapMyPost(postId: Int)
+        case tapMyGalleryPost(galleryId: Int)
     }
     
     enum SideEffect {
-        
+        case navigateToFindSuhyeonDetail(postId: Int)
+        case navigateToGalleryDetail(galleryId: Int)
     }
     
     @Inject private var myPageRepository: MyPageRepository
@@ -45,9 +52,38 @@ class MyPostFeature: Feature {
     
     func handleIntent(_ intent: Intent) {
         switch intent {
-            
+        case .enterScreen:
+            getCurrentTabContent()
         case .selectedTab(index: let index):
             state.selectedTabIndex = index
+            getCurrentTabContent()
+        case .tapMyPost(let postId):
+            sideEffectSubject.send(.navigateToFindSuhyeonDetail(postId: postId))
+        case .tapMyGalleryPost(let galleryId):
+            sideEffectSubject.send(.navigateToGalleryDetail(galleryId: galleryId))
+        }
+    }
+    
+    private func getCurrentTabContent() {
+        state.isLoading = true
+        state.errorMessage = nil
+        
+        if state.selectedTabIndex == 0 {
+            myPageRepository.getMyFindSuhyeonPosts { [weak self] posts in
+                DispatchQueue.main.async {
+                    guard let self = self else { return }
+                    self.state.myPosts = posts
+                    self.state.isLoading = false
+                }
+            }
+        } else {
+            myPageRepository.getMyGalleryPosts { [weak self] posts in
+                DispatchQueue.main.async {
+                    guard let self = self else { return }
+                    self.state.myGalleryPosts = posts
+                    self.state.isLoading = false
+                }
+            }
         }
     }
 }

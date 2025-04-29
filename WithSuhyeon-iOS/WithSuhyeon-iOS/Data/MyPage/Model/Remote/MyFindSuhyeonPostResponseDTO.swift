@@ -8,7 +8,7 @@
 import Foundation
 
 struct MyFindSuhyeonPostsResponseDTO: Codable {
-    let posts: [MyfindSuhyeonPostDTO]
+    let userPosts: [MyfindSuhyeonPostDTO]
 }
 
 struct MyfindSuhyeonPostDTO: Codable {
@@ -18,4 +18,10 @@ struct MyfindSuhyeonPostDTO: Codable {
     let date: String
     let createdDate: String
     let matching: Bool
+}
+
+extension MyfindSuhyeonPostDTO {
+    var entity: MyFindSuhyeonPost {
+        MyFindSuhyeonPost(id: postId, title: title, region: region, date: date, matching: matching, createdDate: createdDate)
+    }
 }

@@ -22,7 +22,7 @@ class GalleryUploadFeature: Feature {
         var commentTextFieldState: WithSuhyeonTextFieldState = .editing
         var title: String = ""
         var comment: String = ""
-        var titleErrorMessage = "필수로 입력해주세요"
+        var titleErrorMessage = "제목을 입력해주세요"
         var commentErrorMessage = "필수로 입력해주세요"
         var categories: [Category] = []
         var selectedCategoryIndex: Int? = nil
@@ -108,7 +108,7 @@ class GalleryUploadFeature: Feature {
             }
             if(state.title.isEmpty) {
                 state.titleTextFieldState = .error
-                state.titleErrorMessage = "필수로 입력해주세요"
+                state.titleErrorMessage = "제목을 입력해주세요"
                 break
             }
             if(state.comment.isEmpty) {

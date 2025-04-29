@@ -1,41 +1,25 @@
 //
-//  Feedback.swift
+//  WithSuhyeonWebView.swift
 //  WithSuhyeon-iOS
 //
-//  Created by 김예지 on 4/8/25.
+//  Created by 김예지 on 4/23/25.
 //
 
 import SwiftUI
 import WebKit
 
-struct Feedback: View {
-    @EnvironmentObject var router: RouterRegistry
-    @StateObject var feature = FeedbackFeature()
-    
-    var body: some View {
-        VStack(spacing: 0) {
-            WithSuhyeonTopNavigationBar(title: "피드백 하기", onTapLeft: { router.popBack() })
-            
-            ZStack {
-                WebView(
-                    request: feature.state.request,
-                    onStartLoading: { feature.send(.startLoading) },
-                    onFinishLoading: { feature.send(.finishLoading) }
-                )
-                
-                if feature.state.isLoading {
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: .gray))
-                }
-            }
-        }
-    }
-}
-
-struct WebView: UIViewRepresentable {
+struct WithSuhyeonWebView: UIViewRepresentable {
     let request: URLRequest?
     var onStartLoading: () -> Void
     var onFinishLoading: () -> Void
+    
+    public init(request: URLRequest?,
+                onStartLoading: @escaping () -> Void = {},
+                onFinishLoading: @escaping () -> Void = {}) {
+        self.request = request
+        self.onStartLoading = onStartLoading
+        self.onFinishLoading = onFinishLoading
+    }
     
     func makeCoordinator() -> Coordinator {
         Coordinator(onStartLoading: onStartLoading, onFinishLoading: onFinishLoading)
@@ -79,8 +63,3 @@ struct WebView: UIViewRepresentable {
         }
     }
 }
-
-#Preview {
-    Feedback()
-}
-

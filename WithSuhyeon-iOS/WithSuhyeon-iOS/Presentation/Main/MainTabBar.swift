@@ -49,9 +49,9 @@ struct MainTabBar : View {
                         VStack{
                             TabItem(
                                 title: tab.title,
-                                icon: tab.icon,
-                                titleColor: tab == router.selectedTab ? Color.primary700 : Color.gray800,
-                                iconColor: tab == router.selectedTab ? Color.primary500 : Color.black)
+                                icon: tab == router.selectedTab ? tab.selectedIcon : tab.icon,
+                                titleColor: tab == router.selectedTab ? Color.primary700 : Color.gray800
+                            )
                         }
                         .onTapGesture {
                             router.navigateTab(to: tab)

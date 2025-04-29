@@ -186,6 +186,9 @@ struct FindSuhyeonMainView: View {
             }
             .padding(.horizontal, 16)
         }
+        .refreshable {
+            feature.send(.pullToRefresh)
+        }
     }
     
     private func postBadgeView() -> some View {

@@ -122,6 +122,7 @@ struct GalleryDetailView : View {
                 router.popBack()
             }
         }.navigationBarBackButtonHidden(true)
+            .enableBackSwipe()
     }
 }
 

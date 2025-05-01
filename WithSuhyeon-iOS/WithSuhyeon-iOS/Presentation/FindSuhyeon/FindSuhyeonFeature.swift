@@ -19,7 +19,7 @@ enum FindSuhyeonAlertType {
         case .ageSelect: "나이대 선택"
         case .requestSelect: "요청사항 선택"
         case .locationSelect: "만날위치 선택"
-        case .dateSelect: "날짜 및 시간 선택"
+        case .dateSelect: "날짜 선택"
         }
     }
 }
@@ -85,16 +85,9 @@ class FindSuhyeonFeature: Feature {
     
     struct DateTimeState {
         var selectedDateIndex: Int
-        var selectedHour: Int
-        var selectedMinute: Int
-        var selectedAmPm: String
         var buttonEnable: Bool = true
         var dropdownState: DropdownState = .defaultState
-        
         var tempDateIndex: Int
-        var tempHour: Int
-        var tempMinute: Int
-        var tempAmPm: String
     }
     
     struct State {
@@ -136,31 +129,16 @@ class FindSuhyeonFeature: Feature {
         init() {
             let now = Date()
             let calendar = Calendar.current
-            let currentHour = calendar.component(.hour, from: now)
-            let currentMinute = calendar.component(.minute, from: now)
-            
-            let roundedMinute = ((currentMinute + 4) / 5) * 5
-            let finalMinute = roundedMinute >= 60 ? 0 : roundedMinute
-            
-            let isPM = currentHour >= 12
-            let twelveHourFormat = currentHour % 12 == 0 ? 12 : currentHour % 12
-            let period = isPM ? "오후" : "오전"
             
             let formatter = DateFormatter()
-            formatter.dateFormat = "M월 d일 E"
+            formatter.dateFormat = "M월 d일 (E)"
             formatter.locale = Locale(identifier: "ko_KR")
             let todayString = formatter.string(from: now)
             let todayIndex = dates.firstIndex(of: todayString) ?? 0
             
             self.dateTime = DateTimeState(
                 selectedDateIndex: todayIndex,
-                selectedHour: twelveHourFormat,
-                selectedMinute: finalMinute,
-                selectedAmPm: period,
-                tempDateIndex: todayIndex,
-                tempHour: twelveHourFormat,
-                tempMinute: finalMinute,
-                tempAmPm: period
+                tempDateIndex: todayIndex
             )
         }
     }
@@ -174,7 +152,7 @@ class FindSuhyeonFeature: Feature {
         case selectAgeRange(String)
         case selectRequest(String)
         case selectLocation(main: Int, sub: Int)
-        case selectDateTime(dateIndex: Int, hour: Int, minute: Int, amPm: String)
+        case selectDateTime(dateIndex: Int)
         case confirmDateTimeSelection
         case progressToNext
         case dismissBottomSheet
@@ -233,7 +211,7 @@ class FindSuhyeonFeature: Feature {
         }
     }
     
-    @Published private(set) var state = State()
+    @Published var state = State()
     private var cancellables = Set<AnyCancellable>()
     
     private let intentSubject = PassthroughSubject<Intent, Never>()
@@ -297,20 +275,13 @@ class FindSuhyeonFeature: Feature {
             state.selectedLocation = state.location.tempSelectedLocation
             state.location.buttonEnable = true
             
-        case .selectDateTime(let dateIndex, let hour, let minute, let amPm):
+        case .selectDateTime(let dateIndex):
             state.dateTime.tempDateIndex = dateIndex
-            state.dateTime.tempHour = hour
-            state.dateTime.tempMinute = minute
-            state.dateTime.tempAmPm = amPm
-            let selectedTime = "\(amPm) \(String(format: "%02d", hour)):\(String(format: "%02d", minute))"
-            state.selectedDate = "\(state.dates[dateIndex])" + " \(selectedTime)"
+            state.selectedDate = state.dates[dateIndex]
             state.dateTime.buttonEnable = true
             
         case .confirmDateTimeSelection:
             state.dateTime.selectedDateIndex = state.dateTime.tempDateIndex
-            state.dateTime.selectedHour = state.dateTime.tempHour
-            state.dateTime.selectedMinute = state.dateTime.tempMinute
-            state.dateTime.selectedAmPm = state.dateTime.tempAmPm
             state.isPresent = false
             
         case .progressToNext:

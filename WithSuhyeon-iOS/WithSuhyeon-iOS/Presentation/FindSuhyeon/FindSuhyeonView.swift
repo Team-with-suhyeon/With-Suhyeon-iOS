@@ -367,8 +367,7 @@ struct FindSuhyeonView: View {
                 }
             ) {
                 let selectedDate = dates[feature.state.dateTime.selectedDateIndex]
-                let selectedTime = "\(feature.state.dateTime.selectedAmPm) \(String(format: "%02d", feature.state.dateTime.selectedHour)):\(String(format: "%02d", feature.state.dateTime.selectedMinute))"
-                Text("\(selectedDate) \(selectedTime)")
+                Text("\(selectedDate)")
                     .font(.body03SB)
                     .foregroundColor(.gray950)
             }
@@ -466,44 +465,12 @@ struct FindSuhyeonView: View {
     
     private func dateTimeModalView() -> some View {
         CustomDatePicker(
-            selectedDateIndex: feature.state.dateTime.tempDateIndex,
-            selectedHour: feature.state.dateTime.tempHour,
-            selectedMinute: feature.state.dateTime.tempMinute,
-            selectedAmPm: feature.state.dateTime.tempAmPm,
+            selectedDateIndex: $feature.state.dateTime.tempDateIndex,
             dates: dates,
-            hours: hours,
-            minutes: minutes,
-            amPm: amPm,
             onDateChange: { index in
+                print("선택된 인덱스: \(index)")
                 feature.send(.selectDateTime(
-                    dateIndex: index,
-                    hour: feature.state.dateTime.tempHour,
-                    minute: feature.state.dateTime.tempMinute,
-                    amPm: feature.state.dateTime.tempAmPm
-                ))
-            },
-            onHourChange: { hour in
-                feature.send(.selectDateTime(
-                    dateIndex: feature.state.dateTime.tempDateIndex,
-                    hour: hour,
-                    minute: feature.state.dateTime.tempMinute,
-                    amPm: feature.state.dateTime.tempAmPm
-                ))
-            },
-            onMinuteChange: { minute in
-                feature.send(.selectDateTime(
-                    dateIndex: feature.state.dateTime.tempDateIndex,
-                    hour: feature.state.dateTime.tempHour,
-                    minute: minute,
-                    amPm: feature.state.dateTime.tempAmPm
-                ))
-            },
-            onAmPmChange: { amPm in
-                feature.send(.selectDateTime(
-                    dateIndex: feature.state.dateTime.tempDateIndex,
-                    hour: feature.state.dateTime.tempHour,
-                    minute: feature.state.dateTime.tempMinute,
-                    amPm: amPm
+                    dateIndex: index
                 ))
             }
         )
@@ -511,7 +478,7 @@ struct FindSuhyeonView: View {
     
     static func generateDatesForYear() -> [String] {
         let formatter = DateFormatter()
-        formatter.dateFormat = "M월 d일 E"
+        formatter.dateFormat = "M월 d일 (E)"
         formatter.locale = Locale(identifier: "ko_KR")
         let calendar = Calendar.current
         

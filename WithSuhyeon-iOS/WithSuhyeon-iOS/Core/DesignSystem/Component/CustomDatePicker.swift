@@ -7,7 +7,8 @@
 import SwiftUI
 
 struct CustomDatePicker: View {
-    let selectedDateIndex: Int
+    @Binding var selectedDateIndex: Int
+    
     let dates: [String]
     let onDateChange: (Int) -> Void
     
@@ -25,7 +26,7 @@ struct CustomDatePicker: View {
                     .foregroundColor(.black)
                     .padding(.leading, 8)
                     .padding(.vertical, 10)
-                                
+                
                 Button(action: {
                     currentMonth = calendar.date(byAdding: .month, value: -1, to: currentMonth)!
                 }) {
@@ -33,7 +34,7 @@ struct CustomDatePicker: View {
                 }
                 .padding(.all, 16)
                 .disabled(isPreviousMonthDisabled)
-                                
+                
                 Button(action: {
                     currentMonth = calendar.date(byAdding: .month, value: 1, to: currentMonth)!
                 }) {
@@ -124,7 +125,8 @@ struct CustomDatePicker: View {
                         .foregroundColor(indexInList == selectedDateIndex ? .white : (isTodayOrLater ? .gray700 : .gray300))
                         .background(
                             Circle()
-                                .fill(indexInList == selectedDateIndex ? Color.blue : Color.clear)
+                                .fill(indexInList == selectedDateIndex ? .primary500 : Color.clear)
+                                .frame(width: 40, height: 40)
                         )
                 }
                 .disabled(!isTodayOrLater)
@@ -149,10 +151,13 @@ extension Date {
 
 struct CustomDatePicker_Previews: PreviewProvider {
     static var previews: some View {
+        @State var selectedIndex: Int = 0
         CustomDatePicker(
-            selectedDateIndex: 0,
+            selectedDateIndex: $selectedIndex,
             dates: generatePreviewDates(),
-            onDateChange: { _ in }
+            onDateChange: { index in
+                print("선택된 인덱스: \(index)")
+            }
         )
         .padding()
         .previewLayout(.sizeThatFits)

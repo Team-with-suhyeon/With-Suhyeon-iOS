@@ -386,7 +386,7 @@ struct FindSuhyeonView: View {
                     placeholder: "금액 입력하기",
                     state: feature.state.moneyTextFieldState,
                     keyboardType: .decimalPad,
-                    maxLength: 0,
+                    maxLength: 7,
                     countable: false,
                     hasButton: false,
                     buttonText: "",
@@ -400,6 +400,7 @@ struct FindSuhyeonView: View {
                     onFocusChanged: { focus in
                         feature.send(.focusOnTextField(focus))
                     },
+                    isUnderMaxLength: true,
                     isNumber: true
                 )
                 .padding(.horizontal, 16)

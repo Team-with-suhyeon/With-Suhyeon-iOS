@@ -383,7 +383,7 @@ class FindSuhyeonFeature: Feature {
         guard Int(money) ?? 0 <= 100000 else {
             state.buttonState = .disabled
             state.moneyTextFieldState = .error
-            state.moneyTextFieldErrorMessage = "100000원까지 입력할 수있어요"
+            state.moneyTextFieldErrorMessage = "100,000원까지 입력할 수있어요"
             return
         }
         state.moneyTextFieldState = .editing

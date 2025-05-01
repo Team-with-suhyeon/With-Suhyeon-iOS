@@ -16,15 +16,16 @@ class SetInterestFeature: Feature {
         var isLocationSelected: Bool {
             return subLocationIndex != nil
         }
-        var buttonEnabled: WithSuhyeonButtonState = .disabled
     }
     
     enum Intent {
         case enterScreen
         case updateLocation(Int, Int)
+        case submitLocation
     }
     
     enum SideEffect {
+        case navigateToMyPage
     }
     
     @Published private(set) var state = State()
@@ -34,6 +35,7 @@ class SetInterestFeature: Feature {
     let sideEffectSubject = PassthroughSubject<SideEffect, Never>()
     
     @Inject var getRegionsUseCase: GetRegionsUseCase
+    @Inject var myPageRepository: MyPageRepository
     
     init() {
         bindIntents()
@@ -55,13 +57,44 @@ class SetInterestFeature: Feature {
             getRegions()
         case .updateLocation(let mainLocationIndex, let subLocationIndex):
             updateLocation(mainLocationIndex, subLocationIndex)
+        case .submitLocation:
+            submitLocation()
         }
     }
     
     private func getRegions() {
         getRegionsUseCase.execute { [weak self] result in
-            self?.state.regions = result
+            guard let self = self else { return }
+            self.state.regions = result
+            self.getMyInterestRegion()
         }
+    }
+    
+    private func getMyInterestRegion() {
+        myPageRepository.getMyInterestRegion { [weak self] (interestRegion: MyInterestRegion) in
+            guard let self = self else { return }
+            if let indexPair = self.findIndex(for: interestRegion.region) {
+                self.state.mainLocationIndex = indexPair.mainIndex
+                self.state.subLocationIndex = indexPair.subIndex
+            } else {
+                if let first = self.state.regions.first, !first.subLocation.isEmpty {
+                    self.state.mainLocationIndex = 0
+                    self.state.subLocationIndex = 0
+                }
+            }
+        }
+    }
+    
+    private func findIndex(for regionStr: String) -> (mainIndex: Int, subIndex: Int)? {
+        for (mainIndex, region) in state.regions.enumerated() {
+            if region.location == regionStr {
+                return (mainIndex, 0)
+            }
+            if let subIndex = region.subLocation.firstIndex(where: { $0 == regionStr }) {
+                return (mainIndex, subIndex)
+            }
+        }
+        return nil
     }
     
     func updateLocation(_ mainIndex: Int, _ subIndex: Int) {
@@ -69,8 +102,35 @@ class SetInterestFeature: Feature {
         
         if mainIndex == 0 {
             state.subLocationIndex = 0
-        } else{
+        } else {
             state.subLocationIndex = subIndex
+        }
+    }
+    
+    func submitLocation() {
+        guard state.mainLocationIndex != -1,
+              state.regions.indices.contains(state.mainLocationIndex),
+              let subIndex = state.subLocationIndex else {
+            return
+        }
+        
+        let selectedRegion = state.regions[state.mainLocationIndex]
+        let regionString: String
+        if selectedRegion.subLocation.indices.contains(subIndex) {
+            regionString = selectedRegion.subLocation[subIndex]
+        } else {
+            regionString = selectedRegion.location
+        }
+        
+        let requestDTO = MyInterestRegionRequestDTO(region: regionString)
+        
+        myPageRepository.postMyInterestRegion(region: requestDTO) { [weak self] success in
+            guard let self = self else { return }
+            if success {
+                self.sideEffectSubject.send(.navigateToMyPage)
+            } else {
+               print("실패")
+            }
         }
     }
 }

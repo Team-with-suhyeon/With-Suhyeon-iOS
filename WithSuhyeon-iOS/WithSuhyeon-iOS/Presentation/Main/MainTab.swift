@@ -13,7 +13,7 @@ public enum MainTab: CaseIterable {
     case gallery
     case chat
     case myPage
-
+    
     var title: String {
         switch self {
         case .home: return "홈"
@@ -23,14 +23,24 @@ public enum MainTab: CaseIterable {
         case .myPage: return "MY"
         }
     }
-
+    
     var icon: WithSuhyeonIcon {
         switch self {
         case .home: return .icHome24
         case .findSuhyeon: return .icFind24
         case .gallery: return .icGallery24
-        case .chat: return .icMessage24
+        case .chat: return .icChat24
         case .myPage: return .icMypage24
+        }
+    }
+    
+    var selectedIcon: WithSuhyeonIcon {
+        switch self {
+        case .home: return .icHomeFilled24
+        case .findSuhyeon: return .icFindFilled24
+        case .gallery: return .icGalleryFilled24
+        case .chat: return .icChatFilled24
+        case .myPage: return .icMyPageFilled24
         }
     }
 }

@@ -10,15 +10,27 @@ import SwiftUI
 struct WithSuhyeonMyFindSuhyeonPost: View {
     let post: MyFindSuhyeonPost
     
-    private func statusLabel(for post: MyFindSuhyeonPost) -> (text: String, backgroundColor: Color, textColor: Color)? {
-        if post.isExpired {
-            return ("기간 만료", Color.gray400, Color.white)
-        } else if post.matching {
-            return ("매칭 완료", Color.gray100, Color.gray500)
-        } else if let days = post.remainingDays {
-            return (days == 0 ? "D-day" : "D-\(days)", Color.primary50, Color.primary500)
-        }
-        return nil
+//    private func statusLabel(for post: MyFindSuhyeonPost) -> (text: String, backgroundColor: Color, textColor: Color)? {
+//        if post.isExpired {
+//            return ("기간 만료", Color.gray400, Color.white)
+//        } else if post.matching {
+//            return ("매칭 완료", Color.gray100, Color.gray500)
+//        } else if let days = post.remainingDays {
+//            return (days == 0 ? "D-day" : "D-\(days)", Color.primary50, Color.primary500)
+//        }
+//        return nil
+//    }
+    
+    private func statusLabel(for post: MyFindSuhyeonPost) -> (text:String, backgroundColor:Color, textColor:Color)? {
+      if post.matching {
+        return ("매칭 완료", Color.gray100, Color.gray500)
+      }
+      switch post.date {
+      case "기간 만료":
+        return ("기간 만료", Color.gray400, Color.white)
+      default:
+        return (post.date, Color.primary50, Color.primary500)
+      }
     }
     
     var body: some View {
@@ -29,7 +41,7 @@ struct WithSuhyeonMyFindSuhyeonPost: View {
                         .font(.body02B)
                         .foregroundColor(.gray900)
                     
-                    Text("\(post.region) · \(post.date)")
+                    Text("\(post.region) · \(post.createdDate)")
                         .font(.caption01R)
                         .foregroundColor(.gray500)
                 }
@@ -62,10 +74,12 @@ struct WithSuhyeonMyFindSuhyeonPost_preview: PreviewProvider {
     static var previews: some View {
         WithSuhyeonMyFindSuhyeonPost(
             post: MyFindSuhyeonPost(
+                id: 1,
                 title: "강남역 수현이 찾아요",
                 region: "강남/역삼/삼성",
-                date: "4월 2일",
-                matching: false
+                date: "D-2",
+                matching: false,
+                createdDate: "4월 23일"
             )
         )
         .previewLayout(.sizeThatFits)

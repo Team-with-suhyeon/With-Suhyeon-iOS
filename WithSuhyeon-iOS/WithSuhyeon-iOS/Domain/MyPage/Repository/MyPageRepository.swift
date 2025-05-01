@@ -10,4 +10,7 @@ import Foundation
 protocol MyPageRepository {
     func getUser(completion: @escaping (User) -> Void)
     func getMyFindSuhyeonPosts(completion: @escaping ([MyFindSuhyeonPost]) -> Void)
+    func getMyInterestRegion(completion: @escaping (MyInterestRegion) -> Void)
+    func postMyInterestRegion(region: MyInterestRegionRequestDTO, completion: @escaping (Bool) -> Void)
+    func getMyGalleryPosts(completion: @escaping ([MyGalleryPost]) -> Void)
 }

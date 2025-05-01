@@ -22,6 +22,7 @@ class MyPageFeature: Feature {
         case tapWithdraw
         case enterScreen
         case tapTermsAndPolicies
+        case tapFeedback
     }
     
     enum SideEffect {
@@ -30,6 +31,7 @@ class MyPageFeature: Feature {
         case navigateToSetInterest
         case navigateToInitialScreen
         case navigateToTermsAndPolicies
+        case navigateToFeedback
     }
     
     @Inject private var authRepository: AuthRepository
@@ -72,6 +74,8 @@ class MyPageFeature: Feature {
             getMyPage()
         case .tapTermsAndPolicies:
             sideEffectSubject.send(.navigateToTermsAndPolicies)
+        case .tapFeedback:
+            sideEffectSubject.send(.navigateToFeedback)
         }
     }
     

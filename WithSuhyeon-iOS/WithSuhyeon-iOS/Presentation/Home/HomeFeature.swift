@@ -25,6 +25,7 @@ class HomeFeature: Feature {
         case tapSeeAllButton
         case scrollChange(CGFloat)
         case enterScreen
+        case pullToRefresh
     }
     
     enum SideEffect {
@@ -72,9 +73,11 @@ class HomeFeature: Feature {
             if(offset < -100) {
                 state.boundary = 0.3
             } else {
-                state.boundary = 0.9
+                state.boundary = 0.5
             }
         case .enterScreen:
+            getHome()
+        case .pullToRefresh:
             getHome()
         }
     }

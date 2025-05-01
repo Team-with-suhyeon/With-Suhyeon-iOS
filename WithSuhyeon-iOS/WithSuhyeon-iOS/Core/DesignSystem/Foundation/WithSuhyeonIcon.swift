@@ -55,4 +55,9 @@ public enum WithSuhyeonIcon: String {
     case icArrowRight16 = "ic_arrow_right_16"
     case icLocationHome16 = "ic_location_home_16"
     case icMypageQna24 = "ic_mypage_qna_24"
+    case icChatFilled24 = "ic_chat_filled_24"
+    case icFindFilled24 = "ic_find_filled_24"
+    case icHomeFilled24 = "ic_home_filled_24"
+    case icGalleryFilled24 = "ic_gallery_filled_24"
+    case icMyPageFilled24 = "ic_mypage_filled_24"
 }

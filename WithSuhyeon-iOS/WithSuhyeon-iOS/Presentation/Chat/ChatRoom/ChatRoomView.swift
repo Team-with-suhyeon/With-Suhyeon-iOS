@@ -61,15 +61,15 @@ struct ChatRoomView: View {
                 
                 Spacer()
                 
-                Text("약속잡기")
-                    .font(.caption01B)
-                    .foregroundColor(.primary500)
-                    .padding(10)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.primary50)
-                    )
-                    .padding(.trailing, 16)
+//                Text("약속잡기")
+//                    .font(.caption01B)
+//                    .foregroundColor(.primary500)
+//                    .padding(10)
+//                    .background(
+//                        RoundedRectangle(cornerRadius: 8)
+//                            .fill(Color.primary50)
+//                    )
+//                    .padding(.trailing, 16)
             }
             .padding(.vertical, 16)
             
@@ -223,6 +223,7 @@ struct ChatRoomView: View {
                 feature.send(.appBackground)
             }
         }
+        .enableBackSwipe()
     }
 }
 

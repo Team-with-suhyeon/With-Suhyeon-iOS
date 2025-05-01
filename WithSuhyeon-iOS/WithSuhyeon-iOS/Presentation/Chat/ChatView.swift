@@ -21,17 +21,7 @@ struct ChatView : View {
                 .padding(.leading, 16)
                 .padding(.bottom, 15)
             if(feature.state.chatList.isEmpty) {
-                ZStack(alignment: .center) {
-                    VStack(spacing: 0) {
-                        Image(image: .imgEmptyState)
-                        Text("새로운 채팅이 없어요")
-                            .font(.body03R)
-                            .foregroundColor(.gray400)
-                            .padding(.top, 8)
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(Color.gray50)
-                }
+                WithSuhyeonEmptyView(emptyMessage: "새로운 채팅이 없어요")
             } else {
                 ScrollView {
                     LazyVStack(spacing: 0) {

@@ -10,6 +10,7 @@ import Combine
 
 class GalleryFeature: Feature {
     struct State {
+        var isLoading: Bool = false
         var scrollOffset: CGFloat = 0
         var selectedCategoryIndex: Int = 0
         var categories: [Category]  = [Category(imageURL: "", category: "전체")]
@@ -80,17 +81,27 @@ class GalleryFeature: Feature {
     }
     
     private func getCategories() {
+        state.isLoading = true
         var categories: [Category] = [Category(imageURL: "", category: "전체")]
         getCategoriesUseCase.execute { [weak self] result in
-            categories += result
-            self?.state.categories = categories
+            
+            DispatchQueue.main.async {
+                categories += result
+                self?.state.categories = categories
+            }
+            
         }
     }
     
     private func getSelectedCategoryGalleries() {
         let category = state.selectedCategoryIndex == 0 ? "all" : state.categories[state.selectedCategoryIndex].category
         galleryRepository.getGalleries(category: category) { [weak self] result in
-            self?.state.galleryItems = result
+            
+            DispatchQueue.main.async {
+                self?.state.galleryItems = result
+                self?.state.isLoading = false
+            }
+            
         }
     }
 }

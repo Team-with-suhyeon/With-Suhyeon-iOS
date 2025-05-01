@@ -29,13 +29,20 @@ struct SetInterest: View {
                 }
             )
             
-            WithSuhyeonButton(title: "완료", buttonState: feature.state.buttonEnabled, onTapButton: {})
+            WithSuhyeonButton(title: "완료", buttonState: .enabled, onTapButton: { feature.send(.submitLocation) })
                 .padding(.horizontal, 16)
             
         }
         .onAppear {
             feature.send(.enterScreen)
         }
+        .onReceive(feature.sideEffectSubject) { effect in
+            switch effect {
+            case .navigateToMyPage:
+                router.popBack()
+            }
+        }
+        .enableBackSwipe()
     }
     
 }

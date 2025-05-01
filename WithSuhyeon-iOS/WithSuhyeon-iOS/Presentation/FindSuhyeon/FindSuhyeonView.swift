@@ -98,8 +98,7 @@ struct FindSuhyeonView: View {
                                         feature.send(.writeContent(value))
                                     },
                                     onFocusChanged: { isFocus in
-                                    },
-                                    isUnderMaxLength: true
+                                    }
                                 )
                                 .padding(.horizontal, 16)
                                 .padding(.top, 8)

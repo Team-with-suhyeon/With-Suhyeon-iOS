@@ -7,154 +7,173 @@
 import SwiftUI
 
 struct CustomDatePicker: View {
-    let selectedDateIndex: Int
-    let selectedHour: Int
-    let selectedMinute: Int
-    let selectedAmPm: String
+    @Binding var selectedDateIndex: Int
     
     let dates: [String]
-    let hours: [Int]
-    let minutes: [Int]
-    let amPm: [String]
-    
     let onDateChange: (Int) -> Void
-    let onHourChange: (Int) -> Void
-    let onMinuteChange: (Int) -> Void
-    let onAmPmChange: (String) -> Void
+    
+    @State private var currentMonth: Date = Date()
+    private let calendar = Calendar(identifier: .gregorian)
+    private let today = Date()
     
     var body: some View {
-        HStack(spacing: 16) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 8)
-                 .fill(Color.primary50)
-                 .frame(width: 124, height: 32)
-                
-                Picker("Date", selection: Binding(
-                    get: { selectedDateIndex },
-                    set: { onDateChange($0) }
-                )) {
-                    ForEach(0..<dates.count, id: \.self) { index in
-                        Text(dates[index])
-                            .tag(index)
-                            .foregroundColor(Color.gray800)
-                            .font(.title03SB)
-                    }
-                }
-                .pickerStyle(.wheel)
-                .frame(width: 142, height: .infinity)
-            }
+        VStack(spacing: 0) {
             
-            ZStack() {
-                RoundedRectangle(cornerRadius: 8)
-                 .fill(Color.primary50)
-                 .frame(width: 62, height: 32)
+            // 월 변경 헤더
+            HStack {
+                Text(formattedMonth(currentMonth))
+                    .font(.body02B)
+                    .foregroundColor(.black)
+                    .padding(.leading, 8)
+                    .padding(.vertical, 10)
                 
-                Picker("AM/PM", selection: Binding(
-                    get: { selectedAmPm },
-                    set: { onAmPmChange($0) }
-                )) {
-                    ForEach(amPm, id: \.self) { period in
-                        Text(period)
-                            .tag(period)
-                            .foregroundColor(Color.gray800)
-                            .font(.title03SB)
-                    }
+                Button(action: {
+                    currentMonth = calendar.date(byAdding: .month, value: -1, to: currentMonth)!
+                }) {
+                    Image(icon: isPreviousMonthDisabled ? .icCalArrowLeftGray : .icCalArrowLeft)
                 }
-                .pickerStyle(.wheel)
-                .frame(width: 80, height: 150)
+                .padding(.all, 16)
+                .disabled(isPreviousMonthDisabled)
+                
+                Button(action: {
+                    currentMonth = calendar.date(byAdding: .month, value: 1, to: currentMonth)!
+                }) {
+                    Image(icon: .icCalArrowRight)
+                }
+                .padding(.all, 16)
+                Spacer()
             }
+            .padding(.horizontal, 24)
+            .padding(.bottom, 12)
             
-            ZStack {
-                RoundedRectangle(cornerRadius: 8)
-                 .fill(Color.primary50)
-                 .frame(width: 98, height: 32)
-                
-                HStack(spacing: 0) {
-                    Picker("Hour", selection: Binding(
-                        get: { selectedHour },
-                        set: { onHourChange($0) }
-                    )) {
-                        ForEach(hours, id: \.self) { hour in
-                            Text(String(format: "%02d", hour))
-                                .tag(hour)
-                                .foregroundColor(Color.gray800)
-                                .font(.title03SB)
-                                .padding(.vertical, 20)
-                        }
-                    }
-                    .pickerStyle(.wheel)
-                    .clipShape(.rect.offset(x: -16))
-                    .padding(.trailing, -16)
-                    .frame(width: 60, height: .infinity)
-                    
-                    Picker("Minute", selection: Binding(
-                        get: { selectedMinute },
-                        set: { onMinuteChange($0) }
-                    )) {
-                        ForEach(minutes, id: \.self) { minute in
-                            ZStack {
-                                Text(String(format: "%02d", minute))
-                                    .tag(minute)
-                                    .foregroundColor(Color.gray800)
-                                    .font(.title03SB)
-                                    .padding(.vertical, 20)
-                            }
-                        }
-                    }
-                    .pickerStyle(.wheel)
-                    .clipShape(.rect.offset(x: 16))
-                    .padding(.leading, -16)
-                    .frame(height: .infinity)
+            // 요일 헤더
+            HStack(spacing: 35) {
+                ForEach(["일", "월", "화", "수", "목", "금", "토"], id: \.self) { day in
+                    Text(day)
+                        .font(.body03SB)
+                        .frame(maxWidth: .infinity)
+                        .foregroundColor(.gray500)
                 }
             }
+            .padding(.top, 12)
+            .padding(.bottom, 18)
+            .padding(.horizontal, 37)
+            
+            // 날짜 셀
+            let days = generateCalendarDates(for: currentMonth)
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 7), spacing: 12) {
+                ForEach(days.indices, id: \.self) { index in
+                    let date = days[index]
+                    dateCell(for: date)
+                }
+            }
+            .font(.body01SB)
+            .padding(.horizontal, 27.5)
+            .padding(.bottom, 24)
         }
-    }
-}
-
-struct DatePickerView: View {
-    @State private var selectedDateIndex: Int = 0
-    @State private var selectedHour: Int = 9
-    @State private var selectedMinute: Int = 0
-    @State private var selectedAmPm: String = "오전"
-    
-    @State var selectedNumber: Int = 3
-    private let dates: [String] = generateDatesForYear()
-    private let hours = Array(1...12)
-    private let minutes = stride(from: 0, to: 60, by: 5).map { $0 }
-    private let amPm = ["오전", "오후"]
-    
-    var body: some View {
-        CustomDatePicker(
-         selectedDateIndex: selectedDateIndex,
-         selectedHour: selectedHour,
-         selectedMinute: selectedMinute,
-         selectedAmPm: selectedAmPm,
-         dates: dates,
-         hours: hours,
-         minutes: minutes,
-         amPm: amPm,
-         onDateChange: { selectedDateIndex = $0 },
-         onHourChange: { selectedHour = $0 },
-         onMinuteChange: { selectedMinute = $0 },
-         onAmPmChange: { selectedAmPm = $0 }
-         )
+        .background(Color.white)
+        .cornerRadius(24)
     }
     
-    static func generateDatesForYear() -> [String] {
+    private var isPreviousMonthDisabled: Bool {
+        let startOfCurrentMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: today))!
+        return currentMonth <= startOfCurrentMonth
+    }
+    
+    private func formattedMonth(_ date: Date) -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "M월 d일 E"
         formatter.locale = Locale(identifier: "ko_KR")
-        let calendar = Calendar.current
+        formatter.dateFormat = "yyyy년 M월"
+        return formatter.string(from: date)
+    }
+    
+    private func generateCalendarDates(for date: Date) -> [Date] {
+        let range = calendar.range(of: .day, in: .month, for: date)!
+        let firstOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: date))!
+        let weekday = calendar.component(.weekday, from: firstOfMonth)
+        let padding = weekday - 1
         
-        let startDate = calendar.date(from: DateComponents(year: 2025, month: 1, day: 1))!
-        let endDate = calendar.date(from: DateComponents(year: 2025, month: 12, day: 31))!
+        var dates: [Date] = []
+        for _ in 0..<padding {
+            dates.append(Date.distantPast)
+        }
         
-        return stride(from: startDate, to: endDate, by: 60 * 60 * 24).map {
-            formatter.string(from: $0)
+        for day in range {
+            if let date = calendar.date(bySetting: .day, value: day, of: firstOfMonth) {
+                dates.append(date)
+            }
+        }
+        
+        return dates
+    }
+    
+    private func dateCell(for date: Date) -> some View {
+        Group {
+            if calendar.isDate(date, equalTo: Date.distantPast, toGranularity: .day) {
+                Color.clear.frame(height: 40)
+            } else {
+                let isTodayOrLater = date >= today.startOfDay
+                let indexInList = indexForDate(date)
+                
+                Button(action: {
+                    if let index = indexInList, isTodayOrLater {
+                        onDateChange(index)
+                    }
+                }) {
+                    Text("\(calendar.component(.day, from: date))")
+                        .frame(width: 40, height: 40)
+                        .foregroundColor(indexInList == selectedDateIndex ? .white : (isTodayOrLater ? .gray700 : .gray300))
+                        .background(
+                            Circle()
+                                .fill(indexInList == selectedDateIndex ? .primary500 : Color.clear)
+                                .frame(width: 40, height: 40)
+                        )
+                }
+                .disabled(!isTodayOrLater)
+            }
+        }
+    }
+    
+    private func indexForDate(_ date: Date) -> Int? {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.dateFormat = "M월 d일 (E)"
+        let dateString = formatter.string(from: date)
+        return dates.firstIndex(of: dateString)
+    }
+}
+
+extension Date {
+    var startOfDay: Date {
+        Calendar.current.startOfDay(for: self)
+    }
+}
+
+struct CustomDatePicker_Previews: PreviewProvider {
+    static var previews: some View {
+        @State var selectedIndex: Int = 0
+        CustomDatePicker(
+            selectedDateIndex: $selectedIndex,
+            dates: generatePreviewDates(),
+            onDateChange: { index in
+                print("선택된 인덱스: \(index)")
+            }
+        )
+        .padding()
+        .previewLayout(.sizeThatFits)
+    }
+    
+    static func generatePreviewDates() -> [String] {
+        let calendar = Calendar(identifier: .gregorian)
+        let today = Date()
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.dateFormat = "M월 d일 (E)"
+        
+        return (0..<30).compactMap {
+            calendar.date(byAdding: .day, value: $0, to: today).map { formatter.string(from: $0) }
         }
     }
 }
 
-#Preview {
-    DatePickerView()
-}
+

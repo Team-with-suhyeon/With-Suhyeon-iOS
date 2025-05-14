@@ -17,8 +17,8 @@ struct GalleryAPI: GalleryApiProtocol {
         return client.upload(target: target, formData: target.multipartFormData!)
     }
     
-    func getGalleries(category: String) -> AnyPublisher<GalleriesResponseDTO, NetworkError> {
-        let target = GalleryTarget.getGalleries(category: category)
+    func getGalleries(category: String, size: Int, cursorId: Int32?) -> AnyPublisher<GalleriesResponseDTO, NetworkError> {
+        let target = GalleryTarget.getGalleries(category: category, size: size, cursorId: cursorId)
         
         return client.request(GalleriesResponseDTO.self, target: target)
     }

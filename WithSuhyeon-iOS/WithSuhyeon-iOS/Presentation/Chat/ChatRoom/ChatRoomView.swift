@@ -60,16 +60,15 @@ struct ChatRoomView: View {
                 .padding(.leading, 16)
                 
                 Spacer()
-                
-//                Text("약속잡기")
-//                    .font(.caption01B)
-//                    .foregroundColor(.primary500)
-//                    .padding(10)
-//                    .background(
-//                        RoundedRectangle(cornerRadius: 8)
-//                            .fill(Color.primary50)
-//                    )
-//                    .padding(.trailing, 16)
+                Text("내 게시물 보기")
+                    .font(.caption01B)
+                    .foregroundColor(.primary500)
+                    .padding(10)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.primary50)
+                    )
+                    .padding(.trailing, 16)
             }
             .padding(.vertical, 16)
             
@@ -166,12 +165,14 @@ struct ChatRoomView: View {
                         .scrollContentBackground(.hidden)
                         .padding(.vertical, 8)
                     
-                    Image(icon: .icChat24)
+                    Image(icon: .icSendMessage24)
                         .renderingMode(.template)
-                        .foregroundColor(.white)
+                        .foregroundColor(
+                            feature.state.inputText.isEmpty ? Color.gray300 : Color.primary500
+                        )
                         .frame(width: 40, height: 40)
                         .background(
-                            Circle().fill(Color.primary500)
+                            Circle().fill(Color.primary50)
                         )
                         .padding(.bottom, 8)
                         .onTapGesture {
@@ -183,10 +184,10 @@ struct ChatRoomView: View {
         }
         .confirmationDialog("타이틀", isPresented: Binding(get: { feature.state.bottomSheetIsPresented }, set: { _,_ in feature.send(.tapBottomSheetCloseButton) })) {
             
-//            Button("차단하기", role: .destructive) {
-//                isBlockMode = true
-//                isAlertPresented = true
-//            }
+            //            Button("차단하기", role: .destructive) {
+            //                isBlockMode = true
+            //                isAlertPresented = true
+            //            }
             
             Button("신고하기", role: .destructive) {
                 isBlockMode = false

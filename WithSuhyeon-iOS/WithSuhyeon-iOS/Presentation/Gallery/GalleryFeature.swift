@@ -23,6 +23,8 @@ class GalleryFeature: Feature {
         case tapGalleryItem(id: Int)
         case tapUploadButton
         case enterScreen
+        case showLastItem
+        case refresh
     }
     
     enum SideEffect {
@@ -60,8 +62,6 @@ class GalleryFeature: Feature {
             changeScrollOffset(offset)
         case .tapCategory(index: let index):
             changeSelectedCategoryIndex(index)
-            getSelectedCategoryGalleries()
-            sideEffectSubject.send(.scrollTotop)
         case .tapGalleryItem(id: let id):
             sideEffectSubject.send(.navigateToDetail(id: id))
         case .tapUploadButton:
@@ -69,11 +69,17 @@ class GalleryFeature: Feature {
         case .enterScreen:
             getCategories()
             getSelectedCategoryGalleries()
+        case .showLastItem:
+            getSelectedCategoryGalleries()
+        case .refresh:
+            getRefreshGalleries()
         }
     }
     
     private func changeSelectedCategoryIndex(_ index: Int) {
         state.selectedCategoryIndex = index
+        state.isLoading = true
+        getRefreshGalleries()
     }
     
     private func changeScrollOffset(_ offset: CGFloat) {
@@ -95,13 +101,25 @@ class GalleryFeature: Feature {
     
     private func getSelectedCategoryGalleries() {
         let category = state.selectedCategoryIndex == 0 ? "all" : state.categories[state.selectedCategoryIndex].category
-        galleryRepository.getGalleries(category: category) { [weak self] result in
+        let cursorId = Int32(state.galleryItems.last?.id ?? 0) == 0 ? nil : Int32(state.galleryItems.last!.id)
+        galleryRepository.getGalleries(category: category, size: 20, cursorId: cursorId) { [weak self] result in
+            
+            DispatchQueue.main.async {
+                self?.state.galleryItems = (self?.state.galleryItems ?? []) + result
+                self?.state.isLoading = false
+            }
+            
+        }
+    }
+    
+    private func getRefreshGalleries() {
+        let category = state.selectedCategoryIndex == 0 ? "all" : state.categories[state.selectedCategoryIndex].category
+        galleryRepository.getGalleries(category: category, size: 20, cursorId: nil) { [weak self] result in
             
             DispatchQueue.main.async {
                 self?.state.galleryItems = result
                 self?.state.isLoading = false
             }
-            
         }
     }
 }

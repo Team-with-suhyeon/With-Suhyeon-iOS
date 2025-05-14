@@ -35,15 +35,19 @@ struct GalleryView: View {
                                 WithSuhyeonEmptyView(emptyMessage: "게시글이 없어요")
                                     .padding(.top, 140)
                             } else {
-                                ContentViewList(items: galleryFeature.state.galleryItems) { id in
+                                ContentViewList(
+                                    items: galleryFeature.state.galleryItems,
+                                    onShowLastItem:{ galleryFeature.send(.showLastItem) }
+                                ) { id in
                                     galleryFeature.send(.tapGalleryItem(id: id))
                                 }
                             }
                         }
+                        .id(galleryFeature.state.selectedCategoryIndex)
                         .id("top")
                     }
                     .refreshable {
-                        galleryFeature.send(.enterScreen)
+                        galleryFeature.send(.refresh)
                     }
                     .scrollBounceBehavior(.basedOnSize)
                     .onReceive(galleryFeature.sideEffectSubject) { sideEffect in
@@ -53,8 +57,10 @@ struct GalleryView: View {
                         case .navigateToUpload:
                             router.navigate(to: .galleryUpload)
                         case .scrollTotop:
-                            withAnimation {
-                                proxy.scrollTo("top", anchor: .top)
+                            DispatchQueue.main.async {
+                                withAnimation {
+                                    proxy.scrollTo("top", anchor: .top)
+                                }
                             }
                         }
                     }
@@ -137,9 +143,11 @@ struct ContentViewList: View {
         GridItem(.flexible()),
     ]
     let onTapItem: (Int) -> Void
+    let onShowLastItem: () -> Void
     
-    init(items: [GalleryPost], onTapItem: @escaping (Int) -> Void) {
+    init(items: [GalleryPost], onShowLastItem: @escaping () -> Void, onTapItem: @escaping (Int) -> Void) {
         self.items = items
+        self.onShowLastItem = onShowLastItem
         self.onTapItem = onTapItem
     }
     
@@ -147,10 +155,15 @@ struct ContentViewList: View {
         LazyVStack(spacing: 0) {
             Color.gray50.frame(height: 16)
             LazyVGrid(columns: columns, alignment: .leading, spacing: 12) {
-                ForEach(items, id: \.id) { item in
+                ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
                     GalleryItem(imageUrl: item.imageURL, title: item.title)
                         .onTapGesture {
                             onTapItem(item.id)
+                        }
+                        .onAppear {
+                            if(index >= items.count - 1) {
+                                onShowLastItem()
+                            }
                         }
                 }
             }

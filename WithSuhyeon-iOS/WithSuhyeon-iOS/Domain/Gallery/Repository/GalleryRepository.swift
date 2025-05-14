@@ -11,7 +11,7 @@ protocol GalleryRepository {
     
     func upload(galleryInfo: GalleryUpload, completion: @escaping (Bool) -> Void)
     
-    func getGalleries(category: String, completion: @escaping ([GalleryPost]) -> Void)
+    func getGalleries(category: String, size: Int, cursorId: Int32?, completion: @escaping ([GalleryPost]) -> Void)
     
     func getGallery(id: Int, completion: @escaping (GalleryDetail) -> Void)
     

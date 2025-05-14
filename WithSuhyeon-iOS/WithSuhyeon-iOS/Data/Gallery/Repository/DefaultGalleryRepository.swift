@@ -29,8 +29,8 @@ class DefaultGalleryRepository: GalleryRepository {
             
     }
     
-    func getGalleries(category: String, completion: @escaping ([GalleryPost]) -> Void) {
-        galleryAPI.getGalleries(category: category)
+    func getGalleries(category: String, size: Int, cursorId: Int32?, completion: @escaping ([GalleryPost]) -> Void) {
+        galleryAPI.getGalleries(category: category, size: size, cursorId: cursorId)
             .map {
                 $0.galleries.map { $0.entity }
             }

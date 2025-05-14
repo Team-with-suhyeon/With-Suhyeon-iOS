@@ -7,4 +7,6 @@
 
 struct CategoryRequestDTO: Codable {
     let category: String
+    let size: Int
+    let cursorId: Int32?
 }

@@ -12,14 +12,14 @@ import Alamofire
 
 enum GalleryTarget {
     case postGallery(image: Data, galleryInfo: GalleryInfoRequestDTO)
-    case getGalleries(category: String)
+    case getGalleries(category: String, size: Int, cursorId: Int32?)
     case getGallery(id: Int)
     case deleteGallery(id: Int)
 }
 
 protocol GalleryApiProtocol {
     func upload(image: Data, galleryInfo: GalleryInfoRequestDTO) -> AnyPublisher<Bool, NetworkError>
-    func getGalleries(category: String) -> AnyPublisher<GalleriesResponseDTO, NetworkError>
+    func getGalleries(category: String, size: Int, cursorId: Int32?) -> AnyPublisher<GalleriesResponseDTO, NetworkError>
     func getGallery(id: Int) -> AnyPublisher<GalleryDetailResponseDTO, NetworkError>
     func deleteGallery(id: Int) -> AnyPublisher<Bool, NetworkError>
 }
@@ -55,8 +55,8 @@ extension GalleryTarget: TargetType {
     
     var parameters: RequestParameters {
         switch self {
-        case .getGalleries(let category):
-            return .query(CategoryRequestDTO(category: category))
+        case .getGalleries(let category, let size, let cursorId):
+            return .query(CategoryRequestDTO(category: category, size: size, cursorId: cursorId))
         case .getGallery, .deleteGallery:
             return .none
         case .postGallery:

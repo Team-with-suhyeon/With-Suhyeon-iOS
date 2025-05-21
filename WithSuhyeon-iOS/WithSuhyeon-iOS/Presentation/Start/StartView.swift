@@ -31,13 +31,13 @@ struct StartView: View {
                             totalIndex: startFeature.state.startImages.count,
                             selectedIndex: startFeature.state.currentImage + 1
                         )
-                        .padding(.top, 28)
+                        .padding(.top, 16)
                     }
                     .overlay(
                         VStack(alignment: .leading, spacing: 8) {
                             Text(startFeature.state.title)
                                 .font(.title01B)
-                                .foregroundColor(.gray800) 
+                                .foregroundColor(.gray800)
                                 .multilineTextAlignment(.leading)
                             Text(startFeature.state.subTitle)
                                 .font(.body02B)
@@ -67,29 +67,13 @@ struct StartView: View {
                     }
             )
             
-            VStack(spacing: 0) {
-                WithSuhyeonButton(title: "가입하기", buttonState: .enabled, onTapButton: {
-                    startFeature.send(.tapSignUpButton)
-                })
-                .padding(.horizontal, 16)
-                .padding(.top, 72)
-                
-                HStack(spacing: 5) {
-                    Text("이미 계정이 있나요?")
-                        .font(.body02SB)
-                        .foregroundColor(Color.gray500)
-                    
-                    Button(action: { startFeature.send(.tapLoginButton) }) {
-                        Text("로그인")
-                            .font(.body02B)
-                            .foregroundColor(Color.primary600)
-                    }
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 18)
+            VStack(spacing: 16) {
+                WithSuhyeonSocialButton(type: .kakao, onTapButton: {})
+                WithSuhyeonSocialButton(type:.apple, onTapButton: {})
             }
+            .padding(.horizontal, 16)
             .safeAreaInset(edge: .bottom) {
-                Color.clear.frame(height: 0)
+                Color.clear.frame(height: 20)
             }
         }
         .edgesIgnoringSafeArea(.top)

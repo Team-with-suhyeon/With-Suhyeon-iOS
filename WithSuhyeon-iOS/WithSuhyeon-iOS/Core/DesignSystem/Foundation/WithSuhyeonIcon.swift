@@ -61,4 +61,7 @@ public enum WithSuhyeonIcon: String {
     case icGalleryFilled24 = "ic_gallery_filled_24"
     case icMyPageFilled24 = "ic_mypage_filled_24"
     case icSendMessage24 = "ic_send_message_24"
+    case icKakao = "ic_kakao"
+    case icApple = "ic_apple"
+    case icLocation18 = "ic_location_18"
 }

@@ -12,8 +12,6 @@ enum SocialLoginType {
     case kakao
 }
 
-import SwiftUI
-
 struct WithSuhyeonSocialButton: View {
     let type: SocialLoginType
     let onTapButton: () -> Void

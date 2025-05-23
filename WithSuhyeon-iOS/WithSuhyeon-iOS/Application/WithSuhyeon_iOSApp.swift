@@ -7,6 +7,9 @@
 
 import SwiftUI
 
+import KakaoSDKCommon
+import KakaoSDKAuth
+
 @main
 struct WithSuhyeon_iOSApp: App {
     @StateObject var router = RouterRegistry()
@@ -14,6 +17,13 @@ struct WithSuhyeon_iOSApp: App {
     
     init() {
         DIContainer.shared.registerDependencies()
+        
+        if let appKey = Bundle.main.infoDictionary?["KAKAO_NATIVE_APP_KEY"] as? String {
+            KakaoSDK.initSDK(appKey: appKey)
+        } else {
+            fatalError("❌ KEY 없음.")
+        }
+        
         //WebSocketClient.shared.connect(target: WebSocketTarget())
     }
     

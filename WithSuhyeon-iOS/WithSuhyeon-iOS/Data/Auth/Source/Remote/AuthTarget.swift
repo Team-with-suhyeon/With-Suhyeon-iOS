@@ -38,8 +38,10 @@ extension AuthTarget: TargetType {
     
     var method: Alamofire.HTTPMethod {
         switch self {
-        case .signUp, .login, .sendAuthCode, .validateAuthCode, .logout:
+        case .login, .sendAuthCode, .validateAuthCode, .logout:
             return .post
+        case .signUp:
+            return .patch
         case .getUserId:
             return .get
         case .withdraw:

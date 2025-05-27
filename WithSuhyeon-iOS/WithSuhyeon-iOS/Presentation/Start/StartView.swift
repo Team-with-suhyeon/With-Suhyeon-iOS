@@ -31,13 +31,13 @@ struct StartView: View {
                             totalIndex: startFeature.state.startImages.count,
                             selectedIndex: startFeature.state.currentImage + 1
                         )
-                        .padding(.top, 28)
+                        .padding(.top, 16)
                     }
                     .overlay(
                         VStack(alignment: .leading, spacing: 8) {
                             Text(startFeature.state.title)
                                 .font(.title01B)
-                                .foregroundColor(.gray800) 
+                                .foregroundColor(.gray800)
                                 .multilineTextAlignment(.leading)
                             Text(startFeature.state.subTitle)
                                 .font(.body02B)
@@ -66,7 +66,6 @@ struct StartView: View {
                         }
                     }
             )
-            
             VStack(spacing: 0) {
                 WithSuhyeonButton(title: "가입하기", buttonState: .enabled, onTapButton: {
                     startFeature.send(.tapSignUpButton)
@@ -85,25 +84,30 @@ struct StartView: View {
                             .foregroundColor(Color.primary600)
                     }
                 }
+                
+                //            VStack(spacing: 16) {
+                //                WithSuhyeonSocialButton(type: .kakao, onTapButton: {})
+                //                WithSuhyeonSocialButton(type:.apple, onTapButton: {})
+                //            }
+                
                 .padding(.horizontal, 16)
-                .padding(.top, 18)
+                .safeAreaInset(edge: .bottom) {
+                    Color.clear.frame(height: 20)
+                }
             }
-            .safeAreaInset(edge: .bottom) {
-                Color.clear.frame(height: 0)
+            .edgesIgnoringSafeArea(.top)
+            .onAppear {
+                startFeature.checkAutoLogin()
             }
-        }
-        .edgesIgnoringSafeArea(.top)
-        .onAppear {
-            startFeature.checkAutoLogin()
-        }
-        .onReceive(startFeature.sideEffectSubject) { sideEffect in
-            switch sideEffect {
-            case .navigateToSignUp:
-                router.navigate(to: .signUp)
-            case .navigateToLogin:
-                router.navigate(to: .login)
-            case .navigateToMain:
-                router.navigate(to: .main(fromSignUp: false, nickname: ""))
+            .onReceive(startFeature.sideEffectSubject) { sideEffect in
+                switch sideEffect {
+                case .navigateToSignUp:
+                    router.navigate(to: .signUp)
+                case .navigateToLogin:
+                    router.navigate(to: .login)
+                case .navigateToMain:
+                    router.navigate(to: .main(fromSignUp: false, nickname: ""))
+                }
             }
         }
     }

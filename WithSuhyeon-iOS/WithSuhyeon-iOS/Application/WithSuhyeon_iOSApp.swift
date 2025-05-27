@@ -60,6 +60,8 @@ struct WithSuhyeon_iOSApp: App {
                         case let .termsAndPoliciesWebView(request, title):
                             TermsAndPoliciesWebView(request: request, title: title)
                                 .navigationBarBackButtonHidden(true)
+                        case .myInfo: MyInfoView()
+                                .navigationBarBackButtonHidden(true)
                         }
                     }
             }

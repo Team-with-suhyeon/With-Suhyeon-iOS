@@ -42,4 +42,5 @@ public enum Destination: Hashable {
     case termsAndPolicies
     case feedback
     case termsAndPoliciesWebView(request: URLRequest, title: String)
+    case myInfo
 }

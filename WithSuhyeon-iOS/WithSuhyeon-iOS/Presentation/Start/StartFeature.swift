@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import KakaoSDKUser
 
 class StartFeature: Feature {
     struct State {
@@ -22,6 +23,7 @@ class StartFeature: Feature {
         case tapLoginButton
         case updateCurrentImage(Int)
         case checkAutoLogin
+        case tapKakaoLoginButton
     }
     
     enum SideEffect {
@@ -61,6 +63,8 @@ class StartFeature: Feature {
             updateCurrentImage(image)
         case .checkAutoLogin:
             checkAutoLogin()
+        case .tapKakaoLoginButton:
+            kakaoLogin()
         }
     }
     
@@ -77,6 +81,75 @@ class StartFeature: Feature {
         default :
             state.title = "내 여행상황에 맞는 사진 찾아\n바로 다운로드해요"
             state.subTitle = "지금 당장 여행 인증 사진이 필요하다면\n수현이들이 올려둔 공유 앨범에서 찾아봐요"
+        }
+    }
+    
+    private func kakaoLogin() {
+        if UserApi.isKakaoTalkLoginAvailable() {
+            UserApi.shared.loginWithKakaoTalk { [weak self] (oauthToken, error) in
+                if let error = error {
+                    print("카카오톡 로그인 실패: \(error)")
+                } else if let token = oauthToken?.accessToken {
+                    self?.handleAfterLogin(accessToken: token)
+                }
+            }
+        } else {
+            UserApi.shared.loginWithKakaoAccount { [weak self] (oauthToken, error) in
+                if let error = error {
+                    print("카카오계정 로그인 실패: \(error)")
+                } else if let token = oauthToken?.accessToken {
+                    self?.handleAfterLogin(accessToken: token)
+                }
+            }
+        }
+    }
+    
+    private func handleAfterLogin(accessToken: String) {
+        UserApi.shared.me { [weak self] (user, error) in
+            if let error = error {
+                print("사용자 정보 조회 실패: \(error)")
+                return
+            }
+
+            var scopes: [String] = []
+            
+            if (user?.kakaoAccount?.profileNeedsAgreement == true) { scopes.append("profile") }
+            if (user?.kakaoAccount?.emailNeedsAgreement == true) { scopes.append("account_email") }
+            if (user?.kakaoAccount?.birthdayNeedsAgreement == true) { scopes.append("birthday") }
+            if (user?.kakaoAccount?.birthyearNeedsAgreement == true) { scopes.append("birthyear") }
+            if (user?.kakaoAccount?.genderNeedsAgreement == true) { scopes.append("gender") }
+            if (user?.kakaoAccount?.phoneNumberNeedsAgreement == true) { scopes.append("phone_number") }
+            if (user?.kakaoAccount?.ageRangeNeedsAgreement == true) { scopes.append("age_range") }
+
+
+            if scopes.isEmpty {
+                self?.checkUserExists(accessToken: accessToken)
+            } else {
+                scopes.append("openid")
+                
+                UserApi.shared.loginWithKakaoAccount(scopes: scopes) { (_, error) in
+                    if let error = error {
+                        print("추가 동의 요청 실패: \(error)")
+                    } else {
+                        self?.checkUserExists(accessToken: accessToken)
+                    }
+                }
+            }
+        }
+    }
+    
+    private func checkUserExists(accessToken: String) {
+        authRepository.checkUserExists(accessToken: accessToken) { result in
+            switch result {
+            case .success(let dto):
+                if dto.isUser {
+                    self.sideEffectSubject.send(.navigateToMain)
+                } else {
+                    self.sideEffectSubject.send(.navigateToSignUp)
+                }
+            case .failure(let error):
+                print("❌ 카카오 로그인 사용자 검증 실패: \(error)")
+            }
         }
     }
     

@@ -215,6 +215,8 @@ final class NetworkClient: NetworkRequestable {
             return .expiredCertificationNumber
         case (400, "REQUEST_001"):
             return .blockFormatBadRequest
+        case (400, "REQUEST_019"):
+            return .invalidAccessToken
         default:
             return .unknownError
         }

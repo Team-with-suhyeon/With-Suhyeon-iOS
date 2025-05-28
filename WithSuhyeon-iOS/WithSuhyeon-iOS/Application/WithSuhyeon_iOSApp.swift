@@ -81,6 +81,11 @@ struct WithSuhyeon_iOSApp: App {
                     WebSocketClient.shared.handleAppLifecycleEvents()
                 }
             }
+            .onOpenURL(perform: { url in
+                if (AuthApi.isKakaoTalkLoginUrl(url)) {
+                    AuthController.handleOpenUrl(url: url)
+                }
+            })
         }
     }
 }

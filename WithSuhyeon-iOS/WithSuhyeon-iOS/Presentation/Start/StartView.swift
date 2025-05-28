@@ -68,7 +68,9 @@ struct StartView: View {
             )
             
             VStack(spacing: 16) {
-                WithSuhyeonSocialButton(type: .kakao, onTapButton: {})
+                WithSuhyeonSocialButton(type: .kakao, onTapButton: {
+                    startFeature.send(.tapKakaoLoginButton)
+                })
                 WithSuhyeonSocialButton(type:.apple, onTapButton: {})
             }
             .padding(.horizontal, 16)

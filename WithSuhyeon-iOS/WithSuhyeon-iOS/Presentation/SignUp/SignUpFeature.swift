@@ -110,12 +110,15 @@ class SignUpFeature: Feature {
         case updateLocation(Int, Int)
         case completeSignUp
         case enterScreen
+        case tapServiceTerms
+        case tapPrivacyPolicy 
     }
     
     enum SideEffect {
         case navigateToSignUpComplete(String)
         case navigateToStartView
         case hideKeyboard
+        case navigateToWebView(url: URL, title: String)
     }
     
     @Published private(set) var state = State()
@@ -200,6 +203,15 @@ class SignUpFeature: Feature {
             completeSignUp()
         case .enterScreen:
             getLocationOptions()
+        case .tapServiceTerms:
+            if let url = URL(string: "https://serious-option-36e.notion.site/Service-Terms-of-Use-1d7640cebba080c1b094cd33de1e117d?pvs=74") {
+                sideEffectSubject.send(.navigateToWebView(url: url, title: "서비스 이용약관"))
+            }
+            
+        case .tapPrivacyPolicy:
+            if let url = URL(string: "https://serious-option-36e.notion.site/Privacy-Policy-1d7640cebba080f9b5eaec2cb6f0e3da?pvs=74") {
+                sideEffectSubject.send(.navigateToWebView(url: url, title: "개인정보처리방침"))
+            }
         }
     }
     

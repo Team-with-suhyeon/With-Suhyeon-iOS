@@ -68,6 +68,8 @@ struct SignUpView: View {
                 router.navigate(to: .startView)
             case .hideKeyboard:
                 hideKeyboard()
+            case .navigateToWebView(url: let url, title: let title):
+                router.navigate(to: .termsAndPoliciesWebView(request: URLRequest(url: url), title: title))
             }
             
         }

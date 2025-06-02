@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		87F528AB2DEE0A700020AF04 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 87F528AA2DEE0A700020AF04 /* FirebaseAnalytics */; };
 		87F528AE2DEE0A950020AF04 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 87F528AD2DEE0A950020AF04 /* Kingfisher */; };
+		87F528B42DEE17A10020AF04 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 87F528B32DEE17A10020AF04 /* FirebaseMessaging */; };
 		8B7951852D3D58E20077A833 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 8B7951842D3D58E20077A833 /* Lottie */; };
 		8BA72DEC2D2E22A9007654D1 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 8BA72DEB2D2E22A9007654D1 /* Alamofire */; };
 		8BA72DEF2D2E22B7007654D1 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = 8BA72DEE2D2E22B7007654D1 /* Then */; };
@@ -73,6 +74,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				87F528B42DEE17A10020AF04 /* FirebaseMessaging in Frameworks */,
 				8BA72DEC2D2E22A9007654D1 /* Alamofire in Frameworks */,
 				8BA72DEF2D2E22B7007654D1 /* Then in Frameworks */,
 				87F528AB2DEE0A700020AF04 /* FirebaseAnalytics in Frameworks */,
@@ -143,6 +145,7 @@
 				8B7951842D3D58E20077A833 /* Lottie */,
 				87F528AA2DEE0A700020AF04 /* FirebaseAnalytics */,
 				87F528AD2DEE0A950020AF04 /* Kingfisher */,
+				87F528B32DEE17A10020AF04 /* FirebaseMessaging */,
 			);
 			productName = "WithSuhyeon-iOS";
 			productReference = 8BA72D872D2E1EF9007654D1 /* WithSuhyeon-iOS.app */;
@@ -664,6 +667,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 87F528AC2DEE0A950020AF04 /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
+		};
+		87F528B32DEE17A10020AF04 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 87F528A92DEE0A700020AF04 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
 		};
 		8B7951842D3D58E20077A833 /* Lottie */ = {
 			isa = XCSwiftPackageProductDependency;

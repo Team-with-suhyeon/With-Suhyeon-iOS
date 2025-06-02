@@ -11,6 +11,7 @@ import SwiftUI
 struct WithSuhyeon_iOSApp: App {
     @StateObject var router = RouterRegistry()
     @Environment(\.scenePhase) private var scenePhase
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
     init() {
         DIContainer.shared.registerDependencies()

@@ -10,6 +10,7 @@ import Combine
 
 class MainTabBarFeature: Feature {
     struct State {
+        var nickname: String = ""
         var blockingAccountSheetIsPresent: Bool = false
     }
     
@@ -32,9 +33,10 @@ class MainTabBarFeature: Feature {
     
     @Inject var authRepository: AuthRepository
     
-    init() {
+    init(nickname: String) {
         bindIntents()
         connect()
+        state.nickname = nickname
         WebSocketClient.shared.handleAppLifecycleEvents()
     }
     

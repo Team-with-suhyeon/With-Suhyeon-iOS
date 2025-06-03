@@ -92,5 +92,13 @@ extension DIContainer {
         DIContainer.shared.register(type: SignUpUseCase.self) {
             SignUpUseCaseImpl()
         }
+        
+        DIContainer.shared.register(type: OAuthInteractor.self) {
+            KakaoInteractor()
+        }
+        
+        DIContainer.shared.register(type: OAuthRepository.self) {
+            DefaultOAuthRepository()
+        }
     }
 }

@@ -21,6 +21,7 @@ class SignUpFeature: Feature {
         var phoneAuthStep: PhoneAuthStep = .enterPhoneNumber
         var isExistsUser: Bool = false
         var errorMessage: String = ""
+        var kakaoId: Int64 = 0
         
         var nickname: String = ""
         var isNicknameValid: Bool = false
@@ -111,7 +112,7 @@ class SignUpFeature: Feature {
         case completeSignUp
         case enterScreen
         case tapServiceTerms
-        case tapPrivacyPolicy 
+        case tapPrivacyPolicy
     }
     
     enum SideEffect {
@@ -131,11 +132,13 @@ class SignUpFeature: Feature {
     @Inject var authRepository: AuthRepository
     @Inject var getRegionsUseCase: GetRegionsUseCase
     @Inject private var signUpUseCase: SignUpUseCase
+    @Inject private var oauthRepository: OAuthRepository
     
     init() {
         bindIntents()
         updateProgress()
         receiveState()
+        getKakaoId()
     }
     
     private func bindIntents() {
@@ -212,6 +215,13 @@ class SignUpFeature: Feature {
             if let url = URL(string: "https://serious-option-36e.notion.site/Privacy-Policy-1d7640cebba080f9b5eaec2cb6f0e3da?pvs=74") {
                 sideEffectSubject.send(.navigateToWebView(url: url, title: "개인정보처리방침"))
             }
+            
+        }
+    }
+    
+    private func getKakaoId() {
+        oauthRepository.getKakaoId() { [weak self] userId in
+            self?.state.kakaoId = userId ?? 0
         }
     }
     
@@ -450,7 +460,8 @@ class SignUpFeature: Feature {
             birthYear: state.birthYear,
             gender: state.gender == "남성",
             profileImage: profileImage,
-            region: region
+            region: region,
+            kakaoId: state.kakaoId
         )
     }
     

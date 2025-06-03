@@ -33,6 +33,7 @@ class StartFeature: Feature {
     }
     
     @Inject private var authRepository: AuthRepository
+    @Inject private var oauthRepository: OAuthRepository
     @Published private(set) var state = State()
     private var cancellables = Set<AnyCancellable>()
     private let intentSubject = PassthroughSubject<Intent, Never>()
@@ -85,56 +86,8 @@ class StartFeature: Feature {
     }
     
     private func kakaoLogin() {
-        if UserApi.isKakaoTalkLoginAvailable() {
-            UserApi.shared.loginWithKakaoTalk { [weak self] (oauthToken, error) in
-                if let error = error {
-                    print("카카오톡 로그인 실패: \(error)")
-                } else if let token = oauthToken?.accessToken {
-                    self?.handleAfterLogin(accessToken: token)
-                }
-            }
-        } else {
-            UserApi.shared.loginWithKakaoAccount { [weak self] (oauthToken, error) in
-                if let error = error {
-                    print("카카오계정 로그인 실패: \(error)")
-                } else if let token = oauthToken?.accessToken {
-                    self?.handleAfterLogin(accessToken: token)
-                }
-            }
-        }
-    }
-    
-    private func handleAfterLogin(accessToken: String) {
-        UserApi.shared.me { [weak self] (user, error) in
-            if let error = error {
-                print("사용자 정보 조회 실패: \(error)")
-                return
-            }
-
-            var scopes: [String] = []
-            
-            if (user?.kakaoAccount?.profileNeedsAgreement == true) { scopes.append("profile") }
-            if (user?.kakaoAccount?.emailNeedsAgreement == true) { scopes.append("account_email") }
-            if (user?.kakaoAccount?.birthdayNeedsAgreement == true) { scopes.append("birthday") }
-            if (user?.kakaoAccount?.birthyearNeedsAgreement == true) { scopes.append("birthyear") }
-            if (user?.kakaoAccount?.genderNeedsAgreement == true) { scopes.append("gender") }
-            if (user?.kakaoAccount?.phoneNumberNeedsAgreement == true) { scopes.append("phone_number") }
-            if (user?.kakaoAccount?.ageRangeNeedsAgreement == true) { scopes.append("age_range") }
-
-
-            if scopes.isEmpty {
-                self?.checkUserExists(accessToken: accessToken)
-            } else {
-                scopes.append("openid")
-                
-                UserApi.shared.loginWithKakaoAccount(scopes: scopes) { (_, error) in
-                    if let error = error {
-                        print("추가 동의 요청 실패: \(error)")
-                    } else {
-                        self?.checkUserExists(accessToken: accessToken)
-                    }
-                }
-            }
+        oauthRepository.login(){ [weak self] token in
+            self?.checkUserExists(accessToken: token)
         }
     }
     

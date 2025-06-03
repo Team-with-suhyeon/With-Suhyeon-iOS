@@ -71,7 +71,9 @@ struct StartView: View {
                 WithSuhyeonSocialButton(type: .kakao, onTapButton: {
                     startFeature.send(.tapKakaoLoginButton)
                 })
-                WithSuhyeonSocialButton(type:.apple, onTapButton: {})
+                WithSuhyeonSocialButton(type:.apple, onTapButton: {
+                    startFeature.send(.tapAppleLoginButton)
+                })
             }
             .padding(.horizontal, 16)
             .safeAreaInset(edge: .bottom) {

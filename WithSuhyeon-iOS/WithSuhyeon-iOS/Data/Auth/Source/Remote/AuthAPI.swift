@@ -59,4 +59,10 @@ struct AuthAPI: AuthAPIProtocol {
         
         return client.request(KakaoLoginResponseDTO.self, target: target)
     }
+    
+    func checkUserExistsApple(code: String) -> AnyPublisher<KakaoLoginResponseDTO, NetworkError> {
+        let target: AuthTarget = .checkUserExistsApple(code: code)
+        
+        return client.request(KakaoLoginResponseDTO.self, target: target)
+    }
 }

@@ -19,4 +19,10 @@ class DefaultOAuthRepository: OAuthRepository {
     func getKakaoId(onSuccess: @escaping (Int64?) -> Void) {
         oauthInteractor.getKakaoId(onSuccess: onSuccess)
     }
+    
+    func loginApple(onSuccess: @escaping (String) -> Void) {
+        oauthInteractor.loginWithApple { userId, identityToken in
+            onSuccess(userId)
+        }
+    }
 }

@@ -10,5 +10,6 @@ protocol OAuthInteractor {
     func loginWithKakaoAccount(onSuccess: @escaping (String) -> Void)
     func checkKakaoTalkAvailable() -> Bool
     func getKakaoId(onSuccess: @escaping (Int64?) -> Void)
+    func loginWithApple(onSuccess: @escaping (_ userId: String, _ identityToken: String?) -> Void)
 }
 

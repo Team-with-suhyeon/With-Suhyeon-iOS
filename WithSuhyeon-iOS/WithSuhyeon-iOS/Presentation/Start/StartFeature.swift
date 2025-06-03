@@ -25,6 +25,7 @@ class StartFeature: Feature {
         case updateCurrentImage(Int)
         case checkAutoLogin
         case tapKakaoLoginButton
+        case tapAppleLoginButton
     }
     
     enum SideEffect {
@@ -67,6 +68,8 @@ class StartFeature: Feature {
             checkAutoLogin()
         case .tapKakaoLoginButton:
             kakaoLogin()
+        case .tapAppleLoginButton:
+            appleLogin()
         }
     }
     
@@ -92,6 +95,12 @@ class StartFeature: Feature {
         }
     }
     
+    private func appleLogin() {
+        oauthRepository.loginApple(){ [weak self] code in
+            self?.checkUserExistsApple(code: code)
+        }
+    }
+    
     private func checkUserExists(accessToken: String) {
         authRepository.checkUserExists(accessToken: accessToken) { [weak self] result in
             switch result {
@@ -105,6 +114,23 @@ class StartFeature: Feature {
                 }
             case .failure(let error):
                 print("❌ 카카오 로그인 사용자 검증 실패: \(error)")
+            }
+        }
+    }
+    
+    private func checkUserExistsApple(code: String) {
+        authRepository.checkUserExistsApple(code: code) { [weak self] result in
+            switch result {
+            case .success(let dto):
+                self?.state.userId = dto.userId
+                
+                if dto.isUser {
+                    self?.sideEffectSubject.send(.navigateToMain)
+                } else {
+                    self?.sideEffectSubject.send(.navigateToSignUp)
+                }
+            case .failure(let error):
+                print("❌ 애플 로그인 사용자 검증 실패: \(error)")
             }
         }
     }

@@ -8,4 +8,5 @@
 protocol OAuthRepository {
     func login(onSuccess: @escaping (String) -> Void)
     func getKakaoId(onSuccess: @escaping (Int64?) -> Void)
+    func loginApple(onSuccess: @escaping (String) -> Void)
 }

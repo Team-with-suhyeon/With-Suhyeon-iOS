@@ -16,7 +16,6 @@ struct MainTabBar : View {
         
         self._fromSignup = State(initialValue: fromSignup)
         self._feature = StateObject(wrappedValue: MainTabBarFeature(nickname: nickname))
-       
     }
     
     var body: some View {
@@ -80,9 +79,11 @@ struct MainTabBar : View {
             },
             onDismiss: {
                 feature.send(.dismissBlockingAccountSheet)
+                fromSignup = false
             },
             onTapButton: {
                 feature.send(.tapNavigateToBlockingAccountButton)
+                fromSignup = false
             }
         )
         .onReceive(feature.sideEffectSubject) { sideEffect in

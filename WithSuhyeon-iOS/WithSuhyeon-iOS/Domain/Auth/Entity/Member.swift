@@ -15,5 +15,5 @@ struct Member: Identifiable {
     let gender: Bool
     let profileImage: String
     let region: String
-    let kakaoId: Int64
+    let userId: Int
 }

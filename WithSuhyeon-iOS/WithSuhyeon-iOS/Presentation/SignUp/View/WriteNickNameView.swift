@@ -41,5 +41,5 @@ struct WriteNickNameView: View {
 
 #Preview {
     WriteNickNameView()
-        .environmentObject(SignUpFeature())
+        .environmentObject(SignUpFeature(userId: 1))
 }

@@ -9,27 +9,31 @@ import SwiftUI
 
 struct SignUpView: View {
     @EnvironmentObject private var router: RouterRegistry
-    @StateObject private var signUpFeature =  SignUpFeature()
+    @StateObject var feature: SignUpFeature
+    
+    init(userId: Int) {
+        self._feature = StateObject(wrappedValue: SignUpFeature(userId: userId))
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             WithSuhyeonTopNavigationBar(
                 title: "",
                 onTapLeft: {
-                    signUpFeature.send(
+                    feature.send(
                         .tapBackButton
                     )
                 })
             
-            WithSuhyeonProgressBar(progress: signUpFeature.state.progress)
+            WithSuhyeonProgressBar(progress: feature.state.progress)
             
             Group {
-              Text(signUpFeature.currentContent.title)
+              Text(feature.currentContent.title)
                 .font(.title02B)
                 .padding(.leading, 16)
                 .padding(.top, 20)
 
-              if signUpFeature.currentContent == .activeAreaView {
+              if feature.currentContent == .activeAreaView {
                 Text("관심지역은 마이페이지에서 수정할 수 있어요")
                   .foregroundColor(.gray600)
                   .font(.caption01SB)
@@ -38,29 +42,29 @@ struct SignUpView: View {
                   .padding(.bottom, 20)
               }
             }
-            .padding(.bottom, signUpFeature.currentContent == .activeAreaView ? 0 : 20)
+            .padding(.bottom, feature.currentContent == .activeAreaView ? 0 : 20)
             
-            SignUpContent(selectedTab: signUpFeature.currentContent)
+            SignUpContent(selectedTab: feature.currentContent)
             
             WithSuhyeonButton(
                 title: "다음",
-                buttonState: signUpFeature.state.buttonState,
-                clickable: signUpFeature.state.buttonState == .enabled,
+                buttonState: feature.state.buttonState,
+                clickable: feature.state.buttonState == .enabled,
                 onTapButton: {
-                    if signUpFeature.currentContent == .activeAreaView {
-                        signUpFeature.send(.completeSignUp)
+                    if feature.currentContent == .activeAreaView {
+                        feature.send(.completeSignUp)
                     } else {
-                        signUpFeature.send(.tapButton)
+                        feature.send(.tapButton)
                     }
                 }
             )
             .padding(.horizontal, 16)
         }
-        .environmentObject(signUpFeature)
+        .environmentObject(feature)
         .onAppear {
-            signUpFeature.send(.enterScreen)
+            feature.send(.enterScreen)
         }
-        .onReceive(signUpFeature.sideEffectSubject) { sideEffect in
+        .onReceive(feature.sideEffectSubject) { sideEffect in
             switch sideEffect {
             case .navigateToSignUpComplete(let nickname):
                 router.navigate(to: .signUpComplete(nickname: nickname))
@@ -77,5 +81,5 @@ struct SignUpView: View {
 }
 
 #Preview {
-    SignUpView()
+//    SignUpView()
 }

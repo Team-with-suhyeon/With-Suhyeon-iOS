@@ -183,6 +183,7 @@ class AuthRepositoryImpl: AuthRepository {
                    let accessToken = response.accessToken,
                    let refreshToken = response.refreshToken {
                     do {
+                        try KeyChainManager.save(key: "userId", value: String(response.userId))
                         try KeyChainManager.save(key: "accessToken", value: accessToken)
                         try KeyChainManager.save(key: "refreshToken", value: refreshToken)
                     } catch {

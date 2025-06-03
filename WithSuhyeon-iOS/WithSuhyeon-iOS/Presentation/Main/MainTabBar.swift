@@ -9,9 +9,7 @@ import SwiftUI
 
 struct MainTabBar : View {
     @EnvironmentObject var router: RouterRegistry
-    @StateObject var feature = MainTabBarFeature()
-    @StateObject var signUpFeature = SignUpFeature()
-    
+    @StateObject var feature = MainTabBarFeature()   
     private var nickname: String
     
     
@@ -78,7 +76,7 @@ struct MainTabBar : View {
         .withSuhyeonSheet(
             isPresented: feature.state.blockingAccountSheetIsPresent,
             title: "차단하고 싶은 번호가 있나요?",
-            description: "차단한 사용자는 \(nickname)님의 게시글을 볼 수 없어요",
+            description: "차단한 사용자는 사용자의 게시글을 볼 수 없어요",
             sheetContent: {
                 Image(image: .imgFuckOff).renderingMode(.original)
             },

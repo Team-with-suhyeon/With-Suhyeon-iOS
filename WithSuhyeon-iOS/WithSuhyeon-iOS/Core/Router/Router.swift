@@ -34,7 +34,7 @@ public enum Destination: Hashable {
     case signUpComplete(nickname: String)
     case findSuhyeon
     case findSuhyeonDetail(id: Int)
-    case signUp
+    case signUp(userId: Int)
     case login
     case loginComplete
     case startView

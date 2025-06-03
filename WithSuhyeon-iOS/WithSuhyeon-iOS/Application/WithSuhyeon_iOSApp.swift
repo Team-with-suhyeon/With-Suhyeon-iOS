@@ -55,7 +55,7 @@ struct WithSuhyeon_iOSApp: App {
                                 .navigationBarBackButtonHidden(true)
                         case .login: LoginView()
                                 .navigationBarBackButtonHidden(true)
-                        case .signUp: SignUpView()
+                        case .signUp(userId: let userId): SignUpView(userId: userId)
                                 .navigationBarBackButtonHidden(true)
                         case .loginComplete: LoginCompleteView()
                                 .navigationBarBackButtonHidden(true)

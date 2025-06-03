@@ -10,6 +10,7 @@ import Combine
 
 class SignUpFeature: Feature {
     struct State {
+        var userId: Int = 0
         var progress: Double = 0.0
         var isAgree: Bool = false
         var buttonState: WithSuhyeonButtonState = .disabled
@@ -21,7 +22,6 @@ class SignUpFeature: Feature {
         var phoneAuthStep: PhoneAuthStep = .enterPhoneNumber
         var isExistsUser: Bool = false
         var errorMessage: String = ""
-        var kakaoId: Int64 = 0
         
         var nickname: String = ""
         var isNicknameValid: Bool = false
@@ -134,11 +134,12 @@ class SignUpFeature: Feature {
     @Inject private var signUpUseCase: SignUpUseCase
     @Inject private var oauthRepository: OAuthRepository
     
-    init() {
+    init(userId: Int) {
+        state.userId = userId
+        
         bindIntents()
         updateProgress()
         receiveState()
-        getKakaoId()
     }
     
     private func bindIntents() {
@@ -216,12 +217,6 @@ class SignUpFeature: Feature {
                 sideEffectSubject.send(.navigateToWebView(url: url, title: "개인정보처리방침"))
             }
             
-        }
-    }
-    
-    private func getKakaoId() {
-        oauthRepository.getKakaoId() { [weak self] userId in
-            self?.state.kakaoId = userId ?? 0
         }
     }
     
@@ -461,7 +456,7 @@ class SignUpFeature: Feature {
             gender: state.gender == "남성",
             profileImage: profileImage,
             region: region,
-            kakaoId: state.kakaoId
+            userId: state.userId
         )
     }
     

@@ -85,7 +85,7 @@ struct StartView: View {
         .onReceive(startFeature.sideEffectSubject) { sideEffect in
             switch sideEffect {
             case .navigateToSignUp:
-                router.navigate(to: .signUp)
+                router.navigate(to: .signUp(userId:startFeature.state.userId))
             case .navigateToLogin:
                 router.navigate(to: .login)
             case .navigateToMain:

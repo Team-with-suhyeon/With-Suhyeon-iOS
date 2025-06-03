@@ -16,6 +16,7 @@ class StartFeature: Feature {
         let startImages: [String] = [ "onboarding1", "onboarding2", "onboarding3"]
         var title: String = "수현이랑 함께라면\n연인과 여행 걱정없어요"
         var subTitle: String = "완벽하게 엄빠 몰래 가는 여행\n수현이랑 함께해요"
+        var userId: Int = 0
     }
     
     enum Intent {
@@ -92,13 +93,15 @@ class StartFeature: Feature {
     }
     
     private func checkUserExists(accessToken: String) {
-        authRepository.checkUserExists(accessToken: accessToken) { result in
+        authRepository.checkUserExists(accessToken: accessToken) { [weak self] result in
             switch result {
             case .success(let dto):
+                self?.state.userId = dto.userId
+                
                 if dto.isUser {
-                    self.sideEffectSubject.send(.navigateToMain)
+                    self?.sideEffectSubject.send(.navigateToMain)
                 } else {
-                    self.sideEffectSubject.send(.navigateToSignUp)
+                    self?.sideEffectSubject.send(.navigateToSignUp)
                 }
             case .failure(let error):
                 print("❌ 카카오 로그인 사용자 검증 실패: \(error)")

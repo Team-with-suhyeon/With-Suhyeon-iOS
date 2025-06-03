@@ -28,7 +28,7 @@ public enum Destination: Hashable {
     case galleryUpload
     case galleryDetail(id: Int)
     case chatRoom(ownerRoomId: String, peerRoomId: String, ownerId: Int, peerId: Int, postId: Int, nickname: String, title: String, location: String, money: String, imageUrl: String)
-    case blockingAccountManagement
+    case blockingAccountManagement(nickname: String)
     case myPost
     case setInterest
     case signUpComplete(nickname: String)

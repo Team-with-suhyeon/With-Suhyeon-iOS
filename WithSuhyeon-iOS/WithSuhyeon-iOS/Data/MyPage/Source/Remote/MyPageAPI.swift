@@ -11,6 +11,18 @@ import Combine
 import Alamofire
 
 struct MyPageAPI: MyPageApiProtocol {
+    func getMyPhoneNumber() -> AnyPublisher<MyPhoneNumberResponseDTO, NetworkError> {
+        let target = MyPageTarget.getMyPhoneNumber
+        
+        return client.request(MyPhoneNumberResponseDTO.self, target: target)
+    }
+    
+    func patchMyPhoneNumber(phoneNumber: String) -> AnyPublisher<Bool, NetworkError> {
+        let target = MyPageTarget.patchMyPhoneNumber(phoneNumber: phoneNumber)
+        
+        return client.request(target: target)
+    }
+    
     private let client = NetworkClient.shared
     
     func getUser() -> AnyPublisher<UserResponseDTO, NetworkError> {

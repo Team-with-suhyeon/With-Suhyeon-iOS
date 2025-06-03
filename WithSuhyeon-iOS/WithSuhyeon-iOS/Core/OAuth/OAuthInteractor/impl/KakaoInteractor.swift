@@ -64,22 +64,31 @@ class KakaoInteractor: NSObject, OAuthInteractor {
 
 extension KakaoInteractor: ASAuthorizationControllerDelegate {
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
-        guard let credential = authorization.credential as? ASAuthorizationAppleIDCredential else { return }
-        
-        let userId = credential.authorizationCode
-        let identityToken = credential.identityToken.flatMap { String(data: $0, encoding: .utf8) }
-        if let codeData = credential.authorizationCode,
-           let authorizationCode = String(data: codeData, encoding: .utf8) {
-            print("✅ authorizationCode: \(authorizationCode)")
-            appleLoginCompletion?(authorizationCode, identityToken)
+        guard let credential = authorization.credential as? ASAuthorizationAppleIDCredential else {
+            print("❌ Apple ID Credential 실패")
+            return
         }
-    }
-    
-    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
-        print("❌ Apple 로그인 실패: \(error.localizedDescription)")
+
+        guard let codeData = credential.authorizationCode else {
+            print("❌ authorizationCode 없음")
+            appleLoginCompletion?("", nil)
+            return
+        }
+        let rawCode = String(decoding: codeData, as: UTF8.self)
+        let encodedCode = rawCode.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+
+        let identityToken: String? = {
+            guard let tokenData = credential.identityToken else { return nil }
+            return String(data: tokenData, encoding: .utf8)
+        }()
+
+        print("✅ raw authorizationCode: \(rawCode)")
+        print("✅ encoded authorizationCode: \(encodedCode)")
+        print("✅ identityToken: \(identityToken ?? "없음")")
+
+        appleLoginCompletion?(encodedCode, identityToken)
     }
 }
-
 extension KakaoInteractor: ASAuthorizationControllerPresentationContextProviding {
     func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
         return UIApplication.shared.windows.first { $0.isKeyWindow }!

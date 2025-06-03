@@ -38,7 +38,8 @@ class BlockingAccountManagementFeature: Feature {
     private let intentSubject = PassthroughSubject<Intent, Never>()
     let sideEffectSubject = PassthroughSubject<SideEffect, Never>()
     
-    init() {
+    init(nickname: String) {
+        state.nickname = nickname
         bindIntents()
         send(.fetchBlockingAccounts)
     }

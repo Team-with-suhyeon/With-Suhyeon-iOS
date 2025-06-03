@@ -112,6 +112,8 @@ extension AuthTarget: TargetType {
                 "Access-Token": accessToken
                 //                "Authorization": "Bearer \(accessToken)"
             ]
+        /*case .checkUserExistsApple(let code):
+            return nil*/
         default:
             return ["Content-Type": "application/json"]
         }

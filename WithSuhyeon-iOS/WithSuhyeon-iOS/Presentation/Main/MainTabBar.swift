@@ -90,7 +90,7 @@ struct MainTabBar : View {
             switch sideEffect {
                 
             case .navigateToBlockingAccountManagement:
-                router.navigate(to: .blockingAccountManagement)
+                router.navigate(to: .blockingAccountManagement(nickname: feature.state.nickname))
             }
         }
     }

@@ -7,6 +7,9 @@
 
 import SwiftUI
 
+import KakaoSDKCommon
+import KakaoSDKAuth
+
 @main
 struct WithSuhyeon_iOSApp: App {
     @StateObject var router = RouterRegistry()
@@ -15,6 +18,13 @@ struct WithSuhyeon_iOSApp: App {
     
     init() {
         DIContainer.shared.registerDependencies()
+        
+        if let appKey = Bundle.main.infoDictionary?["KAKAO_NATIVE_APP_KEY"] as? String {
+            KakaoSDK.initSDK(appKey: appKey)
+        } else {
+            fatalError("❌ KEY 없음.")
+        }
+        
         //WebSocketClient.shared.connect(target: WebSocketTarget())
     }
     
@@ -32,7 +42,7 @@ struct WithSuhyeon_iOSApp: App {
                                 .navigationBarBackButtonHidden(true)
                         case let .chatRoom(ownerRoomID, peerRoomID, ownerID, peerID, postID, nickname, title, location, money, imageUrl) : ChatRoomView(ownerChatRoomId: ownerRoomID, peerChatRoomId: peerRoomID, ownerID: ownerID, peerID: peerID, postID: postID, nickname: nickname, location: location, money: money, title: title, imageUrl: imageUrl)
                                 .navigationBarBackButtonHidden(true)
-                        case .blockingAccountManagement: BlockingAccountManagement()
+                        case let .blockingAccountManagement(nickname): BlockingAccountManagement(nickname: nickname)
                                 .navigationBarBackButtonHidden(true)
                         case .myPost: MyPost()
                                 .navigationBarBackButtonHidden(true)
@@ -46,7 +56,7 @@ struct WithSuhyeon_iOSApp: App {
                                 .navigationBarBackButtonHidden(true)
                         case .login: LoginView()
                                 .navigationBarBackButtonHidden(true)
-                        case .signUp: SignUpView()
+                        case .signUp(userId: let userId): SignUpView(userId: userId)
                                 .navigationBarBackButtonHidden(true)
                         case .loginComplete: LoginCompleteView()
                                 .navigationBarBackButtonHidden(true)
@@ -72,6 +82,11 @@ struct WithSuhyeon_iOSApp: App {
                     WebSocketClient.shared.handleAppLifecycleEvents()
                 }
             }
+            .onOpenURL(perform: { url in
+                if (AuthApi.isKakaoTalkLoginUrl(url)) {
+                    AuthController.handleOpenUrl(url: url)
+                }
+            })
         }
     }
 }

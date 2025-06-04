@@ -12,6 +12,7 @@ public struct SignUpRequestDTO: Codable {
     let gender: Bool
     let profileImage: String
     let region: String
+    let userId: Int
 }
 
 extension Member {
@@ -22,7 +23,8 @@ extension Member {
             birthYear: birthYear,
             gender: gender,
             profileImage: profileImage,
-            region: region
+            region: region,
+            userId: userId
         )
     }
 }

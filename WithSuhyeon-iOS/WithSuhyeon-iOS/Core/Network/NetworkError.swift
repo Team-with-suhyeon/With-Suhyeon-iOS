@@ -47,6 +47,8 @@ public enum NetworkError: Error {
     case invalidCertificationNumber
     case expiredCertificationNumber
     
+    case invalidAccessToken
+    
     
     var errorMessage: String {
         switch self {
@@ -118,6 +120,9 @@ public enum NetworkError: Error {
             return "유효하지 않은 인증번호입니다."
         case .expiredCertificationNumber:
             return "인증번호가 만료되었습니다."
+        
+        case .invalidAccessToken:
+            return "유효하지 않은 카카오 엑세스 토큰입니다."
         }
 
     }

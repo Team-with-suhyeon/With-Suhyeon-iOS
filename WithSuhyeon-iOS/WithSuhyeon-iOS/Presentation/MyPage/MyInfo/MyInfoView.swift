@@ -28,7 +28,7 @@ struct MyInfoView: View {
                         
                         Spacer()
                         
-                        Text("010-1234-1234")
+                        Text(feature.state.phoneNumber)
                             .font(.body02B)
                             .foregroundColor(.gray900)
                         
@@ -40,6 +40,9 @@ struct MyInfoView: View {
                 }
                 
                 Spacer()
+            }
+            .onAppear {
+                feature.send(.enterScreen)
             }
             .background(Color.gray50)
         }

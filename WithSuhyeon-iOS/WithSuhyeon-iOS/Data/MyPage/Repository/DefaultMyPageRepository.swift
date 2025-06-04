@@ -11,8 +11,38 @@ import Combine
 import Alamofire
 
 class DefaultMyPageRepository: MyPageRepository {
+    
     @Inject var myPageAPI: MyPageApiProtocol
     var subscriptions = Set<AnyCancellable>()
+    
+    
+    func getMyPhoneNumber(completion: @escaping (String) -> Void) {
+        myPageAPI.getMyPhoneNumber()
+            .sink { completion in
+                switch completion {
+                case .finished:
+                    print("finish")
+                case .failure(let error):
+                    print(error)
+                }
+            } receiveValue: { phoneNumber in
+                completion(phoneNumber.phoneNumber)
+            }.store(in: &subscriptions)
+    }
+    
+    func patchMyPhoneNumber(phoneNumber: String, completion: @escaping (Bool) -> Void) {
+        myPageAPI.patchMyPhoneNumber(phoneNumber: phoneNumber)
+            .sink { completion in
+                switch completion {
+                case .finished:
+                    break
+                case .failure(let error):
+                    print(error)
+                }
+            } receiveValue: { success in
+                completion(success)
+            }.store(in: &subscriptions)
+    }
     
     func getUser(completion: @escaping (User) -> Void) {
         myPageAPI.getUser()

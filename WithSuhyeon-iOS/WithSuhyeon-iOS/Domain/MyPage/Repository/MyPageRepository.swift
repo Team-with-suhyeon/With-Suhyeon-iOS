@@ -13,4 +13,6 @@ protocol MyPageRepository {
     func getMyInterestRegion(completion: @escaping (MyInterestRegion) -> Void)
     func postMyInterestRegion(region: MyInterestRegionRequestDTO, completion: @escaping (Bool) -> Void)
     func getMyGalleryPosts(completion: @escaping ([MyGalleryPost]) -> Void)
+    func getMyPhoneNumber(completion: @escaping (String) -> Void)
+    func patchMyPhoneNumber(phoneNumber: String, completion: @escaping (Bool) -> Void)
 }

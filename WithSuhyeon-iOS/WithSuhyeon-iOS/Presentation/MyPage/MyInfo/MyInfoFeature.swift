@@ -11,35 +11,20 @@ import Combine
 class MyInfoFeature: Feature {
     struct State {
         var phoneNumber: String = ""
-        var authCode: String = ""
-        var isAuthButtonEnabled: Bool = false
-        var isAuthNumberCorrect: Bool = false
-        var phoneAuthStep: PhoneAuthStep = .enterPhoneNumber
-        var isExistsUser: Bool = false
-        var buttonState: WithSuhyeonButtonState = .disabled
-        var errorMessage: String = ""
     }
     
     enum Intent {
+        case enterScreen
         case tapBackButton
-        case updatePhoneNumber(String)
-        case requestAuthCode
-        case updateAuthCode(String)
-        case validateAuthCode
-        case changePhoneNumber
+        case tapPhoneNumber(String)
     }
     
     enum SideEffect {
-        
+        case popBackStack
+        case navigateToUpdatePhoneNumber
     }
     
-    enum PhoneAuthStep {
-        case enterPhoneNumber
-        case enterAuthCode
-        case completed
-    }
-    
-    @Inject private var authRepository: AuthRepository
+    @Inject private var myPageRepository: MyPageRepository
     @Published private(set) var state = State()
     private var cancellables = Set<AnyCancellable>()
     
@@ -63,17 +48,17 @@ class MyInfoFeature: Feature {
     func handleIntent(_ intent: Intent) {
         switch intent {
         case .tapBackButton:
-            print("뒤로가기")
-        case .updatePhoneNumber(_):
-            print("번호 입력")
-        case .requestAuthCode:
-            print("인증번호 요청")
-        case .updateAuthCode(_):
-            print("인증번호 입력")
-        case .validateAuthCode:
-            print("인증번호 검증")
-        case .changePhoneNumber:
-            print("변경")
+            do {}
+        case .tapPhoneNumber(_):
+            do {}
+        case .enterScreen:
+            getPhoneNumber()
+        }
+    }
+    
+    private func getPhoneNumber() {
+        myPageRepository.getMyPhoneNumber { [weak self] phoneNumber in
+            self?.state.phoneNumber = phoneNumber
         }
     }
 }

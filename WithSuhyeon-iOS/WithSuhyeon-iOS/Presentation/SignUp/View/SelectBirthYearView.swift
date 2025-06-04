@@ -45,5 +45,5 @@ struct SelectBirthYearView: View {
 }
 #Preview {
     SelectBirthYearView()
-        .environmentObject(SignUpFeature())
+        .environmentObject(SignUpFeature(userId: 1))
 }

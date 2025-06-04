@@ -11,16 +11,30 @@ import Combine
 class MyInfoFeature: Feature {
     struct State {
         var phoneNumber: String = ""
+        var authCode: String = ""
+        var isAuthButtonEnabled: Bool = false
+        var isAuthNumberCorrect: Bool = false
+        var phoneAuthStep: PhoneAuthStep = .enterPhoneNumber
+        var errorMessage: String = ""
+    }
+    
+    enum PhoneAuthStep {
+        case enterPhoneNumber
+        case enterAuthCode
+        case completed
     }
     
     enum Intent {
         case enterScreen
-        case tapBackButton
-        case tapPhoneNumber(String)
+        case tapPhoneNumber
+        case updatePhoneNumber(String)
+        case requestAuthCode
+        case updateAuthCode(String)
+        case validateAuthCode
+        case tapComplete
     }
     
     enum SideEffect {
-        case popBackStack
         case navigateToUpdatePhoneNumber
     }
     
@@ -47,12 +61,20 @@ class MyInfoFeature: Feature {
     
     func handleIntent(_ intent: Intent) {
         switch intent {
-        case .tapBackButton:
-            do {}
-        case .tapPhoneNumber(_):
-            do {}
+        case .tapPhoneNumber:
+            sideEffectSubject.send(.navigateToUpdatePhoneNumber)
         case .enterScreen:
             getPhoneNumber()
+        case .updatePhoneNumber(let phoneNumber):
+            updatePhoneNumber(phoneNumber)
+        case .requestAuthCode:
+            requestAuthCode()
+        case .updateAuthCode(let authCode):
+            updateAuthCode(authCode)
+        case .validateAuthCode:
+            validateAuthCode()
+        case .tapComplete:
+            updatePhoneNumberComplete()
         }
     }
     
@@ -60,5 +82,36 @@ class MyInfoFeature: Feature {
         myPageRepository.getMyPhoneNumber { [weak self] phoneNumber in
             self?.state.phoneNumber = phoneNumber
         }
+    }
+    
+    private func updatePhoneNumber(_ phoneNumber: String) {
+        state.phoneNumber = phoneNumber
+        state.isAuthButtonEnabled = phoneNumber.count == 11
+    }
+    
+    private func updateAuthCode(_ authCode: String) {
+        if authCode.count > 6 {
+            return
+        }
+        
+        state.authCode = authCode
+        
+        if authCode.count <= 6 {
+            state.isAuthNumberCorrect = true
+        }
+    }
+    
+    private func requestAuthCode() {
+        print("인증번호 요청")
+        state.phoneAuthStep = .enterAuthCode
+        state.isAuthButtonEnabled = false
+    }
+    
+    private func validateAuthCode() {
+        
+    }
+    
+    private func updatePhoneNumberComplete() {
+        
     }
 }

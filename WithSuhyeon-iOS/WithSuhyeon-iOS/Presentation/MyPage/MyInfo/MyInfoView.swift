@@ -19,7 +19,7 @@ struct MyInfoView: View {
             
             VStack(spacing: 0) {
                 Button(action: {
-                    print("하이")
+                    feature.send(.tapPhoneNumber)
                 }) {
                     HStack {
                         Text("휴대폰 번호")
@@ -43,6 +43,13 @@ struct MyInfoView: View {
             }
             .onAppear {
                 feature.send(.enterScreen)
+            }
+            .onReceive(feature.sideEffectSubject) { sideEffect in
+                switch sideEffect {
+                case .navigateToUpdatePhoneNumber:
+                    router.navigate(to: .updatePhoneNumber)
+                }
+                
             }
             .background(Color.gray50)
         }

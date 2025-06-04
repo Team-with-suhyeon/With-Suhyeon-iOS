@@ -43,4 +43,5 @@ public enum Destination: Hashable {
     case feedback
     case termsAndPoliciesWebView(request: URLRequest, title: String)
     case myInfo
+    case updatePhoneNumber
 }

@@ -72,6 +72,7 @@ struct WithSuhyeon_iOSApp: App {
                                 .navigationBarBackButtonHidden(true)
                         case .myInfo: MyInfoView()
                                 .navigationBarBackButtonHidden(true)
+                        case .updatePhoneNumber: UpdatePhoneNumber().navigationBarBackButtonHidden(true)
                         }
                     }
             }

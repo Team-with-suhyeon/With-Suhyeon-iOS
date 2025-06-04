@@ -233,7 +233,7 @@ class SignUpFeature: Feature {
         state.phoneNumber = phoneNumber
         state.isExistsUser = false
         updateAuthButtonState()
-        state.isAuthButtonEnabled = true
+        state.isAuthButtonEnabled = phoneNumber.count == 11
     }
     
     private func requestAuthCode() {

@@ -39,5 +39,5 @@ struct SelectGenderView: View {
 
 #Preview {
     SelectGenderView()
-        .environmentObject(SignUpFeature())
+        .environmentObject(SignUpFeature(userId: 1))
 }

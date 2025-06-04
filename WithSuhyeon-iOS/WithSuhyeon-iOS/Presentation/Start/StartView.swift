@@ -66,48 +66,32 @@ struct StartView: View {
                         }
                     }
             )
-            VStack(spacing: 0) {
-                WithSuhyeonButton(title: "가입하기", buttonState: .enabled, onTapButton: {
-                    startFeature.send(.tapSignUpButton)
+            
+            VStack(spacing: 16) {
+                WithSuhyeonSocialButton(type: .kakao, onTapButton: {
+                    startFeature.send(.tapKakaoLoginButton)
                 })
-                .padding(.horizontal, 16)
-                .padding(.top, 72)
-                
-                HStack(spacing: 5) {
-                    Text("이미 계정이 있나요?")
-                        .font(.body02SB)
-                        .foregroundColor(Color.gray500)
-                    
-                    Button(action: { startFeature.send(.tapLoginButton) }) {
-                        Text("로그인")
-                            .font(.body02B)
-                            .foregroundColor(Color.primary600)
-                    }
-                }
-                
-                //            VStack(spacing: 16) {
-                //                WithSuhyeonSocialButton(type: .kakao, onTapButton: {})
-                //                WithSuhyeonSocialButton(type:.apple, onTapButton: {})
-                //            }
-                
-                .padding(.horizontal, 16)
-                .safeAreaInset(edge: .bottom) {
-                    Color.clear.frame(height: 20)
-                }
+                WithSuhyeonSocialButton(type:.apple, onTapButton: {
+                    startFeature.send(.tapAppleLoginButton)
+                })
             }
-            .edgesIgnoringSafeArea(.top)
-            .onAppear {
-                startFeature.checkAutoLogin()
+            .padding(.horizontal, 16)
+            .safeAreaInset(edge: .bottom) {
+                Color.clear.frame(height: 20)
             }
-            .onReceive(startFeature.sideEffectSubject) { sideEffect in
-                switch sideEffect {
-                case .navigateToSignUp:
-                    router.navigate(to: .signUp)
-                case .navigateToLogin:
-                    router.navigate(to: .login)
-                case .navigateToMain:
-                    router.navigate(to: .main(fromSignUp: false, nickname: ""))
-                }
+        }
+        .edgesIgnoringSafeArea(.top)
+        .onAppear {
+            startFeature.checkAutoLogin()
+        }
+        .onReceive(startFeature.sideEffectSubject) { sideEffect in
+            switch sideEffect {
+            case .navigateToSignUp:
+                router.navigate(to: .signUp(userId:startFeature.state.userId))
+            case .navigateToLogin:
+                router.navigate(to: .login)
+            case .navigateToMain:
+                router.navigate(to: .main(fromSignUp: false, nickname: ""))
             }
         }
     }

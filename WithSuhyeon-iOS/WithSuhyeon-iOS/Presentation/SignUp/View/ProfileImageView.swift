@@ -93,5 +93,5 @@ struct ProfileImage: View {
 
 #Preview {
     ProfileImageView()
-        .environmentObject(SignUpFeature())
+        .environmentObject(SignUpFeature(userId: 1))
 }

@@ -16,6 +16,8 @@ enum MyPageTarget {
     case getMyInterestRegion
     case postMyInterestRegion(region: MyInterestRegionRequestDTO)
     case getMyGalleryPosts
+    case getMyPhoneNumber
+    case patchMyPhoneNumber(phoneNumber: String)
 }
 
 protocol MyPageApiProtocol {
@@ -24,6 +26,8 @@ protocol MyPageApiProtocol {
     func getMyInterestRegion () -> AnyPublisher<MyInterestRegionResponseDTO, NetworkError>
     func postMyInterestRegion(region: MyInterestRegionRequestDTO) -> AnyPublisher<Bool, NetworkError>
     func getMyGalleryPosts() -> AnyPublisher<MyGalleryPostsResponseDTO, NetworkError>
+    func getMyPhoneNumber() -> AnyPublisher<MyPhoneNumberResponseDTO, NetworkError>
+    func patchMyPhoneNumber(phoneNumber: String) -> AnyPublisher<Bool, NetworkError>
 }
 
 extension MyPageTarget: TargetType {
@@ -36,6 +40,10 @@ extension MyPageTarget: TargetType {
         case .getUser, .getMyFindSuhyeonPosts, .getMyInterestRegion, .getMyGalleryPosts:
             return .get
         case .postMyInterestRegion:
+            return .patch
+        case .getMyPhoneNumber:
+            return .get
+        case .patchMyPhoneNumber:
             return .patch
         }
     }
@@ -52,15 +60,22 @@ extension MyPageTarget: TargetType {
             return "/api/v1/mypage/preference"
         case .getMyGalleryPosts:
             return "/api/v1/mypage/galleries"
+        case .getMyPhoneNumber:
+            return "/api/v1/mypage/phone-number"
+        case .patchMyPhoneNumber:
+            return "/api/v1/mypage/phone-number"
         }
     }
     
     var parameters: RequestParameters {
         switch self {
-        case .getUser, .getMyFindSuhyeonPosts, .getMyInterestRegion, .getMyGalleryPosts:
+        case .getUser, .getMyFindSuhyeonPosts, .getMyInterestRegion, .getMyGalleryPosts, .getMyPhoneNumber:
             return .none
         case .postMyInterestRegion(region: let region):
             return .body(region)
+            
+        case .patchMyPhoneNumber(phoneNumber: let phoneNumber):
+            return .body(["phoneNumber": phoneNumber])
         }
     }
     

@@ -9,7 +9,6 @@ import SwiftUI
 import Lottie
 
 struct HomeView : View {
-    
     @EnvironmentObject private var router: RouterRegistry
     @StateObject var feature = HomeFeature()
     

@@ -32,8 +32,20 @@ struct TermsOfServiceView: View {
                         ) {
                             toggleAgreeCheck(at: index)
                         }
-                        WithSuhyeonUnderlineButton(title: "보기") {}
+                        
+                        if index == 1 || index == 2 {
+                            WithSuhyeonUnderlineButton(title: "보기") {
+                                switch index {
+                                case 1:
+                                    signUpFeature.send(.tapServiceTerms)
+                                case 2:
+                                    signUpFeature.send(.tapPrivacyPolicy)
+                                default:
+                                    break
+                                }
+                            }
                             .frame(width: 25, height: 22)
+                        }
                     }
                 }
             }

@@ -73,7 +73,7 @@ struct MyPageView : View {
             case .navigateToMyPost:
                 router.navigate(to: .myPost)
             case .navigateToBlockingAccountManagement:
-                router.navigate(to: .blockingAccountManagement)
+                router.navigate(to: .blockingAccountManagement(nickname: feature.state.nickname))
             case .navigateToSetInterest:
                 router.navigate(to: .setInterest)
             case .navigateToInitialScreen:

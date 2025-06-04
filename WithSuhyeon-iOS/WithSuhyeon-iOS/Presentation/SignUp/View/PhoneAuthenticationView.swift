@@ -74,5 +74,4 @@ struct PhoneAuthenticationView: View {
 
 #Preview {
     PhoneAuthenticationView()
-        .environmentObject(SignUpFeature())
 }

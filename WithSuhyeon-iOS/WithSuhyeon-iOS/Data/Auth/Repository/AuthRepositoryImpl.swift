@@ -43,7 +43,7 @@ class AuthRepositoryImpl: AuthRepository {
                 do {
                     try KeyChainManager.save(key: "accessToken", value: response.accessToken)
                     try KeyChainManager.save(key: "refreshToken", value: response.refreshToken)
-                    
+                    try KeyChainManager.save(key: "phoneNumber", value: phoneNumber)
                     completion(.success(()))
                 } catch {
                     print("토큰 저장 실패: \(error)")
@@ -168,6 +168,56 @@ class AuthRepositoryImpl: AuthRepository {
                 } else {
                     completion(.failure(.unknownError))
                 }
+            }
+            .store(in: &subscriptions)
+    }
+    
+    func checkUserExists(accessToken: String, completion: @escaping (Result<KakaoLoginResponseDTO, NetworkError>) -> Void) {
+        authAPI.checkUserExists(accessToken: accessToken)
+            .sink { result in
+                if case .failure(let error) = result {
+                    completion(.failure(error))
+                }
+            } receiveValue: { response in
+                if response.isUser,
+                   let accessToken = response.accessToken,
+                   let refreshToken = response.refreshToken {
+                    do {
+                        try KeyChainManager.save(key: "userId", value: String(response.userId))
+                        try KeyChainManager.save(key: "accessToken", value: accessToken)
+                        try KeyChainManager.save(key: "refreshToken", value: refreshToken)
+                    } catch {
+                        print("토큰 저장 실패: \(error)")
+                        completion(.failure(.unknownError))
+                        return
+                    }
+                }
+                completion(.success(response))
+            }
+            .store(in: &subscriptions)
+    }
+    
+    func checkUserExistsApple(code: String, completion: @escaping (Result<KakaoLoginResponseDTO, NetworkError>) -> Void) {
+        authAPI.checkUserExistsApple(code: code)
+            .sink { result in
+                if case .failure(let error) = result {
+                    completion(.failure(error))
+                }
+            } receiveValue: { response in
+                if response.isUser,
+                   let accessToken = response.accessToken,
+                   let refreshToken = response.refreshToken {
+                    do {
+                        try KeyChainManager.save(key: "userId", value: String(response.userId))
+                        try KeyChainManager.save(key: "accessToken", value: accessToken)
+                        try KeyChainManager.save(key: "refreshToken", value: refreshToken)
+                    } catch {
+                        print("토큰 저장 실패: \(error)")
+                        completion(.failure(.unknownError))
+                        return
+                    }
+                }
+                completion(.success(response))
             }
             .store(in: &subscriptions)
     }

@@ -15,6 +15,7 @@ class MyPageFeature: Feature {
     }
     
     enum Intent {
+        case tapMyInfo
         case tapMyPost
         case tapBlockingAccountManagement
         case tapSetInterest
@@ -26,6 +27,7 @@ class MyPageFeature: Feature {
     }
     
     enum SideEffect {
+        case navigateToMyInfo
         case navigateToMyPost
         case navigateToBlockingAccountManagement
         case navigateToSetInterest
@@ -60,6 +62,8 @@ class MyPageFeature: Feature {
     
     func handleIntent(_ intent: Intent) {
         switch intent {
+        case .tapMyInfo:
+            sideEffectSubject.send(.navigateToMyInfo)
         case .tapMyPost:
             sideEffectSubject.send(.navigateToMyPost)
         case .tapBlockingAccountManagement:

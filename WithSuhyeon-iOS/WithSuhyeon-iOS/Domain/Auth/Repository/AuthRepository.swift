@@ -25,4 +25,8 @@ protocol AuthRepository {
     
     func logout(completion: @escaping (Result<Void, NetworkError>) -> Void)
     func withdraw(completion: @escaping (Result<Void, NetworkError>) -> Void)
+    
+    func checkUserExists(accessToken: String, completion: @escaping (Result<KakaoLoginResponseDTO, NetworkError>) -> Void)
+    
+    func checkUserExistsApple(code: String, completion: @escaping (Result<KakaoLoginResponseDTO, NetworkError>) -> Void)
 }

@@ -282,6 +282,7 @@ class FindSuhyeonFeature: Feature {
             
         case .confirmDateTimeSelection:
             state.dateTime.selectedDateIndex = state.dateTime.tempDateIndex
+            state.selectedDate = state.dates[state.dateTime.tempDateIndex]
             state.isPresent = false
             
         case .progressToNext:
@@ -392,6 +393,7 @@ class FindSuhyeonFeature: Feature {
     
     private func postFindSuhyeon() {
         let fommatedDate = convertToISOFormat(from: state.selectedDate)
+        print("fommatedDate : \(fommatedDate ?? "")")
         let money = state.selectedMoney.replacingOccurrences(of: ",", with: "")
         let request = FindSuhyeonPostRequest(
             gender: state.selectedGender == "남자" ? .man : .woman,
@@ -412,28 +414,38 @@ class FindSuhyeonFeature: Feature {
     }
     
     func convertToISOFormat(from dateString: String) -> String? {
+        print("데이트 날짜: \(dateString)")
+
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "ko_KR")
-        dateFormatter.dateFormat = "M월 d일 E a h:mm"
-        
-        guard let date = dateFormatter.date(from: dateString) else {
+        dateFormatter.timeZone = TimeZone(identifier: "Asia/Seoul")
+
+        var fullDateString = dateString
+        if !dateString.contains("오전") && !dateString.contains("오후") {
+            fullDateString += " 오후 6:00"
+        }
+
+        dateFormatter.dateFormat = "M월 d일 (E) a h:mm"
+
+        guard let date = dateFormatter.date(from: fullDateString) else {
+            print("❌ 날짜 파싱 실패")
             return nil
         }
-        
+
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(identifier: "Asia/Seoul")!
         var components = calendar.dateComponents([.month, .day, .hour, .minute], from: date)
         components.year = 2025
-        
+
         guard let fixedDate = calendar.date(from: components) else {
             return nil
         }
-        
+
         let isoFormatter = DateFormatter()
         isoFormatter.locale = Locale(identifier: "en_US_POSIX")
         isoFormatter.timeZone = TimeZone(identifier: "Asia/Seoul")
         isoFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm"
-        
+
         return isoFormatter.string(from: fixedDate)
     }
 }

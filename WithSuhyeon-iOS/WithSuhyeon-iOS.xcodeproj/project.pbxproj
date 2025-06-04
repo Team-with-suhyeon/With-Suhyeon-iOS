@@ -11,6 +11,8 @@
 		8BA72DEC2D2E22A9007654D1 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 8BA72DEB2D2E22A9007654D1 /* Alamofire */; };
 		8BA72DEF2D2E22B7007654D1 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = 8BA72DEE2D2E22B7007654D1 /* Then */; };
 		8BA72DF22D2E22C7007654D1 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 8BA72DF12D2E22C7007654D1 /* Kingfisher */; };
+		B846C5802DE0EC0A00D37788 /* KakaoSDK in Frameworks */ = {isa = PBXBuildFile; productRef = B846C57F2DE0EC0A00D37788 /* KakaoSDK */; };
+		B846C5822DE0EDC300D37788 /* KakaoSDKFriendResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B846C5812DE0EDC300D37788 /* KakaoSDKFriendResources.bundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,6 +36,7 @@
 		8BA72D872D2E1EF9007654D1 /* WithSuhyeon-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WithSuhyeon-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8BA72D972D2E1EFA007654D1 /* WithSuhyeon-iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "WithSuhyeon-iOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8BA72DA12D2E1EFA007654D1 /* WithSuhyeon-iOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "WithSuhyeon-iOSUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B846C5812DE0EDC300D37788 /* KakaoSDKFriendResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = KakaoSDKFriendResources.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -73,6 +76,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8BA72DF22D2E22C7007654D1 /* Kingfisher in Frameworks */,
+				B846C5802DE0EC0A00D37788 /* KakaoSDK in Frameworks */,
 				8BA72DEC2D2E22A9007654D1 /* Alamofire in Frameworks */,
 				8BA72DEF2D2E22B7007654D1 /* Then in Frameworks */,
 				8B7951852D3D58E20077A833 /* Lottie in Frameworks */,
@@ -99,6 +103,7 @@
 		8BA72D7E2D2E1EF9007654D1 = {
 			isa = PBXGroup;
 			children = (
+				B846C5812DE0EDC300D37788 /* KakaoSDKFriendResources.bundle */,
 				8BA72D892D2E1EF9007654D1 /* WithSuhyeon-iOS */,
 				8BA72D9A2D2E1EFA007654D1 /* WithSuhyeon-iOSTests */,
 				8BA72DA42D2E1EFA007654D1 /* WithSuhyeon-iOSUITests */,
@@ -140,6 +145,7 @@
 				8BA72DEE2D2E22B7007654D1 /* Then */,
 				8BA72DF12D2E22C7007654D1 /* Kingfisher */,
 				8B7951842D3D58E20077A833 /* Lottie */,
+				B846C57F2DE0EC0A00D37788 /* KakaoSDK */,
 			);
 			productName = "WithSuhyeon-iOS";
 			productReference = 8BA72D872D2E1EF9007654D1 /* WithSuhyeon-iOS.app */;
@@ -228,6 +234,7 @@
 				8BA72DED2D2E22B7007654D1 /* XCRemoteSwiftPackageReference "Then" */,
 				8BA72DF02D2E22C7007654D1 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				8B7951832D3D58E20077A833 /* XCRemoteSwiftPackageReference "lottie-ios" */,
+				B846C57E2DE0EC0A00D37788 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8BA72D882D2E1EF9007654D1 /* Products */;
@@ -246,6 +253,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B846C5822DE0EDC300D37788 /* KakaoSDKFriendResources.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -431,8 +439,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "WithSuhyeon-iOS/WithSuhyeon-iOS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 20250430;
+				CURRENT_PROJECT_VERSION = 20250415;
 				DEVELOPMENT_ASSET_PATHS = "\"WithSuhyeon-iOS/Preview Content\"";
 				DEVELOPMENT_TEAM = N2YQG934FX;
 				ENABLE_PREVIEWS = YES;
@@ -450,7 +459,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.2;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.WithSuhyeon-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -466,8 +475,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "WithSuhyeon-iOS/WithSuhyeon-iOS.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 20250430;
+				CURRENT_PROJECT_VERSION = 20250415;
 				DEVELOPMENT_ASSET_PATHS = "\"WithSuhyeon-iOS/Preview Content\"";
 				DEVELOPMENT_TEAM = N2YQG934FX;
 				ENABLE_PREVIEWS = YES;
@@ -485,7 +495,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.2;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.WithSuhyeon-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -640,6 +650,14 @@
 				minimumVersion = 8.1.3;
 			};
 		};
+		B846C57E2DE0EC0A00D37788 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kakao/kakao-ios-sdk";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -662,6 +680,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 8BA72DF02D2E22C7007654D1 /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
+		};
+		B846C57F2DE0EC0A00D37788 /* KakaoSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B846C57E2DE0EC0A00D37788 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
+			productName = KakaoSDK;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

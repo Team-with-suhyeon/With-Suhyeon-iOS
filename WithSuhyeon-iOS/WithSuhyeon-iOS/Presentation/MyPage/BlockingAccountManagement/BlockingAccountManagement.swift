@@ -3,9 +3,11 @@ import SwiftUI
 
 struct BlockingAccountManagement: View {
     @EnvironmentObject var router: RouterRegistry
-    @StateObject var blockingAccountManagementFeature = BlockingAccountManagementFeature()
-    @StateObject var signUpFeature = SignUpFeature()
+    @StateObject var blockingAccountManagementFeature: BlockingAccountManagementFeature
     
+    init(nickname: String) {
+        self._blockingAccountManagementFeature = StateObject(wrappedValue: BlockingAccountManagementFeature(nickname: nickname))
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -18,8 +20,7 @@ struct BlockingAccountManagement: View {
                 Text("차단할 번호를 입력해주세요")
                     .font(.title02B)
                     .foregroundColor(.black)
-                
-                Text("차단한 사용자는 \(signUpFeature.state.nickname)님의 게시글을 볼 수 없어요")
+                Text("차단한 사용자는 \(blockingAccountManagementFeature.state.nickname)님의 게시글을 볼 수 없어요")
                     .font(.caption01SB)
                     .foregroundColor(.gray400)
             }
@@ -124,5 +125,5 @@ struct BlockingAccountManagement: View {
 }
 
 #Preview {
-    BlockingAccountManagement()
+    BlockingAccountManagement(nickname: "dd")
 }

@@ -29,5 +29,4 @@ struct ActiveAreaView: View {
 
 #Preview {
     ActiveAreaView()
-        .environmentObject(SignUpFeature())
 }

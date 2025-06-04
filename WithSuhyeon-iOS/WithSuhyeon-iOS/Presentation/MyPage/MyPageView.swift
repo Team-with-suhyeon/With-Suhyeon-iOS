@@ -30,6 +30,9 @@ struct MyPageView : View {
                 )
                 
                 ManageSectionView(
+                    onTabMyInfo: {
+                        feature.send(.tapMyInfo)
+                    },
                     onTapBlock: {
                         feature.send(.tapBlockingAccountManagement)
                     },
@@ -65,10 +68,12 @@ struct MyPageView : View {
         }
         .onReceive(feature.sideEffectSubject) { sideEffect in
             switch sideEffect {
+            case .navigateToMyInfo:
+                router.navigate(to: .myInfo)
             case .navigateToMyPost:
                 router.navigate(to: .myPost)
             case .navigateToBlockingAccountManagement:
-                router.navigate(to: .blockingAccountManagement)
+                router.navigate(to: .blockingAccountManagement(nickname: feature.state.nickname))
             case .navigateToSetInterest:
                 router.navigate(to: .setInterest)
             case .navigateToInitialScreen:
@@ -176,6 +181,7 @@ struct ProfileSectionView: View {
 }
 
 struct ManageSectionView: View {
+    let onTabMyInfo: () -> Void
     let onTapBlock: () -> Void
     let onSetInterest: () -> Void
     
@@ -190,6 +196,18 @@ struct ManageSectionView: View {
             
             VStack(spacing: 0) {
                 HStack {
+                    Image(icon: .icInfo18).padding(.leading, 12)
+                    Text("내 정보 관리")
+                        .font(.body03SB)
+                        .foregroundColor(.black)
+                    Spacer()
+                    Image(icon: .icArrowRight20).padding(.trailing, 12)
+                }
+                .padding(.vertical, 14)
+                .contentShape(Rectangle())
+                .onTapGesture { onTabMyInfo() }
+                
+                HStack {
                     Image(icon: .icBlock18).padding(.leading, 12)
                     Text("차단계정 관리")
                         .font(.body03SB)
@@ -202,7 +220,7 @@ struct ManageSectionView: View {
                 .onTapGesture { onTapBlock() }
                 
                 HStack {
-                    Image(icon: .icInfo18).padding(.leading, 12)
+                    Image(icon: .icLocation18).padding(.leading, 12)
                     Text("관심 지역 설정")
                         .font(.body03SB)
                         .foregroundColor(.black)

@@ -18,6 +18,8 @@ enum AuthTarget {
     case validateAuthCode(flow: String, authCode: String, phoneNumber: String)
     case logout
     case withdraw
+    case checkUserExists(accessToken: String)
+    case checkUserExistsApple(code: String)
 }
 
 protocol AuthAPIProtocol {
@@ -28,6 +30,8 @@ protocol AuthAPIProtocol {
     func validateAuthCode(flow: String, authCode: String, phoneNumber: String) -> AnyPublisher<Bool, NetworkError>
     func logout() -> AnyPublisher<Bool, NetworkError>
     func withdraw() -> AnyPublisher<Bool, NetworkError>
+    func checkUserExists(accessToken: String) -> AnyPublisher<KakaoLoginResponseDTO, NetworkError>
+    func checkUserExistsApple(code: String) -> AnyPublisher<KakaoLoginResponseDTO, NetworkError>
 }
 
 extension AuthTarget: TargetType {
@@ -38,8 +42,10 @@ extension AuthTarget: TargetType {
     
     var method: Alamofire.HTTPMethod {
         switch self {
-        case .signUp, .login, .sendAuthCode, .validateAuthCode, .logout:
+        case .login, .sendAuthCode, .validateAuthCode, .logout, .checkUserExists, .checkUserExistsApple:
             return .post
+        case .signUp:
+            return .patch
         case .getUserId:
             return .get
         case .withdraw:
@@ -63,6 +69,10 @@ extension AuthTarget: TargetType {
             return "/api/v1/auth/logout"
         case .withdraw:
             return "/api/v1/auth/withdraw"
+        case .checkUserExists:
+            return "/api/v1/auth/kakao"
+        case .checkUserExistsApple(code: let code):
+            return "/api/v1/auth/apple"
         }
     }
     
@@ -82,11 +92,31 @@ extension AuthTarget: TargetType {
             return .none
         case .withdraw:
             return .none
+        case .checkUserExists:
+            return .none
+        case .checkUserExistsApple(code: let code):
+            return .query(["code": code])
         }
     }
     
     var encoding: ParameterEncoding {
         return JSONEncoding.default
+    }
+    
+    
+    var headers: [String: String]? {
+        switch self {
+        case .checkUserExists(let accessToken):
+            return [
+                "Content-Type": "application/json",
+                "Access-Token": accessToken
+                //                "Authorization": "Bearer \(accessToken)"
+            ]
+        /*case .checkUserExistsApple(let code):
+            return nil*/
+        default:
+            return ["Content-Type": "application/json"]
+        }
     }
 }
 

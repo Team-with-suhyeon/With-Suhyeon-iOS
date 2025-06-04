@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import KakaoSDKUser
 
 class StartFeature: Feature {
     struct State {
@@ -15,6 +16,7 @@ class StartFeature: Feature {
         let startImages: [String] = [ "onboarding1", "onboarding2", "onboarding3"]
         var title: String = "수현이랑 함께라면\n연인과 여행 걱정없어요"
         var subTitle: String = "완벽하게 엄빠 몰래 가는 여행\n수현이랑 함께해요"
+        var userId: Int = 0
     }
     
     enum Intent {
@@ -22,6 +24,8 @@ class StartFeature: Feature {
         case tapLoginButton
         case updateCurrentImage(Int)
         case checkAutoLogin
+        case tapKakaoLoginButton
+        case tapAppleLoginButton
     }
     
     enum SideEffect {
@@ -31,6 +35,7 @@ class StartFeature: Feature {
     }
     
     @Inject private var authRepository: AuthRepository
+    @Inject private var oauthRepository: OAuthRepository
     @Published private(set) var state = State()
     private var cancellables = Set<AnyCancellable>()
     private let intentSubject = PassthroughSubject<Intent, Never>()
@@ -61,6 +66,10 @@ class StartFeature: Feature {
             updateCurrentImage(image)
         case .checkAutoLogin:
             checkAutoLogin()
+        case .tapKakaoLoginButton:
+            kakaoLogin()
+        case .tapAppleLoginButton:
+            appleLogin()
         }
     }
     
@@ -77,6 +86,52 @@ class StartFeature: Feature {
         default :
             state.title = "내 여행상황에 맞는 사진 찾아\n바로 다운로드해요"
             state.subTitle = "지금 당장 여행 인증 사진이 필요하다면\n수현이들이 올려둔 공유 앨범에서 찾아봐요"
+        }
+    }
+    
+    private func kakaoLogin() {
+        oauthRepository.login(){ [weak self] token in
+            self?.checkUserExists(accessToken: token)
+        }
+    }
+    
+    private func appleLogin() {
+        oauthRepository.loginApple(){ [weak self] code in
+            self?.checkUserExistsApple(code: code)
+        }
+    }
+    
+    private func checkUserExists(accessToken: String) {
+        authRepository.checkUserExists(accessToken: accessToken) { [weak self] result in
+            switch result {
+            case .success(let dto):
+                self?.state.userId = dto.userId
+                
+                if dto.isUser {
+                    self?.sideEffectSubject.send(.navigateToMain)
+                } else {
+                    self?.sideEffectSubject.send(.navigateToSignUp)
+                }
+            case .failure(let error):
+                print("❌ 카카오 로그인 사용자 검증 실패: \(error)")
+            }
+        }
+    }
+    
+    private func checkUserExistsApple(code: String) {
+        authRepository.checkUserExistsApple(code: code) { [weak self] result in
+            switch result {
+            case .success(let dto):
+                self?.state.userId = dto.userId
+                
+                if dto.isUser {
+                    self?.sideEffectSubject.send(.navigateToMain)
+                } else {
+                    self?.sideEffectSubject.send(.navigateToSignUp)
+                }
+            case .failure(let error):
+                print("❌ 애플 로그인 사용자 검증 실패: \(error)")
+            }
         }
     }
     

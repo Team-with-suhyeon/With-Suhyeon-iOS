@@ -24,7 +24,6 @@ class GalleryDetailFeature: Feature {
         var date: String = ""
         var content: String = ""
         var isSaving: Bool = false
-        var saveResultMessage: String = ""
         var bottomSheetIsPresented: Bool = false
     }
     
@@ -39,6 +38,7 @@ class GalleryDetailFeature: Feature {
     
     enum SideEffect {
         case popBack
+        case showToast(String)
     }
     
     @Published private(set) var state = State()
@@ -109,6 +109,7 @@ class GalleryDetailFeature: Feature {
             guard status == .authorized || status == .limited else {
                 DispatchQueue.main.async {
                     self?.state.isSaving = false
+                    self?.sideEffectSubject.send(.showToast("사진 접근 권한이 필요해요"))
                 }
                 return
             }
@@ -119,10 +120,10 @@ class GalleryDetailFeature: Feature {
                 DispatchQueue.main.async {
                     if success {
                         print("이미지 저장 성공")
-                        self?.state.saveResultMessage = "이미지가 성공적으로 저장되었습니다!"
+                        self?.sideEffectSubject.send(.showToast("다운로드 완료되었습니다."))
                     } else {
                         print("이미지 저장 실패")
-                        self?.state.saveResultMessage = "이미지 저장 실패: \(error?.localizedDescription ?? "알 수 없는 오류")"
+                        self?.sideEffectSubject.send(.showToast("다운로드 실패했습니다")) 
                     }
                     self?.state.isSaving = false
                 }

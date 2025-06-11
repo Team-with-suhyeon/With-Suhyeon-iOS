@@ -11,6 +11,7 @@ import Kingfisher
 
 struct GalleryDetailView : View {
     @EnvironmentObject private var router: RouterRegistry
+    @EnvironmentObject var toastState: WithSuhyeonToastState
     @StateObject private var galleryDetailFeature: GalleryDetailFeature
     @State private var isAlertPresented: Bool = false
     @State private var isDeleteMode: Bool = true
@@ -120,6 +121,8 @@ struct GalleryDetailView : View {
             switch sideEffect {
             case .popBack:
                 router.popBack()
+            case .showToast(let message):
+                toastState.show(message: message)
             }
         }.navigationBarBackButtonHidden(true)
             .enableBackSwipe()

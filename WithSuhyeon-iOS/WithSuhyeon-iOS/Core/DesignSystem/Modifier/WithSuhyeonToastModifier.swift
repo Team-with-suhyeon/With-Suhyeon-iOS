@@ -8,19 +8,21 @@
 import SwiftUI
 
 struct WithSuhyeonToastModifier: ViewModifier {
-    @EnvironmentObject var toast: WithSuhyeonToastState
+    var isVisible: Bool
+    var icon: WithSuhyeonIcon
+    var message: String
 
     func body(content: Content) -> some View {
         content
             .overlay(
                 Group {
-                    if toast.isVisible {
+                    if isVisible {
                         HStack(spacing: 12) {
-                            Image(icon: toast.icon)
+                            Image(icon: icon)
                                 .resizable()
                                 .frame(width: 24, height: 24)
 
-                            Text(toast.message)
+                            Text(message)
                                 .font(.body03SB)
                                 .foregroundColor(.white)
                                 .lineLimit(1)
@@ -31,6 +33,7 @@ struct WithSuhyeonToastModifier: ViewModifier {
                             Color.gray600
                                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                         )
+                        .padding(.bottom, 80)
                         .padding(.horizontal, 16)
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                         .zIndex(10)
@@ -42,7 +45,7 @@ struct WithSuhyeonToastModifier: ViewModifier {
 }
 
 extension View {
-    func overlayToast() -> some View {
-        self.modifier(WithSuhyeonToastModifier())
+    func overlayToast(isVisible: Bool, icon: WithSuhyeonIcon, message: String) -> some View {
+        self.modifier(WithSuhyeonToastModifier(isVisible: isVisible, icon: icon, message: message))
     }
 }

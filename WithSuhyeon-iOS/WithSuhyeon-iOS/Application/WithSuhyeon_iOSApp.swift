@@ -13,6 +13,7 @@ import KakaoSDKAuth
 @main
 struct WithSuhyeon_iOSApp: App {
     @StateObject var router = RouterRegistry()
+    @StateObject var toastState: WithSuhyeonToastState = WithSuhyeonToastState()
     @Environment(\.scenePhase) private var scenePhase
     
     init() {
@@ -76,6 +77,8 @@ struct WithSuhyeon_iOSApp: App {
                     }
             }
             .environmentObject(router)
+            .environmentObject(toastState)
+            .overlayToast(isVisible: toastState.isVisible, icon: toastState.icon, message: toastState.message)
             .onChange(of: scenePhase) { newPhase in
                 if newPhase == .active {
                     WebSocketClient.shared.handleAppLifecycleEvents()

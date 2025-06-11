@@ -60,11 +60,16 @@ struct GalleryDetailView : View {
                     )
                     .padding(.top, 12)
                     
+                    Divider()
+                      .frame(height: 1)
+                      .background(Color.gray25)
+                      .padding(.horizontal, 16)
+                    
                     Text(galleryDetailFeature.state.content)
                         .lineSpacing(4)
                         .font(.body03R)
                         .foregroundColor(.gray900)
-                        .padding(.top, 8)
+                        .padding(.top, 24)
                         .padding(.bottom, 16)
                         .padding(.horizontal, 16)
                 }

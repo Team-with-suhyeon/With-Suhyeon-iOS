@@ -52,7 +52,7 @@ struct GalleryUploadView: View {
                             onTapDropdown: {
                                 feature.send(.tapDropdownButton)
                             },
-                            errorMessage: "필수로 입력해줘"
+                            errorMessage: feature.state.categoryErrorMessage
                         ) {
                             Text(feature.state.selectedCategory.first ?? "")
                                 .font(.body03SB)
@@ -84,13 +84,14 @@ struct GalleryUploadView: View {
                                 if(isFocus){
                                     feature.send(.focusOnTitleTextField)
                                 }
-                            }
+                            },
+                            isUnderMaxLength: true
                         )
                         .padding(.horizontal, 16)
                         .padding(.top, 8)
                         .id("title")
                         
-                        Text("설명")
+                        Text("설명 (선택)")
                             .font(.body03SB)
                             .foregroundColor(.gray600)
                             .padding(.top, 36)

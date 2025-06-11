@@ -24,6 +24,7 @@ class GalleryUploadFeature: Feature {
         var comment: String = ""
         var titleErrorMessage = "제목을 입력해주세요"
         var commentErrorMessage = "필수로 입력해주세요"
+        var categoryErrorMessage = "카테고리를 선택해주세요"
         var categories: [Category] = []
         var selectedCategoryIndex: Int? = nil
         var focusedTextField: String? = nil
@@ -99,23 +100,31 @@ class GalleryUploadFeature: Feature {
         case .focusOnCommentTextField:
             state.focusedTextField = "comment"
         case .tapCompleteButton:
+            print("title 상태: \(state.title)")
+            print("눌림?")
+            
+            var hasError = false
+            
             if(state.selectedImage == nil) {
-                break
+                hasError = true
             }
+            
             if(state.selectedCategoryIndex == nil) {
+                print("카테고리?")
                 state.dropdownState = .isError
-                break
+                state.categoryErrorMessage = "카테고리를 선택해주세요"
+                hasError = true
             }
+            
             if(state.title.isEmpty) {
+                print("제목?")
                 state.titleTextFieldState = .error
                 state.titleErrorMessage = "제목을 입력해주세요"
-                break
+                hasError = true
             }
-            if(state.comment.isEmpty) {
-                state.commentTextFieldState = .error
-                state.titleErrorMessage = "필수로 입력해주세요"
-                break
-            }
+            
+            if hasError { return }
+            
             upload()
         case .writeTitle(let title):
             updateTitle(title)
@@ -154,13 +163,14 @@ class GalleryUploadFeature: Feature {
     }
     
     private func updateTitle(_ title: String) {
-        state.title = title
-        if(title.count > 30) {
+        if(title.count == 30 && state.title != title && state.title.count == 30) {
             state.titleTextFieldState = .error
             state.titleErrorMessage = "최대 30자까지 입력할 수 있어요"
-        } else {
-            state.titleTextFieldState = .editing
+            return
         }
+        
+        state.title = title
+        state.titleTextFieldState = .editing
         checkButtonState()
     }
     
@@ -176,7 +186,11 @@ class GalleryUploadFeature: Feature {
     }
     
     private func checkButtonState() {
-        if(state.titleTextFieldState == .editing && state.title.count > 0 && state.commentTextFieldState == .editing && state.comment.count > 0 && state.selectedImage != nil && state.selectedCategoryIndex != nil){
+        
+        if state.titleTextFieldState == .editing &&
+            !state.title.isEmpty &&
+            state.selectedImage != nil &&
+            state.selectedCategoryIndex != nil {
             state.buttonState = .enabled
         } else {
             state.buttonState = .disabled

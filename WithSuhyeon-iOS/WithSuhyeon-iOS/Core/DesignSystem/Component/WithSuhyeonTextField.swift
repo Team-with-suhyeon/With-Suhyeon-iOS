@@ -24,7 +24,6 @@ struct WithSuhyeonTextField: View {
     let onFocusChanged: (Bool) -> Void
     let isUnderMaxLength: Bool
     let isNumber: Bool
-    
     init(
         placeholder: String,
         state: WithSuhyeonTextFieldState,
@@ -104,8 +103,8 @@ struct WithSuhyeonTextField: View {
                 
                 TextField(placeholder, text: $text)
                     .onChange(of: text) { value in
-                        var newValue = isUnderMaxLength ? String(value.prefix(maxLength)) : value
-                        if (isNumber) {
+                        var newValue = value.count < maxLength ? value :  String(value.prefix(maxLength-1))+String(value.last!)
+                         if (isNumber) {
                             let cleanedString = newValue.replacingOccurrences(of: ",", with: "")
                             if let number = Int(cleanedString) {
                                 let formatter = NumberFormatter()

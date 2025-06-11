@@ -45,7 +45,7 @@ struct PhoneAuthenticationView: View {
                     
                     WithSuhyeonTextField(
                         placeholder: "인증 번호 6자리",
-                        state: signUpFeature.state.authCode.count < 6 || signUpFeature.state.isAuthNumberCorrect ? .editing : .error,
+                        state: signUpFeature.state.errorMessage.isEmpty ? .editing : .error,  
                         keyboardType: .numberPad,
                         maxLength: 6,
                         countable: false,

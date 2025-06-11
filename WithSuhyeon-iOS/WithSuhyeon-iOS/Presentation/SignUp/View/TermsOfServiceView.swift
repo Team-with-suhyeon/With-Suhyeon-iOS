@@ -24,7 +24,7 @@ struct TermsOfServiceView: View {
             
             VStack(alignment: .leading, spacing: 16) {
                 ForEach(agreeStatus.indices, id: \.self) { index in
-                    HStack(alignment: .top, spacing: 12) {
+                    HStack(alignment: .top, spacing: 10) {
                         WithSuhyeonCheckbox(
                             state: agreeStatus[index] ? .checked : .unchecked,
                             placeholder: getPlaceholder(for: index),

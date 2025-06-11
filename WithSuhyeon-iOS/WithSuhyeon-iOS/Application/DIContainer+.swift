@@ -100,9 +100,5 @@ extension DIContainer {
         DIContainer.shared.register(type: OAuthRepository.self) {
             DefaultOAuthRepository()
         }
-        
-        DIContainer.shared.register(type: WithSuhyeonToastState.self) {
-            WithSuhyeonToastState()
-        }
     }
 }

@@ -16,7 +16,7 @@ struct WithSuhyeonUnderlineButton: View {
         Button(action: {
             onTap()
         }) {
-            VStack(spacing: 4) {
+            VStack(spacing: 3) {
                 Text(title)
                     .font(.body03B)
                     .foregroundColor(Color.gray500)

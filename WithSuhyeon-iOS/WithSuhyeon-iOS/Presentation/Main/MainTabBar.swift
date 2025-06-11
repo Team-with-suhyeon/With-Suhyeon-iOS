@@ -9,11 +9,12 @@ import SwiftUI
 
 struct MainTabBar : View {
     @EnvironmentObject var router: RouterRegistry
+    @StateObject var toastState: WithSuhyeonToastState
     @StateObject var feature: MainTabBarFeature
     @State var fromSignup: Bool = false
     init(fromSignup: Bool, nickname: String) {
         UITabBar.appearance().isHidden = true
-        
+        self._toastState = StateObject(wrappedValue: WithSuhyeonToastState())
         self._fromSignup = State(initialValue: fromSignup)
         self._feature = StateObject(wrappedValue: MainTabBarFeature(nickname: nickname))
     }
@@ -58,6 +59,8 @@ struct MainTabBar : View {
                 .padding(.top, 10)
             }
         }
+        .overlayToast()
+        .environmentObject(toastState)
         .background(
             Color.white
         )

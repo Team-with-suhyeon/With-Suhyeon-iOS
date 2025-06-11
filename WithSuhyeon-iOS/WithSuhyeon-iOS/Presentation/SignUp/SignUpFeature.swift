@@ -384,7 +384,7 @@ class SignUpFeature: Feature {
             state.nicknameErrorMessage = nil
         } else if nickname.count > 12 {
             state.isNicknameValid = false
-            state.nicknameErrorMessage = "최대 12글자 이하로 입력해주세요"
+            state.nicknameErrorMessage = "12자까지 입력할 수 있어요"
         } else if !nicknameValidateUseCase.execute(nickname) {
             state.isNicknameValid = false
             state.nicknameErrorMessage = "특수기호를 제거해주세요"

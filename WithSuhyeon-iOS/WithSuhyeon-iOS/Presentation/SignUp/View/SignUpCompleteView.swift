@@ -39,10 +39,10 @@ struct SignUpCompleteView: View {
             WithSuhyeonButton(title: "완료", buttonState: .enabled, onTapButton: {
                 router.navigate(to: .main(fromSignUp: true, nickname: nickname))
             })
-            .padding(.horizontal, 8)
+            .padding(.horizontal, 16)
         }
         .padding(.top, 168)
-
+        .padding(.bottom, 15)
     }
 }
 

@@ -32,6 +32,7 @@ public enum Destination: Hashable {
     case myPost
     case setInterest
     case signUpComplete(nickname: String)
+    case findSuhyeonMain
     case findSuhyeon
     case findSuhyeonDetail(id: Int)
     case signUp(userId: Int)

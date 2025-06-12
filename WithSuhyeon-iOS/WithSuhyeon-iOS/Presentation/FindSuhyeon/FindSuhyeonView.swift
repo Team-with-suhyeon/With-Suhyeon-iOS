@@ -10,6 +10,7 @@ import SwiftUI
 struct FindSuhyeonView: View {
     @EnvironmentObject private var router: RouterRegistry
     @StateObject private var feature = FindSuhyeonFeature()
+    @State private var isExitAlertPresented = false
     private let dates: [String] = generateDatesForYear()
     private let hours = Array(1...12)
     private let minutes = stride(from: 0, to: 60, by: 5).map { $0 }
@@ -18,7 +19,16 @@ struct FindSuhyeonView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             VStack {
-                WithSuhyeonTopNavigationBar(title: "", rightIcon: .icXclose24, onTapRight: {feature.send(.tapBackButton)})
+                WithSuhyeonTopNavigationBar(
+                    title: "",
+                    rightIcon: .icXclose24,
+                    onTapRight: {
+                        if feature.state.findSuhyeonTask == .second {
+                            isExitAlertPresented = true
+                        } else {
+                            feature.send(.tapBackButton)
+                        }
+                    })
                 
                 WithSuhyeonProgressBar(progress: progressPercentage)
                 
@@ -219,6 +229,24 @@ struct FindSuhyeonView: View {
                 router.popBack()
             }
         }
+        .withSuhyeonAlert(
+            isPresented: isExitAlertPresented,
+            onTapBackground: { isExitAlertPresented = false }
+        ) {
+            WithSuhyeonAlert(
+                title: "정말 나가겠습니까?",
+                subTitle: "작성한 내용이 저장되지 않고 모두 사라집니다",
+                primaryButtonText: "나가기",
+                secondaryButtonText: "계속하기",
+                primaryButtonAction: {
+                    router.clear()
+                    router.navigate(to: .findSuhyeonMain)
+                    isExitAlertPresented = false
+                },
+                secondaryButtonAction: { isExitAlertPresented = false },
+                isPrimayColorRed: true
+            )
+        }
     }
     
     @ViewBuilder
@@ -236,6 +264,8 @@ struct FindSuhyeonView: View {
             dateTimeSelectionView
         case .gratuity:
             gratuityView
+        case .writeContent:
+            EmptyView()  
         }
     }
     
@@ -362,7 +392,7 @@ struct FindSuhyeonView: View {
             
             FindSuhyeonDropdownCell(
                 dropdownState: feature.state.dateTime.dropdownState.toWithSuhyeonDropdownState(),
-                placeholder: "날짜 및 시간 선택하기",
+                placeholder: "날짜 선택하기",
                 errorMessage: "",
                 onTapDropdown: {
                     feature.send(.tapDateTimeDropdown(.dateSelect))
@@ -378,7 +408,7 @@ struct FindSuhyeonView: View {
     
     private var gratuityView: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("주고싶은 금액을 입력해줘")
+            Text("사례할 금액을 입력해주세요")
                 .font(.title02B)
                 .foregroundColor(.black)
                 .padding(.horizontal, 16)
@@ -386,7 +416,7 @@ struct FindSuhyeonView: View {
             ZStack(alignment: .topTrailing) {
                 WithSuhyeonTextField(
                     text: feature.state.selectedMoney,
-                    placeholder: "금액 입력하기",
+                    placeholder: "100,000원 미만으로 입력해주세요",
                     state: feature.state.moneyTextFieldState,
                     keyboardType: .decimalPad,
                     maxLength: 7,
@@ -401,6 +431,7 @@ struct FindSuhyeonView: View {
                         feature.updateSelectedMoney(text: text)
                     },
                     onFocusChanged: { focus in
+                        feature.state.isMoneyFieldFocused = focus
                         feature.send(.focusOnTextField(focus))
                     },
                     isUnderMaxLength: true,
@@ -409,13 +440,15 @@ struct FindSuhyeonView: View {
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
                 
-                ZStack {
+                if feature.state.isMoneyFieldFocused {
                     Spacer()
-                    Text("원")
-                        .font(.body02B)
-                        .padding(.trailing, 32)
-                        .padding(.top, 28)
-                        .foregroundColor(.gray400)
+                    ZStack {
+                        Text("원")
+                            .font(.body02B)
+                            .foregroundColor(.gray400)
+                            .padding(.trailing, 32)
+                            .padding(.top, 28)
+                    }
                 }
             }
         }

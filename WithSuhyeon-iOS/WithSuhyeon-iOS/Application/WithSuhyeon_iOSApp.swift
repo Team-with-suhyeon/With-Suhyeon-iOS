@@ -50,6 +50,8 @@ struct WithSuhyeon_iOSApp: App {
                                 .navigationBarBackButtonHidden(true)
                         case .signUpComplete(let nickname): SignUpCompleteView(nickname: nickname)
                                 .navigationBarBackButtonHidden(true)
+                        case .findSuhyeonMain: FindSuhyeonMainView()
+                                .navigationBarBackButtonHidden(true)
                         case .findSuhyeon: FindSuhyeonView()
                                 .navigationBarBackButtonHidden(true)
                         case .findSuhyeonDetail(id: let id): FindSuhyeonDetailView(id: id)

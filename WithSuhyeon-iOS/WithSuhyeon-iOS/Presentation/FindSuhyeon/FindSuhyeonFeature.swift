@@ -120,6 +120,7 @@ class FindSuhyeonFeature: Feature {
         
         var moneyTextFieldState: WithSuhyeonTextFieldState = .editing
         var moneyTextFieldErrorMessage: String = "최대 00자까지 입력할 수 있어"
+        var isMoneyFieldFocused: Bool = false 
         
         var titleTextFieldState: WithSuhyeonTextFieldState = .editing
         var titleTextFieldErrorMessage: String = "최대 30자까지 입력할 수 있어요"
@@ -184,6 +185,7 @@ class FindSuhyeonFeature: Feature {
         case locationSelection
         case dateSelection
         case gratuity
+        case writeContent
         
         var next: ProgressState {
             switch self {
@@ -192,7 +194,8 @@ class FindSuhyeonFeature: Feature {
             case .requestSelection: return .locationSelection
             case .locationSelection: return .dateSelection
             case .dateSelection: return .gratuity
-            case .gratuity: return .gratuity
+            case .gratuity: return .writeContent
+            case .writeContent: return .writeContent
             }
         }
     }
@@ -245,7 +248,6 @@ class FindSuhyeonFeature: Feature {
             state.request.dropdownState = state.request.selectedRequests.isEmpty ? .defaultState : newState
             state.isPresent = true
             
-            
         case .setLocationDropdownState(let newState):
             state.location.dropdownState = state.location.tempSelectedLocation.isEmpty ? .defaultState : newState
             
@@ -262,11 +264,14 @@ class FindSuhyeonFeature: Feature {
             state.age.buttonEnable = true
             
         case .selectRequest(let request):
-            if !state.request.selectedRequests.contains(request) {
+            if let index = state.request.selectedRequests.firstIndex(of: request) {
+                state.request.selectedRequests.remove(at: index)
+            } else {
                 state.request.selectedRequests.append(request)
             }
+
             state.selectedRequests = state.request.selectedRequests
-            state.request.buttonEnable = true
+            state.request.buttonEnable = !state.request.selectedRequests.isEmpty
             
         case .selectLocation(let mainIndex, let subIndex):
             state.location.selectedMainLocationIndex = mainIndex
@@ -300,18 +305,23 @@ class FindSuhyeonFeature: Feature {
             
         case .dismissBottomSheet:
             state.isPresent = false
+            
         case .tapAgeDropdown(let type):
             state.alertType = type
             state.isPresent = true
+            
         case .tapRequestDropdown(let type):
             state.alertType = type
             state.isPresent = true
+            
         case .tapLocationDropdown(let type):
             state.alertType = type
             state.isPresent = true
+            
         case .tapDateTimeDropdown(let type):
             state.alertType = type
             state.isPresent = true
+            
         case .tapBottomSheetButton:
             switch state.alertType {
             case .ageSelect: break
@@ -320,40 +330,34 @@ class FindSuhyeonFeature: Feature {
             case .dateSelect: break
             }
             state.isPresent = false
+            
         case .enterScreen:
             getLocationOptions()
+            
         case .tapBackButton:
             if(state.findSuhyeonTask == .first){
                 sideEffectSubject.send(.popBack)
             } else {
                 state.findSuhyeonTask = .first
             }
+            
         case .tapButton:
             state.findSuhyeonTask = .second
+            state.progressState = state.progressState.next
+            
         case .focusOnTextField(let isFocused):
             state.isButtonVisible = isFocused
+            
         case .writeTitle(let title):
-            state.inputTitle = title
-            if(!title.isEmpty && title.count <= 30 && state.inputContent.count <= 200) {
-                state.completeButtonState = .enabled
-            }
-            if(title.count > 30) {
-                state.titleTextFieldState = .error
-            } else {
-                state.titleTextFieldState = .editing
-            }
-        case .writeContent(let title):
-            state.inputContent = title
-            if(!title.isEmpty && title.count <= 200 && state.inputTitle.count <= 30) {
-                state.completeButtonState = .enabled
-            }
-            if(title.count > 30) {
-                state.contentTextFieldState = .error
-            } else {
-                state.contentTextFieldState = .editing
-            }
+            updateTitle(title)
+            
+        case .writeContent(let content):
+            updateContent(content)
+            
         case .tapCompleteButton:
-            postFindSuhyeon()
+            if validateFields() {
+                postFindSuhyeon()
+            }
         }
     }
     
@@ -372,24 +376,106 @@ class FindSuhyeonFeature: Feature {
         state.findSuhyeonTask = findSuhyeonTask
     }
     
-    func updateSelectedMoney(text: String) {
-        state.selectedMoney = text
-        let money = text.replacingOccurrences(of: ",", with: "")
-        guard Int(money) != nil || money.isEmpty else {
-            state.buttonState = .disabled
-            state.moneyTextFieldState = .error
+    func updateSelectedMoney(text newText: String) {
+        var digits = newText.replacingOccurrences(of: ",", with: "")
+        
+        if digits.count > 6 {
+            digits = String(digits.prefix(6))
+            state.selectedMoney = Int(digits)!.formattedWithComma
+            state.moneyTextFieldState      = .error
+            state.moneyTextFieldErrorMessage = "100,000원까지 입력할 수 있어요"
+            state.buttonState              = .disabled
+            return
+        }
+        
+        guard !digits.isEmpty else {
+            state.selectedMoney            = ""
+            state.moneyTextFieldState      = .editing
+            state.moneyTextFieldErrorMessage = ""
+            state.buttonState              = .disabled
+            return
+        }
+        
+        guard let value = Int(digits) else {
+            state.selectedMoney            = newText
+            state.moneyTextFieldState      = .error
             state.moneyTextFieldErrorMessage = "숫자만 입력해주세요"
+            state.buttonState              = .disabled
             return
         }
-        guard Int(money) ?? 0 <= 100000 else {
-            state.buttonState = .disabled
-            state.moneyTextFieldState = .error
-            state.moneyTextFieldErrorMessage = "100,000원까지 입력할 수있어요"
+        
+        guard value <= 100_000 else {
+            state.selectedMoney            = Int(digits)!.formattedWithComma
+            state.moneyTextFieldState      = .error
+            state.moneyTextFieldErrorMessage = "100,000원까지 입력할 수 있어요"
+            state.buttonState              = .disabled
             return
         }
-        state.moneyTextFieldState = .editing
-        state.buttonState = .enabled
+        
+        state.selectedMoney            = value.formattedWithComma
+        state.moneyTextFieldState      = .editing
+        state.moneyTextFieldErrorMessage = ""
+        state.buttonState              = .enabled
     }
+    
+    private func updateTitle(_ title: String) {
+        state.inputTitle = title
+        
+        if title.count > 30 {
+            state.inputTitle = String(title.prefix(30))
+            state.titleTextFieldState  = .error
+            state.titleTextFieldErrorMessage = "최대 30자까지 입력할 수 있어요"
+        } else {
+            state.titleTextFieldState  = .editing
+            state.titleTextFieldErrorMessage = ""
+        }
+        
+        updateCompleteButtonState()
+    }
+    
+    private func updateContent(_ content: String) {
+        state.inputContent = content
+        
+        if content.count > 200 {
+            state.inputContent = String(content.prefix(200))
+            state.contentTextFieldState = .error
+            state.contentTextFieldErrorMessage = "최대 200자까지 입력할 수 있어요"
+        } else {
+            state.contentTextFieldState = .editing
+            state.contentTextFieldErrorMessage = ""
+        }
+        
+        updateCompleteButtonState()
+    }
+    
+    private func updateCompleteButtonState() {
+        let titleOK   = !state.inputTitle.isEmpty   && state.inputTitle.count  <= 30
+        let contentOK = !state.inputContent.isEmpty && state.inputContent.count <= 200
+        
+        state.completeButtonState = (titleOK && contentOK)
+        ? .enabled
+        : .disabled
+    }
+    
+    private func validateFields() -> Bool {
+        var check = true
+
+        if state.inputTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            state.titleTextFieldState  = .error
+            state.titleTextFieldErrorMessage = "필수로 입력해줘"
+            check = false
+        }
+
+        if state.inputContent.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            state.contentTextFieldState  = .error
+            state.contentTextFieldErrorMessage = "필수로 입력해줘"
+            check = false
+        }
+
+        state.completeButtonState = check ? .enabled : .disabled
+        return check
+    }
+    
     
     private func postFindSuhyeon() {
         let fommatedDate = convertToISOFormat(from: state.selectedDate)
@@ -415,37 +501,37 @@ class FindSuhyeonFeature: Feature {
     
     func convertToISOFormat(from dateString: String) -> String? {
         print("데이트 날짜: \(dateString)")
-
+        
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "ko_KR")
         dateFormatter.timeZone = TimeZone(identifier: "Asia/Seoul")
-
+        
         var fullDateString = dateString
         if !dateString.contains("오전") && !dateString.contains("오후") {
             fullDateString += " 오후 6:00"
         }
-
+        
         dateFormatter.dateFormat = "M월 d일 (E) a h:mm"
-
+        
         guard let date = dateFormatter.date(from: fullDateString) else {
             print("❌ 날짜 파싱 실패")
             return nil
         }
-
+        
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(identifier: "Asia/Seoul")!
         var components = calendar.dateComponents([.month, .day, .hour, .minute], from: date)
         components.year = 2025
-
+        
         guard let fixedDate = calendar.date(from: components) else {
             return nil
         }
-
+        
         let isoFormatter = DateFormatter()
         isoFormatter.locale = Locale(identifier: "en_US_POSIX")
         isoFormatter.timeZone = TimeZone(identifier: "Asia/Seoul")
         isoFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm"
-
+        
         return isoFormatter.string(from: fixedDate)
     }
 }

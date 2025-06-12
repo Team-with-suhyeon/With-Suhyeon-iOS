@@ -67,6 +67,7 @@ struct GalleryUploadView: View {
                             .padding(.leading, 16)
                         
                         WithSuhyeonTextField(
+                            text: feature.state.title,
                             placeholder: "텍스트를 입력해주세요",
                             state: feature.state.titleTextFieldState,
                             keyboardType: .default,

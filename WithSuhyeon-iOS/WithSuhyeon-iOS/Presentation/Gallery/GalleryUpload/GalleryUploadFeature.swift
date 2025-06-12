@@ -100,9 +100,6 @@ class GalleryUploadFeature: Feature {
         case .focusOnCommentTextField:
             state.focusedTextField = "comment"
         case .tapCompleteButton:
-            print("title 상태: \(state.title)")
-            print("눌림?")
-            
             var hasError = false
             
             if(state.selectedImage == nil) {
@@ -110,14 +107,12 @@ class GalleryUploadFeature: Feature {
             }
             
             if(state.selectedCategoryIndex == nil) {
-                print("카테고리?")
                 state.dropdownState = .isError
                 state.categoryErrorMessage = "카테고리를 선택해주세요"
                 hasError = true
             }
             
             if(state.title.isEmpty) {
-                print("제목?")
                 state.titleTextFieldState = .error
                 state.titleErrorMessage = "제목을 입력해주세요"
                 hasError = true
@@ -163,9 +158,10 @@ class GalleryUploadFeature: Feature {
     }
     
     private func updateTitle(_ title: String) {
-        if(title.count == 30 && state.title != title && state.title.count == 30) {
+        if(state.title.count >= 30 && state.title != title && title.count >= 30) {
             state.titleTextFieldState = .error
             state.titleErrorMessage = "최대 30자까지 입력할 수 있어요"
+            state.title = String(state.title.prefix(29)) + String(title.last!)
             return
         }
         

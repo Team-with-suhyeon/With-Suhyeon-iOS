@@ -61,6 +61,7 @@ struct FindSuhyeonView: View {
                                     .padding(.leading, 16)
                                 
                                 WithSuhyeonTextField(
+                                    text: feature.state.inputTitle,
                                     placeholder: "제목 입력하기",
                                     state: feature.state.titleTextFieldState,
                                     keyboardType: .default,
@@ -384,6 +385,7 @@ struct FindSuhyeonView: View {
                 .padding(.bottom, 20)
             ZStack(alignment: .topTrailing) {
                 WithSuhyeonTextField(
+                    text: feature.state.selectedMoney,
                     placeholder: "금액 입력하기",
                     state: feature.state.moneyTextFieldState,
                     keyboardType: .decimalPad,

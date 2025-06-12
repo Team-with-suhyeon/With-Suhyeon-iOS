@@ -9,7 +9,8 @@ import SwiftUI
 
 struct WithSuhyeonTextField: View {
     
-    @FocusState private var isFocused: Bool
+    @State private var isFocused: Bool = false
+    let text: String
     let placeholder: String
     let state: WithSuhyeonTextFieldState
     let keyboardType: UIKeyboardType
@@ -24,7 +25,10 @@ struct WithSuhyeonTextField: View {
     let onFocusChanged: (Bool) -> Void
     let isUnderMaxLength: Bool
     let isNumber: Bool
+    let isTextDeleteButton: Bool
+    
     init(
+        text: String,
         placeholder: String,
         state: WithSuhyeonTextFieldState,
         keyboardType: UIKeyboardType,
@@ -38,8 +42,10 @@ struct WithSuhyeonTextField: View {
         onChangeText: @escaping (String) -> Void,
         onFocusChanged: @escaping (Bool) -> Void = { value in },
         isUnderMaxLength: Bool = false,
-        isNumber: Bool = false
+        isNumber: Bool = false,
+        isTextDeleteButton: Bool = false,
     ) {
+        self.text = text
         self.placeholder = placeholder
         self.state = state
         self.keyboardType = keyboardType
@@ -54,9 +60,8 @@ struct WithSuhyeonTextField: View {
         self.onFocusChanged = onFocusChanged
         self.isUnderMaxLength = isUnderMaxLength
         self.isNumber = isNumber
+        self.isTextDeleteButton = isTextDeleteButton
     }
-    
-    @State private var text: String = ""
     
     var body: some View {
         VStack(spacing: 8) {
@@ -101,32 +106,24 @@ struct WithSuhyeonTextField: View {
                     }
                 }
                 
-                TextField(placeholder, text: $text)
-                    .onChange(of: text) { value in
-                        var newValue = value.count < maxLength ? value :  String(value.prefix(maxLength-1))+String(value.last!)
-                         if (isNumber) {
-                            let cleanedString = newValue.replacingOccurrences(of: ",", with: "")
-                            if let number = Int(cleanedString) {
-                                let formatter = NumberFormatter()
-                                formatter.numberStyle = .decimal
-                                if let formattedString = formatter.string(from: NSNumber(value: number)) {
-                                    newValue = formattedString
-                                }
-                            }
-                        }
-                        onChangeText(newValue)
-                        text = newValue
-                        
+                UIKitTextFieldWrapper(
+                    text: text,
+                    placeholder: placeholder,
+                    keyboardType: keyboardType,
+                    isNumber: isNumber,
+                    maxLength: maxLength,
+                    onTextChange: onChangeText,
+                    onFocusChange: { newFocus in
+                        isFocused = newFocus
+                        onFocusChanged(
+                            newFocus
+                        )
                     }
-                    .focused($isFocused)
-                    .keyboardType(keyboardType)
-                    .font(.body03R)
-                    .foregroundColor(state == .disabled ? .gray300 : .gray900)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 15)
-                    .padding(.trailing, hasButton ? CGFloat(buttonText.count * 12) + 16 : 0)
-                    .accentColor(.black)
-                    .disabled(state == .disabled)
+                )
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 15)
+                .padding(.trailing, hasButton ? CGFloat(buttonText.count * 12) + 16 : 0)
                 
             }.frame(height: 52)
             
@@ -152,6 +149,7 @@ struct WithSuhyeonTextField: View {
 #Preview {
     VStack(spacing: 8){
         WithSuhyeonTextField(
+            text: "",
             placeholder: "입력해주세요",
             state: .editing,
             keyboardType: .numberPad,
@@ -168,6 +166,7 @@ struct WithSuhyeonTextField: View {
         .padding(.horizontal, 20)
         
         WithSuhyeonTextField(
+            text: "",
             placeholder: "입력해주세요",
             state: .editing,
             keyboardType: .numberPad,
@@ -184,6 +183,7 @@ struct WithSuhyeonTextField: View {
         .padding(.horizontal, 20)
         
         WithSuhyeonTextField(
+            text: "",
             placeholder: "입력해주세요",
             state: .error,
             keyboardType: .numberPad,
@@ -198,7 +198,9 @@ struct WithSuhyeonTextField: View {
             onFocusChanged: {value in}
         )
         .padding(.horizontal, 20)
+        
         WithSuhyeonTextField(
+            text: "",
             placeholder: "입력해주세요",
             state: .disabled,
             keyboardType: .numberPad,
@@ -215,6 +217,7 @@ struct WithSuhyeonTextField: View {
         .padding(.horizontal, 20)
         
         WithSuhyeonTextField(
+            text: "",
             placeholder: "입력해주세요",
             state: .editing,
             keyboardType: .numberPad,

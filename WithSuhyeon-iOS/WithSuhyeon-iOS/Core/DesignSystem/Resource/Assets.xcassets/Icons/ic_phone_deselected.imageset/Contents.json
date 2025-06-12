@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "ic_phone_deselected.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

@@ -7,6 +7,25 @@
 
 import SwiftUI
 
+private struct RequestOption: Identifiable {
+    let id = UUID()
+    let text: String
+    let iconDefault: WithSuhyeonIcon
+    let iconSelected: WithSuhyeonIcon
+}
+
+private let requestOptions: [RequestOption] = [
+    .init(text: "사진 촬영",
+          iconDefault: .icCameraDeselected,
+          iconSelected: .icCameraSelected),
+    .init(text: "전화 통화",
+          iconDefault: .icPhoneDeselected ,
+          iconSelected: .icPhoneSelected),
+    .init(text: "영상 통화",
+          iconDefault: .icVideoDeselected ,
+          iconSelected: .icVideoSelected)
+]
+
 struct FindSuhyeonView: View {
     @EnvironmentObject private var router: RouterRegistry
     @StateObject private var feature = FindSuhyeonFeature()
@@ -140,6 +159,7 @@ struct FindSuhyeonView: View {
                     }
                 }(),
                 title: feature.state.alertType.title,
+                trailingText: feature.state.alertType == .requestSelect ? "중복선택 가능" : nil,
                 modalContent: {
                     switch feature.state.alertType {
                     case .ageSelect:
@@ -265,7 +285,7 @@ struct FindSuhyeonView: View {
         case .gratuity:
             gratuityView
         case .writeContent:
-            EmptyView()  
+            EmptyView()
         }
     }
     
@@ -461,7 +481,6 @@ struct FindSuhyeonView: View {
                     text: age,
                     isSelected: feature.state.age.selectedAgeRange == age,
                     isDisabled: false,
-                    showIcon: false
                 ) {
                     feature.send(.selectAgeRange(age))
                 }
@@ -472,14 +491,15 @@ struct FindSuhyeonView: View {
     
     private func requestsModalView() -> some View {
         VStack {
-            ForEach(["사진 촬영", "전화 통화", "영상 통화"], id: \.self) { request in
+            ForEach(requestOptions) { option in
                 WithSuhyeonMultiSelectCheckBigChip(
-                    text: request,
-                    isSelected: feature.state.request.selectedRequests.contains(request),
+                    text: option.text,
+                    isSelected: feature.state.request.selectedRequests.contains(option.text),
                     isDisabled: false,
-                    showIcon: false
+                    iconDefault: option.iconDefault,
+                    iconSelected: option.iconSelected
                 ) {
-                    feature.send(.selectRequest(request))
+                    feature.send(.selectRequest(option.text))
                 }
                 .padding(.horizontal, 16)
             }

@@ -66,4 +66,10 @@ public enum WithSuhyeonIcon: String {
     case icLocation18 = "ic_location_18"
     case icToastRed = "ic_toast_red"
     case icToastGreen = "ic_toast_green"
+    case icCameraDeselected = "ic_camera_deselected"
+    case icCameraSelected = "ic_camera_selected"
+    case icPhoneDeselected = "ic_phone_deselected"
+    case icPhoneSelected = "ic_phone_selected"
+    case icVideoDeselected = "ic_video_deselected"
+    case icVideoSelected = "ic_video_selected"
 }

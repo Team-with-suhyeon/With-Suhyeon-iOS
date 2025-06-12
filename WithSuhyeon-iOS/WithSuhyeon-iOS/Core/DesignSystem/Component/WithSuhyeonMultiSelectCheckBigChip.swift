@@ -11,8 +11,27 @@ struct WithSuhyeonMultiSelectCheckBigChip: View {
     let text: String
     let isSelected: Bool
     let isDisabled: Bool
-    let showIcon: Bool
+
+    let iconDefault: WithSuhyeonIcon?
+    let iconSelected: WithSuhyeonIcon?
+    
     let onTapChip: () -> Void
+    
+    init(text: String,
+         isSelected: Bool,
+         isDisabled: Bool = false,
+         iconDefault: WithSuhyeonIcon? = nil,
+         iconSelected: WithSuhyeonIcon? = nil,
+         onTapChip: @escaping () -> Void)
+    {
+        self.text         = text
+        self.isSelected   = isSelected
+        self.isDisabled   = isDisabled
+        self.iconDefault  = iconDefault
+        self.iconSelected = iconSelected
+        self.onTapChip    = onTapChip
+    }
+    
     
     var body: some View {
         Button(action: {
@@ -21,13 +40,12 @@ struct WithSuhyeonMultiSelectCheckBigChip: View {
             }
         }) {
             HStack(spacing: 10) {
-                if showIcon {
-                    ZStack {
-                        RoundedRectangle(cornerSize: CGSize(width: 16, height: 16))
-                            .fill(Color.gray200)
-                            .frame(width: 48, height: 48)
-                    }
+                if let icon = isSelected ? iconSelected : iconDefault {
+                    Image(icon: icon)
+                        .resizable()
+                        .frame(width: 48, height: 48)
                 }
+                
                 Text(text)
                     .font(.body02SB)
                     .foregroundColor(isDisabled ? Color.gray300 : (isSelected ? Color.primary600 : Color.gray400))
@@ -43,7 +61,7 @@ struct WithSuhyeonMultiSelectCheckBigChip: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: 64, alignment: .leading)
-            .padding(.leading, showIcon ? 8 : 24)
+            .padding(.leading, (iconDefault != nil || iconSelected != nil) ? 8 : 24)
             .padding(.trailing, 16)
             .background(
                 RoundedRectangle(cornerRadius: 20)
@@ -69,7 +87,6 @@ struct CheckChipTestView: View {
                 text: "요청사항",
                 isSelected: isSelected1,
                 isDisabled: false,
-                showIcon: true
             ) {
                 isSelected1.toggle()
             }
@@ -78,7 +95,6 @@ struct CheckChipTestView: View {
                 text: "사진 촬영",
                 isSelected: isSelected2,
                 isDisabled: false,
-                showIcon: false
             ) {
                 isSelected2.toggle()
             }
@@ -87,7 +103,6 @@ struct CheckChipTestView: View {
                 text: "요청사항",
                 isSelected: false,
                 isDisabled: true,
-                showIcon: false
             ) {}
         }
         .padding()

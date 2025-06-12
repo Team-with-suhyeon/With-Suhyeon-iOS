@@ -12,6 +12,7 @@ struct WithSuhyeonModalModifier<ModalContent: View>: ViewModifier {
     let isPresented: Bool
     let isButtonEnabled: Bool
     let title: String
+    let trailingText: String?
     let modalContent: () -> ModalContent
     let onDismiss: () -> Void
     let onTapButton: () -> Void
@@ -60,16 +61,20 @@ struct WithSuhyeonModalModifier<ModalContent: View>: ViewModifier {
                 .frame(width: 60, height: 4)
                 .padding(.top, 12)
             
-            HStack{
+            HStack(alignment: .center, spacing: 15) {
                 Text(title)
                     .font(.title02B)
-                    .frame(alignment: .leading)
-                    .padding(.top, 44)
-                    .padding(.horizontal, 24)
-                    .padding(.bottom, 32)
-                
+
+                if let note = trailingText {
+                    Text(note)
+                        .font(.body03B)
+                        .foregroundColor(.gray400)
+                }
                 Spacer()
             }
+            .padding(.top, 44)
+            .padding(.horizontal, 24)
+            .padding(.bottom, 32)
             
             modalContent()
             
@@ -99,6 +104,7 @@ extension View {
         isPresented: Bool,
         isButtonEnabled: Bool,
         title: String,
+        trailingText: String? = nil,
         @ViewBuilder modalContent: @escaping () -> ModalContent,
         onDismiss: @escaping () -> Void,
         onTapButton: @escaping () -> Void
@@ -108,6 +114,7 @@ extension View {
                 isPresented: isPresented,
                 isButtonEnabled: isButtonEnabled,
                 title: title,
+                trailingText: trailingText,
                 modalContent: modalContent,
                 onDismiss: onDismiss,
                 onTapButton: onTapButton

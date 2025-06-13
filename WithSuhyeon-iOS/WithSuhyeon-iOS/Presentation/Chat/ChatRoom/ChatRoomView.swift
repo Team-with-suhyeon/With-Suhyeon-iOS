@@ -75,6 +75,7 @@ struct ChatRoomView: View {
             Divider()
                 .foregroundColor(.gray100)
                 .frame(height: 1)
+            
             ScrollViewReader { proxy in
                 ScrollView {
                     VStack(alignment: .leading, spacing: 0) {
@@ -184,10 +185,10 @@ struct ChatRoomView: View {
         }
         .confirmationDialog("타이틀", isPresented: Binding(get: { feature.state.bottomSheetIsPresented }, set: { _,_ in feature.send(.tapBottomSheetCloseButton) })) {
             
-            //            Button("차단하기", role: .destructive) {
-            //                isBlockMode = true
-            //                isAlertPresented = true
-            //            }
+            Button("차단하기", role: .destructive) {
+                isBlockMode = true
+                isAlertPresented = true
+            }
             
             Button("신고하기", role: .destructive) {
                 isBlockMode = false
@@ -201,7 +202,7 @@ struct ChatRoomView: View {
         }) {
             WithSuhyeonAlert(
                 title: isBlockMode ? "상대방을\n정말 차단하시겠습니까?" : "상대방을\n정말 신고하시겠습니까?",
-                subTitle: isBlockMode ? "" : "",
+                subTitle: isBlockMode ? "차단한 사용자는 마이페이지에서 수정할 수\n있습니다." : "허위 신고시 이용이 제한될 수 있습니다.",
                 primaryButtonText: isBlockMode ? "차단하기" : "신고하기",
                 secondaryButtonText: "취소하기",
                 primaryButtonAction: {

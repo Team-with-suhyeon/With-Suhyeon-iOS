@@ -119,7 +119,7 @@ class FindSuhyeonDetailFeature: Feature {
             self?.state.age = value.detail.age
             self?.state.promiseDate = value.detail.date
             self?.state.request = value.detail.requests
-            self?.state.money = String(value.price)
+            self?.state.money = value.price.formattedWithComma
             self?.state.gender = value.detail.gender
             self?.state.isExpired = value.isExpired
             self?.state.ownerChatRoomId = value.chatRoom.ownerChatRoomId

@@ -17,6 +17,7 @@ struct WriteNickNameView: View {
                 .foregroundStyle(Color.gray600)
             
             WithSuhyeonTextField(
+                text: signUpFeature.state.nickname,
                 placeholder: "한글, 영문, 숫자로 조합된 2~12자",
                 state: signUpFeature.state.nicknameErrorMessage == nil ? .editing : .error,
                 keyboardType: .default,

@@ -11,6 +11,7 @@ public class RouterRegistry: Router, ObservableObject {
     @Published public var path: [Destination] = []
     @Published public var selectedTab: MainTab = .home
     @Published public var shouldShowBottomBar: Bool = true
+    @Published public var selectedCategory: Int = 0
     
     public init() {}
     

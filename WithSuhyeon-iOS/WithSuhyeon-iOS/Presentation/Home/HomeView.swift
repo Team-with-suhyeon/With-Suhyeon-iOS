@@ -210,6 +210,7 @@ struct HomeView : View {
                     router.navigate(to: .findSuhyeonDetail(id: id))
                 case .navigateToGallery(let category):
                     router.navigateTab(to: .gallery)
+                    router.selectedCategory = category
                 }
             }
             .refreshable{

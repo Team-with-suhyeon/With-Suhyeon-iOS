@@ -24,6 +24,7 @@ class GalleryUploadFeature: Feature {
         var comment: String = ""
         var titleErrorMessage = "제목을 입력해주세요"
         var commentErrorMessage = "필수로 입력해주세요"
+        var categoryErrorMessage = "카테고리를 선택해주세요"
         var categories: [Category] = []
         var selectedCategoryIndex: Int? = nil
         var focusedTextField: String? = nil
@@ -47,7 +48,7 @@ class GalleryUploadFeature: Feature {
         case enterScreen
     }
     
-    enum SideEffect {
+    enum SideEffect: Equatable {
         case scrollTo(tag: String)
         case openCategorySelectSheet
         case popBack
@@ -58,6 +59,7 @@ class GalleryUploadFeature: Feature {
     
     private let intentSubject = PassthroughSubject<Intent, Never>()
     let sideEffectSubject = PassthroughSubject<SideEffect, Never>()
+    private var lastEffect: SideEffect?
     
     @Inject var galleryApi: GalleryApiProtocol
     @Inject var galleryRepository: GalleryRepository
@@ -80,7 +82,9 @@ class GalleryUploadFeature: Feature {
     func handleIntent(_ intent: Intent) {
         switch intent {
         case .tapCloseButton:
+            if(lastEffect == .popBack) { return }
             sideEffectSubject.send(.popBack)
+            lastEffect = .popBack
         case .tapImage:
             state.isImagePickerPresented = true
         case .tapDropdownButton:
@@ -99,23 +103,26 @@ class GalleryUploadFeature: Feature {
         case .focusOnCommentTextField:
             state.focusedTextField = "comment"
         case .tapCompleteButton:
+            var hasError = false
+            
             if(state.selectedImage == nil) {
-                break
+                hasError = true
             }
+            
             if(state.selectedCategoryIndex == nil) {
                 state.dropdownState = .isError
-                break
+                state.categoryErrorMessage = "카테고리를 선택해주세요"
+                hasError = true
             }
+            
             if(state.title.isEmpty) {
                 state.titleTextFieldState = .error
                 state.titleErrorMessage = "제목을 입력해주세요"
-                break
+                hasError = true
             }
-            if(state.comment.isEmpty) {
-                state.commentTextFieldState = .error
-                state.titleErrorMessage = "필수로 입력해주세요"
-                break
-            }
+            
+            if hasError { return }
+            
             upload()
         case .writeTitle(let title):
             updateTitle(title)
@@ -129,12 +136,17 @@ class GalleryUploadFeature: Feature {
         case .keyboardDisappeared:
             state.focusedTextField = nil
         case .enterScreen:
+            state.isImagePickerPresented = true
             getCategories()
         }
     }
     
     func setImagePickerPresented(_ isPresented: Bool) {
         state.isImagePickerPresented = isPresented
+        if state.selectedItem == nil && lastEffect != .popBack {
+            sideEffectSubject.send(.popBack)
+            lastEffect = .popBack
+        }
     }
     
     func setSelectedItem(_ item: PhotosPickerItem?) {
@@ -154,13 +166,15 @@ class GalleryUploadFeature: Feature {
     }
     
     private func updateTitle(_ title: String) {
-        state.title = title
-        if(title.count > 30) {
+        if(state.title.count >= 30 && state.title != title && title.count >= 30) {
             state.titleTextFieldState = .error
             state.titleErrorMessage = "최대 30자까지 입력할 수 있어요"
-        } else {
-            state.titleTextFieldState = .editing
+            state.title = String(state.title.prefix(29)) + String(title.last!)
+            return
         }
+        
+        state.title = title
+        state.titleTextFieldState = .editing
         checkButtonState()
     }
     
@@ -176,7 +190,11 @@ class GalleryUploadFeature: Feature {
     }
     
     private func checkButtonState() {
-        if(state.titleTextFieldState == .editing && state.title.count > 0 && state.commentTextFieldState == .editing && state.comment.count > 0 && state.selectedImage != nil && state.selectedCategoryIndex != nil){
+        
+        if state.titleTextFieldState == .editing &&
+            !state.title.isEmpty &&
+            state.selectedImage != nil &&
+            state.selectedCategoryIndex != nil {
             state.buttonState = .enabled
         } else {
             state.buttonState = .disabled

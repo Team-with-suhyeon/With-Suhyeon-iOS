@@ -9,6 +9,7 @@ import SwiftUI
 
 struct GalleryView: View {
     @EnvironmentObject private var router: RouterRegistry
+    @EnvironmentObject var toastState: WithSuhyeonToastState
     @StateObject private var galleryFeature = GalleryFeature()
     
     var body: some View {
@@ -65,6 +66,7 @@ struct GalleryView: View {
                         }
                     }
                 }
+                .secureScreen(message: "공유앨범은 보안상 캡처가 불가능해요", preventable: router.selectedTab == .gallery)
                 .edgesIgnoringSafeArea(.top)
                 
                 
@@ -77,7 +79,8 @@ struct GalleryView: View {
                 }
         }
         .onAppear {
-            galleryFeature.send(.enterScreen)
+            galleryFeature.send(.enterScreen(index: router.selectedCategory))
+            router.selectedCategory = 0
         }
         .background(Color.gray50)
     }
@@ -109,29 +112,37 @@ struct GalleryCategoryHeader: View {
     }
     
     private var categoryScrollView: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: spacing) {
-                Spacer()
-                ForEach(categories.indices, id: \.self) { index in
-                    CategoryItem(
-                        category: categories[index],
-                        scrollOffset: scrollOffset,
-                        isSelected: selectedIndex == index
-                    )
-                    .onTapGesture {
-                        onTapItem(index)
+        ScrollViewReader { proxy in
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: spacing) {
+                    Spacer()
+                    ForEach(categories.indices, id: \.self) { index in
+                        CategoryItem(
+                            category: categories[index],
+                            scrollOffset: scrollOffset,
+                            isSelected: selectedIndex == index
+                        )
+                        .onTapGesture {
+                            onTapItem(index)
+                        }
+                        .id(index)
+                    }
+                    Spacer()
+                }
+                .onChange(of: scrollOffset) { newValue in
+                    let progress = min(max(0, -newValue / 100), 1)
+                    
+                    spacing = 16 - (progress * 8)
+                    withAnimation(.easeInOut(duration: 0.5)) {
                     }
                 }
-                Spacer()
+                .padding(.vertical, 16)
             }
-            .onChange(of: scrollOffset) { newValue in
-                let progress = min(max(0, -newValue / 100), 1)
-                
-                spacing = 16 - (progress * 8)
-                withAnimation(.easeInOut(duration: 0.5)) {
+            .onChange(of: selectedIndex) { newValue in
+                withAnimation {
+                    proxy.scrollTo(newValue, anchor: .center)
                 }
             }
-            .padding(.vertical, 16)
         }
     }
 }

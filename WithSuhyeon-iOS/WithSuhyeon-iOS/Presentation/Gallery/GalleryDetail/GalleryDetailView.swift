@@ -77,8 +77,15 @@ struct GalleryDetailView : View {
             .scrollBounceBehavior(.basedOnSize)
             if (!galleryDetailFeature.state.isMine) {
                 ZStack {
+                    Color.white
+                        .frame(maxWidth: .infinity, maxHeight: 72)
+                        .shadow(color: .black.opacity(0.05),
+                                radius: 4,
+                                x: 0, y: -1)
+                    
                     WithSuhyeonButton(title: "다운로드", buttonState: .enabled, icon: .icDownload24) { galleryDetailFeature.send(.tapDownloadButton)}
                         .padding(.horizontal, 16)
+                        .padding(.top, 16)
                 }
             }
         }
@@ -131,6 +138,7 @@ struct GalleryDetailView : View {
             }
         }.navigationBarBackButtonHidden(true)
             .enableBackSwipe()
+            .secureScreen(message: "공유앨범은 보안상 캡처가 불가능해요", preventable: router.currentDestination() == .galleryDetail(id: galleryDetailFeature.state.id))
     }
 }
 

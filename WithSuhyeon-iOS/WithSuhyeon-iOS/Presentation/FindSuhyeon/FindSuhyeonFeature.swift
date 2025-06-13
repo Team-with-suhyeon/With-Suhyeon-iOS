@@ -176,6 +176,7 @@ class FindSuhyeonFeature: Feature {
         case navigateToNextStep
         case popBack
         case postComplete
+        case hideKeyboard
     }
     
     enum ProgressState: Int, CaseIterable {
@@ -307,22 +308,27 @@ class FindSuhyeonFeature: Feature {
             state.isPresent = false
             
         case .tapAgeDropdown(let type):
+            sideEffectSubject.send(.hideKeyboard)
             state.alertType = type
             state.isPresent = true
             
         case .tapRequestDropdown(let type):
+            sideEffectSubject.send(.hideKeyboard)
             state.alertType = type
             state.isPresent = true
             
         case .tapLocationDropdown(let type):
+            sideEffectSubject.send(.hideKeyboard)
             state.alertType = type
             state.isPresent = true
             
         case .tapDateTimeDropdown(let type):
+            sideEffectSubject.send(.hideKeyboard)
             state.alertType = type
             state.isPresent = true
             
         case .tapBottomSheetButton:
+            sideEffectSubject.send(.hideKeyboard)
             switch state.alertType {
             case .ageSelect: break
             case .requestSelect: break

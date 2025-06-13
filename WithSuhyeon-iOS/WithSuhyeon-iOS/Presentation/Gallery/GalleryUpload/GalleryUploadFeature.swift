@@ -48,7 +48,7 @@ class GalleryUploadFeature: Feature {
         case enterScreen
     }
     
-    enum SideEffect {
+    enum SideEffect: Equatable {
         case scrollTo(tag: String)
         case openCategorySelectSheet
         case popBack
@@ -59,6 +59,7 @@ class GalleryUploadFeature: Feature {
     
     private let intentSubject = PassthroughSubject<Intent, Never>()
     let sideEffectSubject = PassthroughSubject<SideEffect, Never>()
+    private var lastEffect: SideEffect?
     
     @Inject var galleryApi: GalleryApiProtocol
     @Inject var galleryRepository: GalleryRepository
@@ -81,7 +82,9 @@ class GalleryUploadFeature: Feature {
     func handleIntent(_ intent: Intent) {
         switch intent {
         case .tapCloseButton:
+            if(lastEffect == .popBack) { return }
             sideEffectSubject.send(.popBack)
+            lastEffect = .popBack
         case .tapImage:
             state.isImagePickerPresented = true
         case .tapDropdownButton:
@@ -133,12 +136,17 @@ class GalleryUploadFeature: Feature {
         case .keyboardDisappeared:
             state.focusedTextField = nil
         case .enterScreen:
+            state.isImagePickerPresented = true
             getCategories()
         }
     }
     
     func setImagePickerPresented(_ isPresented: Bool) {
         state.isImagePickerPresented = isPresented
+        if state.selectedItem == nil && lastEffect != .popBack {
+            sideEffectSubject.send(.popBack)
+            lastEffect = .popBack
+        }
     }
     
     func setSelectedItem(_ item: PhotosPickerItem?) {

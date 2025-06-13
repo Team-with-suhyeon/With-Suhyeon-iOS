@@ -64,7 +64,7 @@ struct WithSuhyeonModalModifier<ModalContent: View>: ViewModifier {
             HStack(alignment: .center, spacing: 15) {
                 Text(title)
                     .font(.title02B)
-
+                
                 if let note = trailingText {
                     Text(note)
                         .font(.body03B)
@@ -94,8 +94,14 @@ struct WithSuhyeonModalModifier<ModalContent: View>: ViewModifier {
             .padding(.top, 32)
             .disabled(!isButtonEnabled)
         }
-        .background(Color.white)
-        .withSuhyeonCornerRadius(24, corners: [.topLeft, .topRight])
+        .background(
+            Color.white
+            .mask(
+                RoundedCorners(radius: 24,
+                               corners: [.topLeft, .topRight])
+            )
+            .ignoresSafeArea(.container, edges: .bottom)
+        )
     }
 }
 

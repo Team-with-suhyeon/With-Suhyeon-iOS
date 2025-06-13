@@ -15,6 +15,7 @@ struct WithSuhyeon_iOSApp: App {
     @StateObject var router = RouterRegistry()
     @StateObject var toastState: WithSuhyeonToastState = WithSuhyeonToastState()
     @Environment(\.scenePhase) private var scenePhase
+    private var unauthorized = AuthEventBus.shared.unauthorized
     
     init() {
         DIContainer.shared.registerDependencies()
@@ -91,6 +92,10 @@ struct WithSuhyeon_iOSApp: App {
                     AuthController.handleOpenUrl(url: url)
                 }
             })
+            .onReceive(unauthorized){
+                router.clear()
+                router.navigate(to: .startView)
+            }
         }
     }
 }

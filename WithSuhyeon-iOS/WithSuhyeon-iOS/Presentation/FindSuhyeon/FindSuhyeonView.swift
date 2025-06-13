@@ -248,6 +248,8 @@ struct FindSuhyeonView: View {
                 router.popBack()
             case .postComplete:
                 router.popBack()
+            case .hideKeyboard:
+                hideKeyboard()
             }
         }
         .withSuhyeonAlert(

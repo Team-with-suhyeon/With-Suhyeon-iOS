@@ -231,6 +231,10 @@ class SignUpFeature: Feature {
     }
     
     private func updatePhoneNumber(_ phoneNumber: String) {
+        if(phoneNumber.count > 11) {
+            state.phoneNumber = String(phoneNumber.prefix(11))
+            return
+        }
         state.phoneNumber = phoneNumber
         state.isExistsUser = false
         state.phoneAuthStep = .enterPhoneNumber
@@ -302,6 +306,7 @@ class SignUpFeature: Feature {
     
     private func updateAuthCode(_ authCode: String) {
         if authCode.count > 6 {
+            state.authCode = String(authCode.prefix(6))
             return
         }
         

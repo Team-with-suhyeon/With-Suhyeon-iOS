@@ -14,7 +14,7 @@ class ChatRoomFeature: Feature {
         
         var groupedMessages: [(String, [Message])] {
             Dictionary(grouping: messages) { $0.date }
-                .sorted { $0.key > $1.key }
+                .sorted { $0.key < $1.key }
         }
         
         var inputText: String = ""

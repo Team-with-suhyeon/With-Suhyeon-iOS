@@ -221,6 +221,7 @@ struct FindSuhyeonView: View {
                 ) {
                     feature.send(.tapButton)
                 }
+                .padding(.vertical, 16)
                 .padding(.horizontal, 16)
             }
             

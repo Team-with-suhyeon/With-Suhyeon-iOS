@@ -59,6 +59,7 @@ struct SignUpView: View {
                 }
             )
             .padding(.horizontal, 16)
+            .padding(.bottom, 12)
         }
         .environmentObject(feature)
         .onAppear {

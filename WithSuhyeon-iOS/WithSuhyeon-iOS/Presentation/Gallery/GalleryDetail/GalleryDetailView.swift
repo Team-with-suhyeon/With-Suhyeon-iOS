@@ -11,6 +11,7 @@ import Kingfisher
 
 struct GalleryDetailView : View {
     @EnvironmentObject private var router: RouterRegistry
+    @EnvironmentObject var toastState: WithSuhyeonToastState
     @StateObject private var galleryDetailFeature: GalleryDetailFeature
     @State private var isAlertPresented: Bool = false
     @State private var isDeleteMode: Bool = true
@@ -59,11 +60,16 @@ struct GalleryDetailView : View {
                     )
                     .padding(.top, 12)
                     
+                    Divider()
+                      .frame(height: 1)
+                      .background(Color.gray25)
+                      .padding(.horizontal, 16)
+                    
                     Text(galleryDetailFeature.state.content)
                         .lineSpacing(4)
                         .font(.body03R)
                         .foregroundColor(.gray900)
-                        .padding(.top, 8)
+                        .padding(.top, 24)
                         .padding(.bottom, 16)
                         .padding(.horizontal, 16)
                 }
@@ -71,8 +77,15 @@ struct GalleryDetailView : View {
             .scrollBounceBehavior(.basedOnSize)
             if (!galleryDetailFeature.state.isMine) {
                 ZStack {
+                    Color.white
+                        .frame(maxWidth: .infinity, maxHeight: 72)
+                        .shadow(color: .black.opacity(0.05),
+                                radius: 4,
+                                x: 0, y: -1)
+                    
                     WithSuhyeonButton(title: "다운로드", buttonState: .enabled, icon: .icDownload24) { galleryDetailFeature.send(.tapDownloadButton)}
                         .padding(.horizontal, 16)
+                        .padding(.top, 16)
                 }
             }
         }
@@ -120,9 +133,12 @@ struct GalleryDetailView : View {
             switch sideEffect {
             case .popBack:
                 router.popBack()
+            case .showToast(let message):
+                toastState.show(message: message)
             }
         }.navigationBarBackButtonHidden(true)
             .enableBackSwipe()
+            .secureScreen(message: "공유앨범은 보안상 캡처가 불가능해요", preventable: router.currentDestination() == .galleryDetail(id: galleryDetailFeature.state.id))
     }
 }
 

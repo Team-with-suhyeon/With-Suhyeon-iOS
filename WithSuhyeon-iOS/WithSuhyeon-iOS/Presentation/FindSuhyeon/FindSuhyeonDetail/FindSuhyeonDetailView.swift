@@ -74,8 +74,7 @@ struct FindSuhyeonDetailView: View {
                         gender: feature.state.gender == .man ? "남" : "여",
                         age: feature.state.age,
                         date: feature.state.promiseDate,
-                        request: feature.state.request,
-                        money: feature.state.money
+                        request: feature.state.request
                     )
                     .padding(.horizontal, 16)
                 }

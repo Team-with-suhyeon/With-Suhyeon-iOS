@@ -9,11 +9,11 @@ import SwiftUI
 
 struct MainTabBar : View {
     @EnvironmentObject var router: RouterRegistry
+    @EnvironmentObject var toastState: WithSuhyeonToastState
     @StateObject var feature: MainTabBarFeature
     @State var fromSignup: Bool = false
     init(fromSignup: Bool, nickname: String) {
         UITabBar.appearance().isHidden = true
-        
         self._fromSignup = State(initialValue: fromSignup)
         self._feature = StateObject(wrappedValue: MainTabBarFeature(nickname: nickname))
     }

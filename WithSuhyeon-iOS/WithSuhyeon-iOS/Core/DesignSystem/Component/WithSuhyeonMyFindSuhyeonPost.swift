@@ -10,27 +10,16 @@ import SwiftUI
 struct WithSuhyeonMyFindSuhyeonPost: View {
     let post: MyFindSuhyeonPost
     
-//    private func statusLabel(for post: MyFindSuhyeonPost) -> (text: String, backgroundColor: Color, textColor: Color)? {
-//        if post.isExpired {
-//            return ("기간 만료", Color.gray400, Color.white)
-//        } else if post.matching {
-//            return ("매칭 완료", Color.gray100, Color.gray500)
-//        } else if let days = post.remainingDays {
-//            return (days == 0 ? "D-day" : "D-\(days)", Color.primary50, Color.primary500)
-//        }
-//        return nil
-//    }
-    
     private func statusLabel(for post: MyFindSuhyeonPost) -> (text:String, backgroundColor:Color, textColor:Color)? {
-      if post.matching {
-        return ("매칭 완료", Color.gray100, Color.gray500)
-      }
-      switch post.date {
-      case "기간 만료":
-        return ("기간 만료", Color.gray400, Color.white)
-      default:
-        return (post.date, Color.primary50, Color.primary500)
-      }
+        if post.matching {
+            return ("매칭 완료", Color.gray100, Color.gray500)
+        }
+        switch post.date {
+        case "기간 만료":
+            return ("기간 만료", Color.gray400, Color.white)
+        default:
+            return (post.date, Color.primary50, Color.primary500)
+        }
     }
     
     var body: some View {

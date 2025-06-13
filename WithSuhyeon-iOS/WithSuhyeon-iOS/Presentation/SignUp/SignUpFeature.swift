@@ -22,6 +22,7 @@ class SignUpFeature: Feature {
         var phoneAuthStep: PhoneAuthStep = .enterPhoneNumber
         var isExistsUser: Bool = false
         var errorMessage: String = ""
+        var isAuthCodeRequest: Bool = false
         
         var nickname: String = ""
         var isNicknameValid: Bool = false
@@ -230,26 +231,37 @@ class SignUpFeature: Feature {
     }
     
     private func updatePhoneNumber(_ phoneNumber: String) {
+        if(phoneNumber.count > 11) {
+            state.phoneNumber = String(phoneNumber.prefix(11))
+            return
+        }
         state.phoneNumber = phoneNumber
         state.isExistsUser = false
+        state.phoneAuthStep = .enterPhoneNumber
+        state.errorMessage = ""
         updateAuthButtonState()
-        state.isAuthButtonEnabled = true
     }
     
     private func requestAuthCode() {
+        guard !state.isAuthCodeRequest else { return }
+        state.isAuthCodeRequest = true
+        
         authRepository.sendAuthCode(flow: "signup", phoneNumber: state.phoneNumber) { [weak self] result in
-            switch result {
-            case .success:
-                self?.state.phoneAuthStep = .enterAuthCode
-                self?.state.authCode = ""
-                self?.state.isExistsUser = false
-                self?.state.authCode = ""
-                self?.state.isAuthButtonEnabled = false
-                print("✅ 회원가입 인증번호 요청 성공")
-            case .failure(let error):
-                print("인증번호 요청 실패: \(error.localizedDescription)")
-                self?.state.isExistsUser = true
-                self?.state.isAuthButtonEnabled = false
+            DispatchQueue.main.async {
+                self?.state.isAuthCodeRequest = false
+
+                switch result {
+                case .success:
+                    self?.state.phoneAuthStep = .enterAuthCode
+                    self?.state.authCode = ""
+                    self?.state.isExistsUser = false
+                    self?.state.isAuthButtonEnabled = false
+                    print("✅ 회원가입 인증번호 요청 성공")
+                case .failure(let error):
+                    print("인증번호 요청 실패: \(error.localizedDescription)")
+                    self?.state.isExistsUser = true
+                    self?.state.isAuthButtonEnabled = false
+                }
             }
         }
         
@@ -284,7 +296,7 @@ class SignUpFeature: Feature {
                         self?.state.errorMessage = ""
                     }
                 } else {
-                    self?.state.errorMessage = "서버와 통신 중 문제가 발생했습니다."
+                    self?.state.errorMessage = "서버 에러가 발생했어요"
                 }
                 self?.state.isExistsUser = false
             }
@@ -294,14 +306,13 @@ class SignUpFeature: Feature {
     
     private func updateAuthCode(_ authCode: String) {
         if authCode.count > 6 {
+            state.authCode = String(authCode.prefix(6))
             return
         }
         
         state.authCode = authCode
-        
-        if authCode.count <= 6 {
-            state.isAuthNumberCorrect = true
-        }
+        state.isAuthNumberCorrect = false
+        state.errorMessage = ""
         
         updateAuthButtonState()
     }
@@ -339,7 +350,7 @@ class SignUpFeature: Feature {
             if state.phoneAuthStep == .enterPhoneNumber {
                 newButtonState = .disabled
             } else if state.phoneAuthStep == .enterAuthCode {
-                newButtonState = (state.authCode.count >= 6 && state.isAuthNumberCorrect) ? .enabled : .disabled
+                newButtonState = (state.authCode.count == 6) ? .enabled : .disabled 
             } else {
                 newButtonState = .disabled
             }
@@ -378,7 +389,7 @@ class SignUpFeature: Feature {
             state.nicknameErrorMessage = nil
         } else if nickname.count > 12 {
             state.isNicknameValid = false
-            state.nicknameErrorMessage = "최대 12글자 이하로 입력해주세요"
+            state.nicknameErrorMessage = "12자까지 입력할 수 있어요"
         } else if !nicknameValidateUseCase.execute(nickname) {
             state.isNicknameValid = false
             state.nicknameErrorMessage = "특수기호를 제거해주세요"

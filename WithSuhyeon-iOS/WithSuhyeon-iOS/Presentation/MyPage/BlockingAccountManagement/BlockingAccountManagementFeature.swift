@@ -66,6 +66,7 @@ class BlockingAccountManagementFeature: Feature {
             fetchBlockingAccounts()
         }
     }
+    
     private func addPhoneNumberToBlockingList() {
         state.errorMessage = ""
         state.isValidPhoneNumber = true
@@ -73,22 +74,25 @@ class BlockingAccountManagementFeature: Feature {
         if state.blockingAccountList.contains(state.phoneNumber) {
             state.errorMessage = "이미 차단된 번호에요"
             state.isValidPhoneNumber = false
+            state.isButtonEnabled = false
             return
         }
         
         blockingAccountRepository.registerBlockingAccount(phoneNumber: state.phoneNumber) { [weak self] result in
-            print("차단 계정 등록")
             DispatchQueue.main.async {
                 switch result {
                 case .success:
                     print("✅ 차단 계정 등록 성공")
-                    withAnimation {
-                        self?.state.blockingAccountList.insert(self?.state.phoneNumber ?? "", at: 0)
-                    }
+                    self?.state.blockingAccountList.insert(self?.state.phoneNumber ?? "", at: 0)
+                    self?.state.isButtonEnabled = false
                     self?.state.phoneNumber = ""
                     self?.state.errorMessage = ""
                 case .failure(let error):
                     print("❌ 차단 계정 등록 실패: \(error.localizedDescription)")
+                    
+                    self?.state.isButtonEnabled    = false
+                    self?.state.isValidPhoneNumber = false
+                    self?.state.errorMessage       = ""
                     
                     if let networkError = error as? NetworkError {
                         switch networkError {
@@ -99,12 +103,9 @@ class BlockingAccountManagementFeature: Feature {
                         case .blockAlreadyExistsBadRequest:
                             self?.state.errorMessage = "이미 차단된 번호에요"
                         default:
-                            self?.state.errorMessage = ""
+                            break
                         }
-                    } else {
-                        self?.state.errorMessage = ""
                     }
-                    self?.state.isValidPhoneNumber = false
                 }
             }
         }
@@ -134,9 +135,12 @@ class BlockingAccountManagementFeature: Feature {
         }
     }
     private func updatePhoneNumber(_ phoneNumber: String) {
-        state.phoneNumber = phoneNumber
+        let filterNumber = phoneNumber.filter { $0.isNumber }
+        let limitNumber = String(filterNumber.prefix(11))
+        
+        state.phoneNumber = limitNumber
         state.isValidPhoneNumber = true
-        state.isButtonEnabled = phoneNumber.count == 11
+        state.isButtonEnabled = limitNumber.count == 11
     }
     
     private func fetchBlockingAccounts() {

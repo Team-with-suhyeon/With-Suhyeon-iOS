@@ -30,7 +30,7 @@ class HomeFeature: Feature {
     
     enum SideEffect {
         case navigateToFindSuhyeon(Int)
-        case navigateToGallery(String)
+        case navigateToGallery(Int)
     }
     
     @Published private(set) var state = State()
@@ -59,16 +59,16 @@ class HomeFeature: Feature {
         switch intent {
             
         case .tapTravelButton:
-            sideEffectSubject.send(.navigateToGallery("여행"))
+            sideEffectSubject.send(.navigateToGallery(5))
         case .tapHideAndSeekButton:
-            sideEffectSubject.send(.navigateToGallery("여행"))
+            sideEffectSubject.send(.navigateToGallery(7))
         case .tapStudyCafeButton:
-            sideEffectSubject.send(.navigateToGallery("스터디카페"))
+            sideEffectSubject.send(.navigateToGallery(13))
         case .tapWithSuhyeonContainer(let index):
             let id = state.findSuhyeons[index].id
             sideEffectSubject.send(.navigateToFindSuhyeon(id))
         case .tapSeeAllButton:
-            sideEffectSubject.send(.navigateToGallery("전체보기"))
+            sideEffectSubject.send(.navigateToGallery(0))
         case .scrollChange(let offset):
             if(offset < -100) {
                 state.boundary = 0.3

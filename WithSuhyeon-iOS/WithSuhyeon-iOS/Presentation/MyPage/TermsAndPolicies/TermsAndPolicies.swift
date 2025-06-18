@@ -43,34 +43,6 @@ struct TermsAndPolicies: View {
                     .padding(16)
                     .contentShape(Rectangle())
                 }
-                
-                Button(action: {
-                    feature.send(.tapOperationalPolicy)
-                }) {
-                    HStack {
-                        Text("운영정책")
-                            .font(.body03SB)
-                            .foregroundColor(.black)
-                        Spacer()
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(16)
-                    .contentShape(Rectangle())
-                }
-                
-                Button(action: {
-                    feature.send(.tapLocationBasedServicePolicy)
-                }) {
-                    HStack {
-                        Text("위치기반서비스이용약관")
-                            .font(.body03SB)
-                            .foregroundColor(.black)
-                        Spacer()
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(16)
-                    .contentShape(Rectangle())
-                }
             }
             .padding(.top, 16)
             

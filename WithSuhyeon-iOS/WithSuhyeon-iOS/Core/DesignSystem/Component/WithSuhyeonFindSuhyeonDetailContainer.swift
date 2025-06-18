@@ -13,7 +13,23 @@ struct WithSuhyeonFindSuhyeonDetailContainer: View {
     let age: String
     let date: String
     let request: [String]
-    let money: String
+    let money: String?
+    
+    init(location: String,
+         gender: String,
+         age: String,
+         date: String,
+         request: [String],
+         money: String? = nil)
+    {
+        self.location = location
+        self.gender   = gender
+        self.age      = age
+        self.date     = date
+        self.request  = request
+        self.money    = money
+    }
+    
     
     var body: some View {
         ZStack {
@@ -77,28 +93,22 @@ struct WithSuhyeonFindSuhyeonDetailContainer: View {
                         }
                     }
                 }
-                HStack(spacing: 0) {
-                    Text("금액")
-                        .font(.body03R)
-                        .foregroundColor(.gray500)
-                    Spacer()
-                    HStack(spacing: 0) {
-                        Text(money)
-                            .font(.body03B)
-                            .foregroundColor(.gray700)
-                        Text("원")
-                            .font(.body03B)
-                            .foregroundColor(.gray400)
+                if let money, !money.isEmpty {
+                    HStack {
+                        Text("금액")
+                            .font(.body03R).foregroundColor(.gray500)
+                        Spacer()
+                        Text(money).font(.body03B).foregroundColor(.gray700) +
+                        Text("원").font(.body03B).foregroundColor(.gray400)
                     }
                 }
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 16)
             .background(
-                RoundedRectangle(cornerRadius: 24)
-                    .fill(Color.gray25)
+                RoundedRectangle(cornerRadius: 24).fill(Color.gray25)
             )
-            .background(
+            .overlay(
                 RoundedRectangle(cornerRadius: 24)
                     .stroke(Color.gray100, lineWidth: 1)
             )

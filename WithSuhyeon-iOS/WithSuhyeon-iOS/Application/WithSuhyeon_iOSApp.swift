@@ -13,7 +13,9 @@ import KakaoSDKAuth
 @main
 struct WithSuhyeon_iOSApp: App {
     @StateObject var router = RouterRegistry()
+    @StateObject var toastState: WithSuhyeonToastState = WithSuhyeonToastState()
     @Environment(\.scenePhase) private var scenePhase
+    private var unauthorized = AuthEventBus.shared.unauthorized
     
     init() {
         DIContainer.shared.registerDependencies()
@@ -49,6 +51,8 @@ struct WithSuhyeon_iOSApp: App {
                                 .navigationBarBackButtonHidden(true)
                         case .signUpComplete(let nickname): SignUpCompleteView(nickname: nickname)
                                 .navigationBarBackButtonHidden(true)
+                        case .findSuhyeonMain: FindSuhyeonMainView()
+                                .navigationBarBackButtonHidden(true)
                         case .findSuhyeon: FindSuhyeonView()
                                 .navigationBarBackButtonHidden(true)
                         case .findSuhyeonDetail(id: let id): FindSuhyeonDetailView(id: id)
@@ -77,6 +81,8 @@ struct WithSuhyeon_iOSApp: App {
                     }
             }
             .environmentObject(router)
+            .environmentObject(toastState)
+            .overlayToast(isVisible: toastState.isVisible, icon: toastState.icon, message: toastState.message)
             .onChange(of: scenePhase) { newPhase in
                 if newPhase == .active {
                     WebSocketClient.shared.handleAppLifecycleEvents()
@@ -87,6 +93,10 @@ struct WithSuhyeon_iOSApp: App {
                     AuthController.handleOpenUrl(url: url)
                 }
             })
+            .onReceive(unauthorized){
+                router.clear()
+                router.navigate(to: .startView)
+            }
         }
     }
 }

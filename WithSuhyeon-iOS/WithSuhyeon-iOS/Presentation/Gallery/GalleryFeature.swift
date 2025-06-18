@@ -22,7 +22,7 @@ class GalleryFeature: Feature {
         case tapCategory(index: Int)
         case tapGalleryItem(id: Int)
         case tapUploadButton
-        case enterScreen
+        case enterScreen(index: Int)
         case showLastItem
         case refresh
     }
@@ -66,8 +66,8 @@ class GalleryFeature: Feature {
             sideEffectSubject.send(.navigateToDetail(id: id))
         case .tapUploadButton:
             sideEffectSubject.send(.navigateToUpload)
-        case .enterScreen:
-            getCategories()
+        case .enterScreen(let index):
+            getCategories(index: index)
             getSelectedCategoryGalleries()
         case .showLastItem:
             getSelectedCategoryGalleries()
@@ -86,7 +86,7 @@ class GalleryFeature: Feature {
         state.scrollOffset = offset
     }
     
-    private func getCategories() {
+    private func getCategories(index: Int) {
         state.isLoading = true
         var categories: [Category] = [Category(imageURL: "", category: "전체")]
         getCategoriesUseCase.execute { [weak self] result in
@@ -94,8 +94,8 @@ class GalleryFeature: Feature {
             DispatchQueue.main.async {
                 categories += result
                 self?.state.categories = categories
+                self?.changeSelectedCategoryIndex(index)
             }
-            
         }
     }
     

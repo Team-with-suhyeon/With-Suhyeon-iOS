@@ -28,6 +28,7 @@ struct LoginView: View {
                     .foregroundStyle(Color.gray600)
                 
                 WithSuhyeonTextField(
+                    text: loginFeature.state.phoneNumber,
                     placeholder: "- 를 제외한 휴대폰 번호를 입력해주세요",
                     state: .editing,
                     keyboardType: .numberPad,
@@ -59,6 +60,7 @@ struct LoginView: View {
                         .foregroundStyle(Color.gray600)
                     
                     WithSuhyeonTextField(
+                        text: loginFeature.state.authCode,
                         placeholder: "인증 번호 6자리",
                         state: loginFeature.state.authCode.count < 6 || loginFeature.state.isAuthNumberCorrect ? .editing : .error,
                         keyboardType: .numberPad,

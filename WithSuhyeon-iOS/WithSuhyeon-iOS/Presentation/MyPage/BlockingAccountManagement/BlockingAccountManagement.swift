@@ -21,8 +21,8 @@ struct BlockingAccountManagement: View {
                     .font(.title02B)
                     .foregroundColor(.black)
                 Text("차단한 사용자는 \(blockingAccountManagementFeature.state.nickname)님의 게시글을 볼 수 없어요")
-                    .font(.caption01SB)
-                    .foregroundColor(.gray400)
+                    .font(.body03SB)
+                    .foregroundColor(.gray500)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 20)
@@ -37,6 +37,7 @@ struct BlockingAccountManagement: View {
                     .foregroundColor(.gray600)
                 
                 WithSuhyeonTextField(
+                    text: blockingAccountManagementFeature.state.phoneNumber,
                     placeholder: "- 를 제외한 휴대폰 번호를 입력해주세요",
                     state: blockingAccountManagementFeature.state.isValidPhoneNumber ? .editing : .error,
                     keyboardType: .numberPad,
@@ -47,14 +48,13 @@ struct BlockingAccountManagement: View {
                     buttonState: blockingAccountManagementFeature.state.isButtonEnabled ? .enabled : .disabled,
                     errorText: blockingAccountManagementFeature.state.errorMessage,
                     onTapButton: {
-                        withAnimation {
-                            blockingAccountManagementFeature.send(.tapBlockingAccountButton)
-                        }
+                        blockingAccountManagementFeature.send(.tapBlockingAccountButton)
                     },
                     onChangeText: { text in
                         blockingAccountManagementFeature.send(.updatePhoneNumber(text))
                     },
-                    isUnderMaxLength: true
+                    isUnderMaxLength: true,
+                    isTextDeleteButton: true
                 )
             }
             .padding(.all, 16)
@@ -63,8 +63,8 @@ struct BlockingAccountManagement: View {
                 .frame(height: 4)
                 .foregroundColor(Color.gray50)
             
-            VStack(alignment: .leading) {
-                if !blockingAccountManagementFeature.state.blockingAccountList.isEmpty {
+            if !blockingAccountManagementFeature.state.blockingAccountList.isEmpty {
+                VStack(alignment: .leading) {
                     Text("차단된 연락처 \(blockingAccountManagementFeature.state.blockingAccountList.count)")
                         .font(.caption01SB)
                         .foregroundColor(.black)
@@ -96,21 +96,21 @@ struct BlockingAccountManagement: View {
                         }
                     }
                     .frame(maxHeight: 400)
-                } else {
-                    VStack(alignment: .center) {
-                        Image(image: .imgEmptyState)
-                            .renderingMode(.original)
-                            .frame(width: 150, height: 150)
-                        
-                        Text("아직 차단된 번호가 없어요")
-                            .font(.body03R)
-                            .foregroundColor(Color.gray400)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.top, 93)
                 }
+                .padding(.horizontal, 16)
+            } else {
+                VStack(alignment: .center, spacing: 8) {
+                    Image(image: .imgEmptyState)
+                        .renderingMode(.original)
+                        .frame(width: 150, height: 150)
+                    
+                    Text("아직 차단된 번호가 없어요")
+                        .font(.body03R)
+                        .foregroundColor(Color.gray400)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color.gray50)
             }
-            .padding(.horizontal, 16)
             
             Spacer()
         }
